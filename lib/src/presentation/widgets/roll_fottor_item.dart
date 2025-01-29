@@ -1,6 +1,6 @@
 import 'package:pdf/widgets.dart' as pw;
 
-pw.Padding fotterItem(
+pw.Padding rollfotterItem(
     {required text, required font, double? padding, isHeader = false}) {
   return pw.Padding(
       padding: pw.EdgeInsets.all(padding ?? 4),

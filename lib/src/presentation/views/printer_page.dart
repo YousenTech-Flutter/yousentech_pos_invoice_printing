@@ -5,8 +5,6 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pdf/pdf.dart';
-import 'package:pos_desktop/core/config/app_colors.dart';
-import 'package:pos_desktop/features/invoice_printing/domain/invoice_printing_viewmodel.dart';
 import 'package:printing/printing.dart';
 import 'package:shared_widgets/config/app_colors.dart';
 import 'package:yousentech_pos_invoice_printing/src/domain/invoice_printing_viewmodel.dart';

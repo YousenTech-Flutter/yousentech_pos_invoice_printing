@@ -1,11 +1,10 @@
 import 'package:pdf/widgets.dart' as pw;
-import 'package:pos_desktop/features/invoice_printing/presentation/widgets/a4_item_company.dart';
-
-import '../../../../core/config/app_invoice_colors.dart';
-import '../../../../core/config/app_invoice_styles.dart';
-import '../../../../core/utils/translations/ar.dart';
-import '../../../../core/utils/translations/en.dart';
-import '../../../basic_data_management/customer/data/customer.dart';
+import 'package:pos_shared_preferences/models/customer_model.dart';
+import 'package:shared_widgets/config/app_invoice_colors.dart';
+import 'package:shared_widgets/config/app_invoice_styles.dart';
+import 'package:shared_widgets/utils/translations/ar.dart';
+import 'package:shared_widgets/utils/translations/en.dart';
+import 'package:yousentech_pos_invoice_printing/lib_module.dart';
 
 pw.Padding companyDetailItem(Customer company, String tital) {
   final companyInfo = [

@@ -2,22 +2,16 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:pos_desktop/core/config/app_invoice_colors.dart';
-import 'package:pos_desktop/core/config/app_invoice_styles.dart';
-import 'package:pos_desktop/features/basic_data_management/customer/data/customer.dart';
-import 'package:pos_desktop/features/invoice_printing/domain/invoice_printing_viewmodel.dart';
-import 'package:pos_desktop/features/invoice_printing/presentation/widgets/a4_data_row_cell.dart';
-import 'package:pos_desktop/features/invoice_printing/presentation/widgets/a4_detail_item_company.dart';
-import 'package:pos_desktop/features/invoice_printing/presentation/widgets/a4_table_row_data.dart';
+import 'package:pos_shared_preferences/models/customer_model.dart';
+import 'package:pos_shared_preferences/pos_shared_preferences.dart';
+import 'package:shared_widgets/config/app_invoice_colors.dart';
+import 'package:shared_widgets/config/app_invoice_styles.dart';
+import 'package:shared_widgets/utils/translations/ar.dart';
+import 'package:shared_widgets/utils/translations/en.dart';
+import 'package:yousentech_pos_invoice_printing/yousentech_pos_invoice_printing.dart';
 
-import '../../../core/config/app_shared_pr.dart';
-import '../../../core/utils/translations/ar.dart';
-import '../../../core/utils/translations/en.dart';
-import '../presentation/widgets/a4_fottor_item.dart';
-import '../presentation/widgets/a4_header_item.dart';
-import '../presentation/widgets/a4_header_table_item.dart';
-
-Future<pw.Document> a4Print({required bool isSimple, Customer? customer, PdfPageFormat? format}) async {
+Future<pw.Document> a4Print(
+    {required bool isSimple, Customer? customer, PdfPageFormat? format}) async {
   PrintingInvoiceController printingController =
       Get.put(PrintingInvoiceController());
   Customer? company = SharedPr.currentCompanyObject;
@@ -114,7 +108,6 @@ Future<pw.Document> a4Print({required bool isSimple, Customer? customer, PdfPage
                             height: 100),
                       ])),
             )
-          
           ]),
           isSimple
               ? pw.Column(children: [
@@ -138,8 +131,6 @@ Future<pw.Document> a4Print({required bool isSimple, Customer? customer, PdfPage
                               company, '${ar['seller']} / ${en['seller']}')),
                   ],
                 ),
-          
-
           pw.Table(
             border: pw.TableBorder.all(
               color: AppInvoceColor.grayTableBorder,
@@ -160,7 +151,7 @@ Future<pw.Document> a4Print({required bool isSimple, Customer? customer, PdfPage
                       },
                     ),
                   ]),
-              ...TableRowData(),
+              ...a4TableRowData(),
             ],
           ),
           pw.Table(
@@ -177,20 +168,20 @@ Future<pw.Document> a4Print({required bool isSimple, Customer? customer, PdfPage
                               ? PdfColors.white
                               : const PdfColor.fromInt(0xfff8f5f7)),
                   children: [
-                    dataRowCell(
+                    a4dataRowCell(
                         expanded: 2,
                         isTotal: true,
                         text: formatter.format(
                             printingController.saleOrderInvoice!.totalPrice)),
-                    dataRowCell(
+                    a4dataRowCell(
                         isTotal: true,
                         text: formatter.format(
                             printingController.saleOrderInvoice!.totalTaxes)),
-                    dataRowCell(
+                    a4dataRowCell(
                         isTotal: true,
                         text: formatter.format(printingController
                             .saleOrderInvoice!.totalPriceSubtotal)),
-                    dataRowCell(
+                    a4dataRowCell(
                         expanded: 6,
                         isTotal: true,
                         text:
@@ -198,8 +189,6 @@ Future<pw.Document> a4Print({required bool isSimple, Customer? customer, PdfPage
                   ]),
             ],
           ),
-          
-          
           pw.Row(children: [
             pw.Expanded(flex: 3, child: pw.Container()),
             pw.Expanded(
@@ -208,30 +197,30 @@ Future<pw.Document> a4Print({required bool isSimple, Customer? customer, PdfPage
                   pw.Divider(
                       thickness: 1, color: const PdfColor.fromInt(0xFFDAD5D5)),
                   if (SharedPr.invoiceSetting!.showSubtotal!) ...[
-                    fotterItem(
+                    a4fotterItem(
                       titel: 'sub_total',
                       value:
                           "${formatter.format(printingController.saleOrderInvoice!.totalPriceSubtotal)} SR",
                     ),
                   ],
-                  fotterItem(
+                  a4fotterItem(
                       titel: 'vat',
                       value:
                           "${formatter.format(printingController.saleOrderInvoice!.totalTaxes)} SR",
                       isAll: true),
-                  fotterItem(
+                  a4fotterItem(
                       titel: 'total_2',
                       value:
                           "${formatter.format(printingController.saleOrderInvoice!.totalPrice)} SR",
                       isAll: true),
                   pw.Divider(
                       thickness: 1, color: const PdfColor.fromInt(0xFFDAD5D5)),
-                  fotterItem(
+                  a4fotterItem(
                       titel: 'paid_on',
                       value: DateTime.now().toString().substring(0, 10),
                       isAll: true),
                   ...printingController.saleOrderInvoice!.invoiceChosenPayment
-                      .map((item) => fotterItem(
+                      .map((item) => a4fotterItem(
                           titel:
                               "${printingController.accountJournalList.firstWhere((e) => e.id == item.id).name!.enUS}",
                           value: "${formatter.format(item.amount)} SR",
@@ -239,20 +228,18 @@ Future<pw.Document> a4Print({required bool isSimple, Customer? customer, PdfPage
                           isAll: true)),
                   pw.Divider(
                       thickness: 1, color: const PdfColor.fromInt(0xFFDAD5D5)),
-                  fotterItem(
+                  a4fotterItem(
                     titel: 'amount_due',
                     value:
                         "${formatter.format(printingController.saleOrderInvoice!.remaining)} SR",
                   ),
-                  fotterItem(
+                  a4fotterItem(
                     titel: 'change',
                     value:
                         "${formatter.format(printingController.saleOrderInvoice!.change)} SR",
                   ),
                 ]))
           ]),
-        
-        
         ];
       }));
   // print("addPage2");

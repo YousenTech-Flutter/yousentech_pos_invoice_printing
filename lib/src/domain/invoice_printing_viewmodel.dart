@@ -27,6 +27,7 @@ import 'package:pos_shared_preferences/models/sale_order_line.dart';
 import 'package:pos_shared_preferences/pos_shared_preferences.dart';
 
 import 'package:printing/printing.dart';
+import 'package:shared_widgets/config/app_invoice_styles.dart';
 import 'package:yousentech_pos_invoice_printing/src/utils/printer_helper.dart';
 import 'package:yousentech_pos_invoice_printing/src/utils/roll_print_helper2.dart';
 

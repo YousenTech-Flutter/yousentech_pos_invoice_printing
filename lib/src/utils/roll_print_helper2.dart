@@ -7,12 +7,11 @@ import 'package:intl/intl.dart' as intl;
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:pos_desktop/features/authentication/data/user.dart';
-
-import '../../../core/config/app_invoice_styles.dart';
-import '../../../core/config/app_shared_pr.dart';
-import '../../basic_data_management/account_journal/data/account_journal.dart';
-import '../../basic_data_management/customer/data/customer.dart';
+import 'package:pos_shared_preferences/models/account_journal/data/account_journal.dart';
+import 'package:pos_shared_preferences/models/authentication_data/user.dart';
+import 'package:pos_shared_preferences/models/customer_model.dart';
+import 'package:pos_shared_preferences/pos_shared_preferences.dart';
+import 'package:shared_widgets/config/app_invoice_styles.dart';
 import '../domain/invoice_printing_viewmodel.dart';
 import '../presentation/widgets/roll_table_row_data.dart';
 

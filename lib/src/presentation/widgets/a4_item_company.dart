@@ -1,6 +1,6 @@
 import 'package:pdf/widgets.dart' as pw;
 
-import '../../../../core/config/app_invoice_styles.dart';
+import 'package:shared_widgets/config/app_invoice_styles.dart';
 
 pw.Padding itemCompany({tital, value, bool? isblack = false}) {
   List listtext = [tital, value];

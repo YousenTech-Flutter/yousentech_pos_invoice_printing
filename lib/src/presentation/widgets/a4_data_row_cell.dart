@@ -1,7 +1,7 @@
 import 'package:pdf/widgets.dart' as pw;
-import 'package:pos_desktop/core/config/app_invoice_styles.dart';
+import 'package:shared_widgets/config/app_invoice_styles.dart';
 
-pw.Expanded dataRowCell({
+pw.Expanded a4dataRowCell({
   required text,
   int? expanded,
   bool isTotal = false,
@@ -12,14 +12,8 @@ pw.Expanded dataRowCell({
           padding: const pw.EdgeInsets.all(8.0),
           child: pw.Align(
               alignment: pw.Alignment.center,
-              child: 
-              pw.FittedBox(child: 
-              pw.Text(text,style: 
-              AppInvoiceStyle.dataRowCellStyle(
-              isTotal: isTotal, fontSize: 8)
-                      )
-              )
-              
-                      
-                      )));
+              child: pw.FittedBox(
+                  child: pw.Text(text,
+                      style: AppInvoiceStyle.dataRowCellStyle(
+                          isTotal: isTotal, fontSize: 8))))));
 }

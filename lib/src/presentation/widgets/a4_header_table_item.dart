@@ -1,8 +1,7 @@
 import 'package:pdf/widgets.dart' as pw;
-import 'package:pos_desktop/core/config/app_invoice_styles.dart';
-
-import '../../../../core/utils/translations/ar.dart';
-import '../../../../core/utils/translations/en.dart';
+import 'package:shared_widgets/config/app_invoice_styles.dart';
+import 'package:shared_widgets/utils/translations/ar.dart';
+import 'package:shared_widgets/utils/translations/en.dart';
 
 pw.Expanded headerTableItem({
   required text,

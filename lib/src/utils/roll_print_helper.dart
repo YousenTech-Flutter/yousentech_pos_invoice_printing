@@ -6,10 +6,9 @@ import 'package:intl/intl.dart' as intl;
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-
-import '../../../core/config/app_colors.dart';
-import '../../../core/config/app_shared_pr.dart';
-import '../../basic_data_management/customer/data/customer.dart';
+import 'package:pos_shared_preferences/models/customer_model.dart';
+import 'package:pos_shared_preferences/pos_shared_preferences.dart';
+import 'package:shared_widgets/config/app_colors.dart';
 import '../domain/invoice_printing_viewmodel.dart';
 import '../presentation/widgets/roll_data_row_cell.dart';
 import '../presentation/widgets/roll_date_time.dart';
@@ -110,7 +109,7 @@ Future<pw.Document> rollPrint({required PdfPageFormat format}) async {
                       children: SharedPr.lang == 'en'
                           ? [
                               ...List.generate(listHeder.length, (index) {
-                                return dataRowCell(
+                                return rolldataRowCell(
                                     font: font,
                                     text: listHeder[index],
                                     isHeader: true);
@@ -118,13 +117,13 @@ Future<pw.Document> rollPrint({required PdfPageFormat format}) async {
                             ]
                           : [
                               ...List.generate(listHeder.length, (index) {
-                                return dataRowCell(
+                                return rolldataRowCell(
                                     font: font,
                                     text: listHeder.reversed.toList()[index],
                                     isHeader: true);
                               }),
                             ]),
-                  ...TableRowData(
+                  ...rollTableRowData(
                       saleOrderLinesList:
                           printingController.saleOrderLinesList!,
                       formatter: formatter,
@@ -146,20 +145,20 @@ Future<pw.Document> rollPrint({required PdfPageFormat format}) async {
                     crossAxisAlignment: pw.CrossAxisAlignment.start,
                     children: [
                       if (SharedPr.invoiceSetting!.showSubtotal!) ...[
-                        fotterItem(
+                        rollfotterItem(
                             font: font,
                             text:
                                 '${'invoice_footer_total_before_tax'.tr} : ${formatter.format(printingController.saleOrderInvoice!.totalPriceWitoutTaxAndDiscount)} SR'),
                       ],
-                      fotterItem(
+                      rollfotterItem(
                           font: font,
                           text:
                               '${'invoice_footer_total_discount'.tr} : ${formatter.format(printingController.saleOrderInvoice!.totalDiscount)} SR'),
-                      fotterItem(
+                      rollfotterItem(
                           font: font,
                           text:
                               '${'invoice_footer_total_exclude_tax'.tr} : ${formatter.format(printingController.saleOrderInvoice!.totalPriceSubtotal)} SR'),
-                      fotterItem(
+                      rollfotterItem(
                           font: font,
                           text:
                               '${'invoice_footer_total_tax'.tr} : ${formatter.format(printingController.saleOrderInvoice!.totalTaxes)} SR'),
@@ -174,7 +173,7 @@ Future<pw.Document> rollPrint({required PdfPageFormat format}) async {
                   // ...jsonDecode(
                   // snapshot.data[0]["payments"]
                   // )
-                  fotterItem(
+                  rollfotterItem(
                       padding: 8,
                       text:
                           '${'total_due'.tr} : ${formatter.format(printingController.saleOrderInvoice!.totalPrice)} SR',
@@ -197,12 +196,12 @@ Future<pw.Document> rollPrint({required PdfPageFormat format}) async {
                   //       style: pw.TextStyle(font: font, fontSize: 14),
                   //     )),
                   pw.Divider(),
-                  fotterItem(
+                  rollfotterItem(
                       padding: 8,
                       text:
                           '${'remaining'.tr} : ${formatter.format(printingController.saleOrderInvoice!.remaining)} SR',
                       font: font),
-                  fotterItem(
+                  rollfotterItem(
                       padding: 8,
                       text:
                           '${'change'.tr} : ${formatter.format(printingController.saleOrderInvoice!.change)} SR',

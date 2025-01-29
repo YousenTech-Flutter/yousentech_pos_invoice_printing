@@ -1,12 +1,12 @@
 import 'package:get/get.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'package:pos_shared_preferences/models/sale_order_line.dart';
+import 'package:pos_shared_preferences/pos_shared_preferences.dart';
+import 'package:shared_widgets/config/app_invoice_styles.dart';
 
-import '../../../../core/config/app_invoice_styles.dart';
-import '../../../../core/config/app_shared_pr.dart';
-import '../../../invoices/data/sale_order_line.dart';
 import 'roll_data_row_cell.dart';
 
-List<pw.TableRow> TableRowData(
+List<pw.TableRow> rollTableRowData(
     {required List<SaleOrderLine> saleOrderLinesList,
     required formatter,
     required font}) {
@@ -18,24 +18,27 @@ List<pw.TableRow> TableRowData(
     return pw.TableRow(
       children: SharedPr.lang == 'en'
           ? [
-              dataRowCell(text: item.name!, font: font, isDescrebtion: true),
-              dataRowCell(
+              rolldataRowCell(
+                  text: item.name!, font: font, isDescrebtion: true),
+              rolldataRowCell(
                   text: formatter.format(item.productUomQty).toString(),
                   font: font),
-              dataRowCell(
+              rolldataRowCell(
                   text: formatter.format(item.priceUnit).toString(),
                   font: font),
-              dataRowCell(text: formatter.format(item.totalPrice), font: font),
+              rolldataRowCell(
+                  text: formatter.format(item.totalPrice), font: font),
             ]
           : [
-              dataRowCell(text: formatter.format(item.totalPrice), font: font),
-              dataRowCell(
+              rolldataRowCell(
+                  text: formatter.format(item.totalPrice), font: font),
+              rolldataRowCell(
                   text: formatter.format(item.priceUnit).toString(),
                   font: font),
-              dataRowCell(
+              rolldataRowCell(
                   text: formatter.format(item.productUomQty).toString(),
                   font: font),
-              dataRowCell(text: item.name!, font: font),
+              rolldataRowCell(text: item.name!, font: font),
             ],
     );
   });
