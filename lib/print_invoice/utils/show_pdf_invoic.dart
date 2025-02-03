@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_widgets/config/app_colors.dart';
-import 'package:yousentech_pos_invoice_printing/lib_module.dart';
+import 'package:yousentech_pos_invoice_printing/print_invoice/presentation/views/print_invoice.dart';
 
 import '../domain/invoice_printing_viewmodel.dart';
 

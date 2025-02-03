@@ -2,4 +2,4 @@
 
 library yousentech_pos_invoice_printing;
 // export 'lib_module.dart';
-export 'src/presentation/views/printer_page.dart';
+export 'print_invoice/presentation/views/printer_page.dart';

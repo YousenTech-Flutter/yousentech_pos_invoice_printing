@@ -1,5 +1,4 @@
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 
 bool printingWrapperKeyEventHandler(KeyEvent event) {
   if (event is KeyDownEvent) {
