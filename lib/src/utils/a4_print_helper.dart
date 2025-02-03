@@ -12,9 +12,9 @@ import 'package:yousentech_pos_invoice_printing/src/domain/invoice_printing_view
 import 'package:yousentech_pos_invoice_printing/src/presentation/widgets/a4_data_row_cell.dart';
 import 'package:yousentech_pos_invoice_printing/src/presentation/widgets/a4_detail_item_company.dart';
 import 'package:yousentech_pos_invoice_printing/src/presentation/widgets/a4_fottor_item.dart';
+import 'package:yousentech_pos_invoice_printing/src/presentation/widgets/a4_header_item.dart';
 import 'package:yousentech_pos_invoice_printing/src/presentation/widgets/a4_header_table_item.dart';
 import 'package:yousentech_pos_invoice_printing/src/presentation/widgets/a4_table_row_data.dart';
-import 'package:yousentech_pos_invoice_printing/src/presentation/widgets/header_item.dart';
 
 Future<pw.Document> a4Print({required bool isSimple, Customer? customer, PdfPageFormat? format}) async {
   PrintingInvoiceController printingController =
