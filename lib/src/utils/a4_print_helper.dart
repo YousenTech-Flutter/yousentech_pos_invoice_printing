@@ -8,25 +8,21 @@ import 'package:shared_widgets/config/app_invoice_colors.dart';
 import 'package:shared_widgets/config/app_invoice_styles.dart';
 import 'package:shared_widgets/utils/translations/ar.dart';
 import 'package:shared_widgets/utils/translations/en.dart';
-import 'package:yousentech_pos_invoice_printing/yousentech_pos_invoice_printing.dart';
+import 'package:yousentech_pos_invoice_printing/src/domain/invoice_printing_viewmodel.dart';
+import 'package:yousentech_pos_invoice_printing/src/presentation/widgets/a4_data_row_cell.dart';
+import 'package:yousentech_pos_invoice_printing/src/presentation/widgets/a4_detail_item_company.dart';
+import 'package:yousentech_pos_invoice_printing/src/presentation/widgets/a4_fottor_item.dart';
+import 'package:yousentech_pos_invoice_printing/src/presentation/widgets/a4_header_table_item.dart';
+import 'package:yousentech_pos_invoice_printing/src/presentation/widgets/a4_table_row_data.dart';
+import 'package:yousentech_pos_invoice_printing/src/presentation/widgets/header_item.dart';
 
-Future<pw.Document> a4Print(
-    {required bool isSimple, Customer? customer, PdfPageFormat? format}) async {
+Future<pw.Document> a4Print({required bool isSimple, Customer? customer, PdfPageFormat? format}) async {
   PrintingInvoiceController printingController =
       Get.put(PrintingInvoiceController());
   Customer? company = SharedPr.currentCompanyObject;
   final intl.NumberFormat formatter = intl.NumberFormat('#,##0.00', 'en_US');
-  // String dateOrder = printingController.saleOrderInvoice!.orderDate
-  //     .toString()
-  //     .substring(0, 11)
-  //     .toString();
   printingController.config();
-  // String myString =
-  //     "تاريخ الترحيل:$dateOrder\n وقت الترحيل:  $timeOrder\n إجمالي الفاتورة:  ${printingController.saleOrderInvoice!.totalPrice} \n اسم الشركة: ${company.name.toString()} \n الرقم الضريبي: ${company.vat.toString()}  ";
-  // List<int> bytes = utf8.encode(myString);
   final pdf = pw.Document(version: PdfVersion.pdf_1_5, compress: true);
-
-  // await AppInvoiceStyle.loadFonts();
   List listHeder = [
     {'title': "total_price", 'expanded': 2},
     {'title': "vat_amount", 'expanded': 1},
@@ -42,14 +38,6 @@ Future<pw.Document> a4Print(
       header: (pw.Context context) => pw.Container(
             height: 70,
           ),
-      // PdfPageFormat(
-      //   80 * mm,
-      //   double.maxFinite,
-      //   marginAll: 5 * mm,
-      // ),
-
-      // orientation: pw.PageOrientation.landscape,
-      // textDirection: lang == "ar" ? pw.TextDirection.rtl : pw.TextDirection.ltr,
       margin: const pw.EdgeInsets.only(
         top: 45,
         bottom: 32,
@@ -70,13 +58,11 @@ Future<pw.Document> a4Print(
                     style: AppInvoiceStyle.titlInvoiceStyle(),
                   ),
                   pw.Divider(thickness: 1, color: AppInvoceColor.graydivider),
-                  // if (SharedPr.invoiceSetting!.showOrderNumber!) ...[
                   headerItem(
                     titel: 'invoice_nmuber',
                     value: printingController.saleOrderInvoice!.invoiceName ??
                         printingController.saleOrderInvoice!.id,
                   ),
-                  // ],
                   headerItem(
                     titel: 'invoice_date',
                     value:
@@ -137,9 +123,6 @@ Future<pw.Document> a4Print(
             ),
             children: [
               pw.TableRow(
-                  // decoration: pw.BoxDecoration(
-                  //   border: pw.Border.all(color: PdfColor.fromInt(0xfff8f9fa)),
-                  // ),
                   children: [
                     ...List.generate(
                       listHeder.length,
@@ -242,6 +225,5 @@ Future<pw.Document> a4Print(
           ]),
         ];
       }));
-  // print("addPage2");
   return pdf;
 }

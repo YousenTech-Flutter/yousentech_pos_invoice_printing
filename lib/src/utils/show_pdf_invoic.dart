@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pos_desktop/core/config/app_colors.dart';
-import 'package:pos_desktop/features/payment/domain/payment_viewmodel.dart';
-import 'package:pos_desktop/features/invoice_printing/presentation/views/print_invoice.dart';
 import 'package:shared_widgets/config/app_colors.dart';
 import 'package:yousentech_pos_invoice_printing/lib_module.dart';
 
 import '../domain/invoice_printing_viewmodel.dart';
 
-showPDFInvoice(
-    {required PaymentController paymentController,
+// TODO :=====
+// showPDFInvoice({required PaymentController paymentController,
+showPDFInvoice({required  paymentController,
+//
     bool isFromPayment = false,
     bool isShowOnly = false}) {
   PrintingInvoiceController printingController =

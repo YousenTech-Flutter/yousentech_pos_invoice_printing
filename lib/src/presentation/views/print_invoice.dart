@@ -13,10 +13,12 @@ import 'package:shared_widgets/config/app_colors.dart';
 import 'package:yousentech_pos_invoice_printing/src/domain/invoice_printing_viewmodel.dart';
 import 'package:yousentech_pos_invoice_printing/src/presentation/views/printer_page.dart';
 
-import '../../../payment/domain/payment_viewmodel.dart';
 
 class PrinterInvoice extends StatefulWidget {
-  PaymentController paymentController;
+  // TODO :=====
+  // PaymentController paymentController;
+  var paymentController;
+  //
   bool isFromPayment;
   bool showActions;
   double? maxPageWidth;
@@ -52,19 +54,6 @@ class _PrinterInvoiceState extends State<PrinterInvoice> {
             canDebug: false,
             maxPageWidth: widget.maxPageWidth,
             padding: EdgeInsets.all(widget.padding ?? 0.0),
-            // maxPageWidth: 100.w,
-            // padding: EdgeInsets.all(20.r),
-            // pageFormats: {
-            //   'Letter': PdfPageFormat.letter,
-            // },
-            // initialPageFormat:
-            //     printingController.isCash && printingController.isDefault
-            //         ? const PdfPageFormat(
-            //             80 * PdfPageFormat.mm, // Width of 80mm
-            //             double.infinity, // Infinite height for roll paper
-            //             marginAll: 5 * PdfPageFormat.mm, // Optional margin
-            //           )
-            //         : null,
             actionBarTheme:
                 PdfActionBarTheme(backgroundColor: AppColor.cyanTeal),
             actions: widget.showActions
@@ -93,7 +82,6 @@ class _PrinterInvoiceState extends State<PrinterInvoice> {
                   ]
                 : null,
             build: (format) {
-              // print("qqqqqq");
               return printingController.isCash
                   ? printingController.generateCachPdf(
                       format: format,

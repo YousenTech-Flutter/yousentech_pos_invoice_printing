@@ -11,34 +11,15 @@ import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/widgets.dart';
-import 'package:pos_desktop/core/config/app_shared_pr.dart';
-import 'package:pos_desktop/features/invoice_printing/utils/roll_print_helper2.dart';
-
-import 'package:pos_desktop/features/invoices/data/sale_order.dart';
-
-import 'package:pos_desktop/features/invoice_printing/utils/printer_helper.dart';
-import 'package:pos_desktop/features/invoices/domain/invoice_operations/invoice_operations_viewmodel.dart';
-import 'package:pos_desktop/features/invoices/domain/invoice_viewmodel.dart';
-import 'package:pos_desktop/features/payment/presentation/payment_sammry_screen.dart';
 import 'package:pos_shared_preferences/models/account_journal/data/account_journal.dart';
 import 'package:pos_shared_preferences/models/customer_model.dart';
 import 'package:pos_shared_preferences/models/sale_order.dart';
 import 'package:pos_shared_preferences/models/sale_order_line.dart';
 import 'package:pos_shared_preferences/pos_shared_preferences.dart';
-
 import 'package:printing/printing.dart';
 import 'package:shared_widgets/config/app_invoice_styles.dart';
 import 'package:yousentech_pos_invoice_printing/src/utils/printer_helper.dart';
 import 'package:yousentech_pos_invoice_printing/src/utils/roll_print_helper2.dart';
-
-import '../../../core/config/app_invoice_styles.dart';
-import '../../basic_data_management/customer/data/customer.dart';
-import '../../invoices/data/sale_order_line.dart';
-import '../../basic_data_management/account_journal/data/account_journal.dart';
-import '../../messaging/domain/messaging_viewmodel.dart';
-import '../../messaging/utils/file_convert_helper.dart';
-import '../../payment/domain/payment_viewmodel.dart';
-import '../../printing/domain/app_connected_printers/connected_printer_viewmodel.dart';
 import '../utils/a4_print_helper.dart';
 import '../utils/show_pdf_invoic.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -72,26 +53,15 @@ class PrintingInvoiceController extends GetxController {
 
   Future<void> loadFonts() async {
     try {
-      // var ttfMedium = await rootBundle.load('assets/fonts/Tajawal-Medium.ttf');
-      // var ttfBold = await rootBundle.load('assets/fonts/Tajawal-Bold.ttf');
-      print("11111111111111111111111111");
       final ttfMedium = await rootBundle.load('assets/fonts/ARIAL.TTF');
-      print("2222222222222222222");
-
       final ttfBold = await rootBundle.load('assets/fonts/ARIALBD.TTF');
-      print("3333333333333333333333333333");
-
       fontMedium = pw.Font.ttf(ttfMedium.buffer.asByteData());
-      print("44444444444444444444444444444444444");
-
       fontBold = pw.Font.ttf(ttfBold.buffer.asByteData());
-      print("6666666666666666666666666666");
     } catch (e) {}
   }
 
   // ================================================================ [ GET ACCOUNT JOURNAL ] ===============================================================
   nextPressed({required String format, bool isFromPayment = false}) async {
-    // PdfPageFormat.roll80
     PdfPageFormat pdfFormat = getFormatByName(formatName: format);
 
     if (isFromPayment) {
@@ -119,7 +89,6 @@ class PrintingInvoiceController extends GetxController {
         format is String ? getFormatByName(formatName: format) : format;
     final pdfDirectory = pdfCreatDirectory('PDF Invoices');
     await buildPDFLayout(format: pdfFormat);
-    // final file = File(filePath);
     update();
     await pdfCreatfile(
         pdfDirectory: pdfDirectory, filename: saleOrderInvoice!.id.toString());
@@ -141,32 +110,33 @@ class PrintingInvoiceController extends GetxController {
     final bool result;
     Printer? printer;
     late Printer defaultPrinter;
-    ConnectedPrinterController printingController =
-        Get.isRegistered<ConnectedPrinterController>()
-            ? Get.find<ConnectedPrinterController>()
-            : Get.put(ConnectedPrinterController());
-    if (printingController.connectedPrinterList.isNotEmpty &&
-        printingController.connectedPrinterList.any(
-          (elem) => elem.paperType == format,
-        )) {
-      String? printerName = printingController.connectedPrinterList
-          .firstWhere(
-            (elem) => elem.paperType == format,
-          )
-          .printerName;
-      printer = printingController.systemPrinterList
-          .firstWhere((elem) => elem.name == printerName);
-    } else {
-      defaultPrinter = await PrintHelper.setDefaultPrinter();
-    }
-    result = await Printing.directPrintPdf(
-      format: pdfFormat,
-      printer: printer ?? defaultPrinter,
-      onLayout: await buildPDFLayout(
-        format: pdfFormat,
-      ),
-      name: saleOrderInvoice!.id.toString(),
-    );
+    // TODO :=====
+    // ConnectedPrinterController printingController =
+    //     Get.isRegistered<ConnectedPrinterController>()
+    //         ? Get.find<ConnectedPrinterController>()
+    //         : Get.put(ConnectedPrinterController());
+    // if (printingController.connectedPrinterList.isNotEmpty &&
+    //     printingController.connectedPrinterList.any(
+    //       (elem) => elem.paperType == format,
+    //     )) {
+    //   String? printerName = printingController.connectedPrinterList
+    //       .firstWhere(
+    //         (elem) => elem.paperType == format,
+    //       )
+    //       .printerName;
+    //   printer = printingController.systemPrinterList
+    //       .firstWhere((elem) => elem.name == printerName);
+    // } else {
+    //   defaultPrinter = await PrintHelper.setDefaultPrinter();
+    // }
+    // result = await Printing.directPrintPdf(
+    //   format: pdfFormat,
+    //   printer: printer ?? defaultPrinter,
+    //   onLayout: await buildPDFLayout(
+    //     format: pdfFormat,
+    //   ),
+    //   name: saleOrderInvoice!.id.toString(),
+    // );
   }
 
   Directory pdfCreatDirectory(String directoryName) {
@@ -192,8 +162,6 @@ class PrintingInvoiceController extends GetxController {
     var pdffile = pdfSession ?? pdf;
     if (pdffile != null) {
       final filePath = '${pdfDirectory.path}/$filename.pdf';
-
-      // await file.writeAsBytes(await pdf!.save());
       try {
         final file = File(filePath);
 
@@ -206,11 +174,7 @@ class PrintingInvoiceController extends GetxController {
           await Process.run('xdg-open', [filePath]);
         }
       } catch (e) {
-        // if (kDebugMode) {
-        //   print("Error opening file: $e");
-        // }
       }
-      // pdf.save();
     } else {}
   }
 
@@ -255,12 +219,13 @@ class PrintingInvoiceController extends GetxController {
   Future<Uint8List> generateCachrollPdf() async {
     pdf = await rollPrint2();
     // ============================================= [ ENCODE PDF FILE TO BASE64 ] ============================================
-    MessagingController messagingController =
-        Get.isRegistered<MessagingController>()
-            ? Get.find<MessagingController>()
-            : Get.put(MessagingController());
-    messagingController.encodedFile =
-        FileConvertHelper.convertUint8ListToBase64(await pdf!.save());
+    // TODO :=====
+    // MessagingController messagingController =
+    //     Get.isRegistered<MessagingController>()
+    //         ? Get.find<MessagingController>()
+    //         : Get.put(MessagingController());
+    // messagingController.encodedFile =
+    //     FileConvertHelper.convertUint8ListToBase64(await pdf!.save());
 
     // ============================================= [ ENCODE PDF FILE TO BASE64 ] ============================================
 
@@ -272,12 +237,13 @@ class PrintingInvoiceController extends GetxController {
       isSimple: true,
     );
     // ============================================= [ ENCODE PDF FILE TO BASE64 ] ============================================
-    MessagingController messagingController =
-        Get.isRegistered<MessagingController>()
-            ? Get.find<MessagingController>()
-            : Get.put(MessagingController());
-    messagingController.encodedFile =
-        FileConvertHelper.convertUint8ListToBase64(await pdf!.save());
+    // TODO :=====
+    // MessagingController messagingController =
+    //     Get.isRegistered<MessagingController>()
+    //         ? Get.find<MessagingController>()
+    //         : Get.put(MessagingController());
+    // messagingController.encodedFile =
+    //     FileConvertHelper.convertUint8ListToBase64(await pdf!.save());
 
     return pdf!.save();
   }
@@ -288,12 +254,13 @@ class PrintingInvoiceController extends GetxController {
     if (isDefault) {
       pdf = await rollPrint2(format: format);
       // ============================================= [ ENCODE PDF FILE TO BASE64 ] ============================================
-      MessagingController messagingController =
-          Get.isRegistered<MessagingController>()
-              ? Get.find<MessagingController>()
-              : Get.put(MessagingController());
-      messagingController.encodedFile =
-          FileConvertHelper.convertUint8ListToBase64(await pdf!.save());
+      // TODO :=====
+      // MessagingController messagingController =
+      //     Get.isRegistered<MessagingController>()
+      //         ? Get.find<MessagingController>()
+      //         : Get.put(MessagingController());
+      // messagingController.encodedFile =
+      //     FileConvertHelper.convertUint8ListToBase64(await pdf!.save());
 
       // ============================================= [ ENCODE PDF FILE TO BASE64 ] ============================================
 
@@ -301,12 +268,13 @@ class PrintingInvoiceController extends GetxController {
     } else {
       pdf = await a4Print(isSimple: true, format: format);
       // ============================================= [ ENCODE PDF FILE TO BASE64 ] ============================================
-      MessagingController messagingController =
-          Get.isRegistered<MessagingController>()
-              ? Get.find<MessagingController>()
-              : Get.put(MessagingController());
-      messagingController.encodedFile =
-          FileConvertHelper.convertUint8ListToBase64(await pdf!.save());
+      // TODO :=====
+      // MessagingController messagingController =
+      //     Get.isRegistered<MessagingController>()
+      //         ? Get.find<MessagingController>()
+      //         : Get.put(MessagingController());
+      // messagingController.encodedFile =
+      //     FileConvertHelper.convertUint8ListToBase64(await pdf!.save());
 
       return pdf!.save();
     }
@@ -322,15 +290,14 @@ class PrintingInvoiceController extends GetxController {
         customer: customer,
         format: format);
     // ============================================= [ ENCODE PDF FILE TO BASE64 ] ============================================
-    MessagingController messagingController =
-        Get.isRegistered<MessagingController>()
-            ? Get.find<MessagingController>()
-            : Get.put(MessagingController());
-    messagingController.encodedFile =
-        FileConvertHelper.convertUint8ListToBase64(await pdf!.save());
-    // if (kDebugMode) {
-    //   // print('messagingController.encodedFile ::: ${messagingController.encodedFile}');
-    // }
+    // TODO :=====
+    
+    // MessagingController messagingController =
+    //     Get.isRegistered<MessagingController>()
+    //         ? Get.find<MessagingController>()
+    //         : Get.put(MessagingController());
+    // messagingController.encodedFile =
+    //     FileConvertHelper.convertUint8ListToBase64(await pdf!.save());
     // ============================================= [ ENCODE PDF FILE TO BASE64 ] ============================================
     return pdf!.save();
   }
@@ -362,75 +329,72 @@ class PrintingInvoiceController extends GetxController {
     bool isShowOnly = false,
     SaleOrderInvoice? saleOrderInvoiceValue,
   }) async {
-    PaymentController paymentController = Get.put(PaymentController());
-    //  Get.isRegistered<PaymentController>()
-    //     ? Get.find<PaymentController>()
-    //     : Get.put(PaymentController());
+    // TODO :=====
+    // PaymentController paymentController = Get.put(PaymentController());
 
-    InvoiceController invoiceController = Get.put(InvoiceController());
-    title = titleValue!;
-    customersList = invoiceController.customersList;
-    accountJournalList = paymentController.accountJournalList;
-    if (isFromPayment) {
-      saleOrderInvoice = invoiceController.saleOrderInvoice;
-      checkboxDisable = invoiceController.saleOrderInvoice!.partnerId !=
-          SharedPr.currentPosObject!.cashPartnerId;
-      isCash = invoiceController.saleOrderInvoice!.partnerId ==
-          SharedPr.currentPosObject!.cashPartnerId;
-      saleOrderLinesList = invoiceController.saleOrderLinesList;
-    } else {
-      InvoiceOperationsController invoiceOperationsController =
-          Get.find<InvoiceOperationsController>();
-      bool checkConnect = await invoiceOperationsController.checkConnectivity();
-      if (!checkConnect) {
-        await invoiceController.updateSaleOrderLine(
-            saleOrderInvoice: saleOrderInvoiceValue!);
-      } else {
-        invoiceController.saleOrderInvoice ??=
-            SaleOrderInvoice.fromJson(saleOrderInvoiceValue!.toJson());
-      }
-      if (saleOrderInvoiceValue == null) {
-        saleOrderInvoice = invoiceController.saleOrderInvoice;
-        checkboxDisable = invoiceController.saleOrderInvoice!.partnerId !=
-            SharedPr.currentPosObject!.cashPartnerId;
-        isCash = invoiceController.saleOrderInvoice!.partnerId ==
-            SharedPr.currentPosObject!.cashPartnerId;
-        saleOrderLinesList = invoiceController.saleOrderLinesList;
-      } else {
-        saleOrderInvoice = saleOrderInvoiceValue;
-        checkboxDisable = saleOrderInvoiceValue.partnerId !=
-            SharedPr.currentPosObject!.cashPartnerId;
-        isCash = saleOrderInvoiceValue.partnerId ==
-            SharedPr.currentPosObject!.cashPartnerId;
-        saleOrderLinesList = saleOrderInvoiceValue.saleOrderLine;
-      }
-    }
+    // InvoiceController invoiceController = Get.put(InvoiceController());
+    // title = titleValue!;
+    // customersList = invoiceController.customersList;
+    // accountJournalList = paymentController.accountJournalList;
+    // if (isFromPayment) {
+    //   saleOrderInvoice = invoiceController.saleOrderInvoice;
+    //   checkboxDisable = invoiceController.saleOrderInvoice!.partnerId !=
+    //       SharedPr.currentPosObject!.cashPartnerId;
+    //   isCash = invoiceController.saleOrderInvoice!.partnerId ==
+    //       SharedPr.currentPosObject!.cashPartnerId;
+    //   saleOrderLinesList = invoiceController.saleOrderLinesList;
+    // } else {
+     
+    //   InvoiceOperationsController invoiceOperationsController =
+    //       Get.find<InvoiceOperationsController>();
+    //   bool checkConnect = await invoiceOperationsController.checkConnectivity();
+    //   if (!checkConnect) {
+    //     await invoiceController.updateSaleOrderLine(
+    //         saleOrderInvoice: saleOrderInvoiceValue!);
+    //   } else {
+    //     invoiceController.saleOrderInvoice ??=
+    //         SaleOrderInvoice.fromJson(saleOrderInvoiceValue!.toJson());
+    //   }
+    //   if (saleOrderInvoiceValue == null) {
+    //     saleOrderInvoice = invoiceController.saleOrderInvoice;
+    //     checkboxDisable = invoiceController.saleOrderInvoice!.partnerId !=
+    //         SharedPr.currentPosObject!.cashPartnerId;
+    //     isCash = invoiceController.saleOrderInvoice!.partnerId ==
+    //         SharedPr.currentPosObject!.cashPartnerId;
+    //     saleOrderLinesList = invoiceController.saleOrderLinesList;
+    //   } else {
+    //     saleOrderInvoice = saleOrderInvoiceValue;
+    //     checkboxDisable = saleOrderInvoiceValue.partnerId !=
+    //         SharedPr.currentPosObject!.cashPartnerId;
+    //     isCash = saleOrderInvoiceValue.partnerId ==
+    //         SharedPr.currentPosObject!.cashPartnerId;
+    //     saleOrderLinesList = saleOrderInvoiceValue.saleOrderLine;
+    //   }
+    // }
 
-    await AppInvoiceStyle.loadFonts();
-    // change hear
-    if (isFromPayment) {
-      if (SharedPr.printingPreferenceObj!.showPosPaymentSummary!) {
-        await nextPressed(
-            format: checkbox ? "A4" : "Roll80", isFromPayment: isFromPayment);
-        invoiceController.preventQuantityDecrease = true;
-        Get.to(() => PaymentSammryScreen(
-              totalPrice: saleOrderInvoice!.totalPrice,
-              newSaleOrder: saleOrderInvoiceValue,
-            ));
-
-        // showPDFInvoice(paymentController: paymentController, isFromPayment: isFromPayment);
-      } else {
-        paymentController.isPDFDialogOpen = true;
-        await nextPressed(
-            format: checkbox ? "A4" : "Roll80", isFromPayment: isFromPayment);
-        paymentController.escapeFocus(frompayment: isFromPayment);
-        paymentController.isPDFDialogOpen = false;
-      }
-    } else {
-      showPDFInvoice(
-          paymentController: paymentController,
-          isFromPayment: isFromPayment,
-          isShowOnly: isShowOnly);
-    }
+    // await AppInvoiceStyle.loadFonts();
+    // if (isFromPayment) {
+    //   if (SharedPr.printingPreferenceObj!.showPosPaymentSummary!) {
+    //     await nextPressed(
+    //         format: checkbox ? "A4" : "Roll80", isFromPayment: isFromPayment);
+    //     invoiceController.preventQuantityDecrease = true;
+    //     // TODO :=====
+    //     // Get.to(() => PaymentSammryScreen(
+    //     //       totalPrice: saleOrderInvoice!.totalPrice,
+    //     //       newSaleOrder: saleOrderInvoiceValue,
+    //     //     ));
+    //   } else {
+    //     paymentController.isPDFDialogOpen = true;
+    //     await nextPressed(
+    //         format: checkbox ? "A4" : "Roll80", isFromPayment: isFromPayment);
+    //     paymentController.escapeFocus(frompayment: isFromPayment);
+    //     paymentController.isPDFDialogOpen = false;
+    //   }
+    // } else {
+    //   showPDFInvoice(
+    //       paymentController: paymentController,
+    //       isFromPayment: isFromPayment,
+    //       isShowOnly: isShowOnly);
+    // }
   }
 }
