@@ -11,13 +11,12 @@ import 'package:printing/printing.dart';
 import 'package:shared_widgets/config/app_colors.dart';
 import 'package:yousentech_pos_invoice_printing/print_invoice/domain/invoice_printing_viewmodel.dart';
 import 'package:yousentech_pos_invoice_printing/print_invoice/presentation/views/printer_page.dart';
+import 'package:yousentech_pos_payment/payment/domain/payment_viewmodel.dart';
 
 
 class PrinterInvoice extends StatefulWidget {
-  // TODO :=====
-  // PaymentController paymentController;
-  var paymentController;
-  //
+  PaymentController paymentController;
+
   bool isFromPayment;
   bool showActions;
   double? maxPageWidth;

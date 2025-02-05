@@ -1,4 +1,6 @@
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:yousentech_pos_payment/payment/domain/payment_viewmodel.dart';
 
 bool printingWrapperKeyEventHandler(KeyEvent event) {
   if (event is KeyDownEvent) {
@@ -8,16 +10,15 @@ bool printingWrapperKeyEventHandler(KeyEvent event) {
 }
 
 bool handleGlobalKeyEvent(KeyEvent event) {
-  // TODO :=====
-  // PaymentController paymentController = Get.find<PaymentController>();
-  // if (paymentController.isDialogOpen) {
-  //   return false; // Ignore keyboard events while the dialog is open
-  // }
+  PaymentController paymentController = Get.find<PaymentController>();
+  if (paymentController.isDialogOpen) {
+    return false; // Ignore keyboard events while the dialog is open
+  }
   
-  // if (event.logicalKey == LogicalKeyboardKey.enter) {
-  //   paymentController.enterFocus(paymentController: paymentController);
-  //   return true;
-  // }
+  if (event.logicalKey == LogicalKeyboardKey.enter) {
+    paymentController.enterFocus(paymentController: paymentController);
+    return true;
+  }
 
 
   return false;

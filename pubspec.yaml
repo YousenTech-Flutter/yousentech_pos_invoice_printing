@@ -24,6 +24,22 @@ dependencies:
     git:
       url: https://github.com/YousenTech-Flutter/yousentech_pos_shared_widgets.git
       ref: master
+  yousentech_pos_payment:
+    git:
+      url: https://github.com/YousenTech-Flutter/yousentech_pos_payment.git
+      ref: master
+  yousentech_pos_invoice:
+    git:
+      url: https://github.com/YousenTech-Flutter/yousentech_pos_invoice.git
+      ref: master
+  yousentech_pos_messaging:
+    git:
+      url: https://github.com/YousenTech-Flutter/yousentech_pos_messaging.git
+      ref: master
+  yousentech_pos_printing:
+    git:
+      url: https://github.com/YousenTech-Flutter/yousentech_pos_printing.git
+      ref: master
 dev_dependencies:
   flutter_test:
     sdk: flutter
