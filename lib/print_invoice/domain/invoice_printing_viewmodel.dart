@@ -71,24 +71,26 @@ class PrintingInvoiceController extends GetxController {
   // ================================================================ [ GET ACCOUNT JOURNAL ] ===============================================================
   nextPressed({required String format, bool isFromPayment = false}) async {
     PdfPageFormat pdfFormat = getFormatByName(formatName: format);
-
-    if (isFromPayment) {
-      if (!SharedPr.printingPreferenceObj!.disablePrinting!) {
-        if (SharedPr.printingPreferenceObj!.isSilentPrinting!) {
-          await printingInvoiceDirectPrintPdf(
-            format: format,
-            pdfFormat: pdfFormat,
-          );
-        } else {
-          await printingInvoiceLayoutPdf(pdfFormat: pdfFormat);
+    if (Platform.isWindows) {
+      if (isFromPayment) {
+        if (!SharedPr.printingPreferenceObj!.disablePrinting!) {
+          if (SharedPr.printingPreferenceObj!.isSilentPrinting!) {
+            await printingInvoiceDirectPrintPdf(
+              format: format,
+              pdfFormat: pdfFormat,
+            );
+          } else {
+            await printingInvoiceLayoutPdf(pdfFormat: pdfFormat);
+          }
         }
-      }
 
-      if (SharedPr.printingPreferenceObj!.isDownloadPDF!) {
-        await downloadPDF(format: pdfFormat);
+        if (SharedPr.printingPreferenceObj!.isDownloadPDF!) {
+          await downloadPDF(format: pdfFormat);
+        }
+      } else {
+        await printingInvoiceDirectPrintPdf(
+            pdfFormat: pdfFormat, format: format);
       }
-    } else {
-      await printingInvoiceDirectPrintPdf(pdfFormat: pdfFormat, format: format);
     }
   }
 
@@ -180,8 +182,7 @@ class PrintingInvoiceController extends GetxController {
         } else if (Platform.isLinux) {
           await Process.run('xdg-open', [filePath]);
         }
-      } catch (e) {
-      }
+      } catch (e) {}
     } else {}
   }
 
@@ -344,7 +345,6 @@ class PrintingInvoiceController extends GetxController {
           SharedPr.currentPosObject!.cashPartnerId;
       saleOrderLinesList = invoiceController.saleOrderLinesList;
     } else {
-     
       InvoiceOperationsController invoiceOperationsController =
           Get.find<InvoiceOperationsController>();
       bool checkConnect = await invoiceOperationsController.checkConnectivity();
