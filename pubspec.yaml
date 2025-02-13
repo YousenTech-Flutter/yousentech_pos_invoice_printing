@@ -28,6 +28,10 @@ dependencies:
     git:
       url: https://github.com/YousenTech-Flutter/yousentech_pos_payment.git
       ref: master
+  yousentech_pos_payment_summary:
+    git:
+      url: https://github.com/YousenTech-Flutter/yousentech_pos_payment_summary.git
+      ref: master
   yousentech_pos_invoice:
     git:
       url: https://github.com/YousenTech-Flutter/yousentech_pos_invoice.git
