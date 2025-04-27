@@ -54,7 +54,7 @@ Future<pw.Document> a4Print({required bool isSimple, Customer? customer, PdfPage
                 mainAxisAlignment: pw.MainAxisAlignment.center,
                 children: [
                   pw.Text(
-                    '${en[printingController.title]!} / ${ar[printingController.title]!}', // Arabic text
+                    '${en[isSimple ? printingController.title : 'tax_invoice']!} / ${ar[isSimple ? printingController.title : 'tax_invoice']!}', // Arabic text // Arabic text
                     style: AppInvoiceStyle.titlInvoiceStyle(),
                   ),
                   pw.Divider(thickness: 1, color: AppInvoceColor.graydivider),
@@ -165,7 +165,7 @@ Future<pw.Document> a4Print({required bool isSimple, Customer? customer, PdfPage
                         text: formatter.format(printingController
                             .saleOrderInvoice!.totalPriceSubtotal)),
                     a4dataRowCell(
-                        expanded: 6,
+                        expanded: 7,
                         isTotal: true,
                         text:
                             "${ar['quantity']} ${formatter.format(printingController.saleOrderInvoice!.totalQuantity)}"),

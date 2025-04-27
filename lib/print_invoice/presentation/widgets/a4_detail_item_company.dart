@@ -12,7 +12,7 @@ pw.Padding companyDetailItem(Customer company, String tital) {
     {'key': 'building_no', 'value': company.buildingNo},
     {'key': 'district', 'value': company.district},
     {'key': 'city', 'value': company.city},
-    {'key': 'country', 'value': company.country},
+    {'key': 'country', 'value': company.country?.countryName},
     {'key': 'postal_code', 'value': company.postalCode},
     {'key': 'additional_no', 'value': company.additionalNo},
     {'key': 'vat_no', 'value': company.vat},
