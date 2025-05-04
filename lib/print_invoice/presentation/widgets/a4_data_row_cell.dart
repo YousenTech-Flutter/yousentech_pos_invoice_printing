@@ -12,8 +12,13 @@ pw.Expanded a4dataRowCell({
           padding: const pw.EdgeInsets.all(8.0),
           child: pw.Align(
               alignment: pw.Alignment.center,
-              child: pw.FittedBox(
-                  child: pw.Text(text,
+              child: 
+              // pw.FittedBox(
+              //     child: 
+                  pw.Text(text,
                       style: AppInvoiceStyle.dataRowCellStyle(
-                          isTotal: isTotal, fontSize: 8))))));
+                          isTotal: isTotal, fontSize: 8)
+                          )
+                          // )
+                          )));
 }
