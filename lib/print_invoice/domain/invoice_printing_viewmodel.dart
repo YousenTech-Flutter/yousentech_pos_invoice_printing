@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -31,6 +32,7 @@ import 'package:yousentech_pos_printing/printing/domain/app_connected_printers/c
 
 import '../utils/a4_print_helper.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'package:path_provider/path_provider.dart';
 
 class PrintingInvoiceController extends GetxController {
   SaleOrderInvoice? saleOrderInvoice;
@@ -97,7 +99,7 @@ class PrintingInvoiceController extends GetxController {
   downloadPDF({required format}) async {
     PdfPageFormat pdfFormat =
         format is String ? getFormatByName(formatName: format) : format;
-    final pdfDirectory = pdfCreatDirectory('PDF Invoices');
+    final pdfDirectory = await  pdfCreatDirectory('PDF Invoices');
     await buildPDFLayout(format: pdfFormat);
     update();
     await pdfCreatfile(
@@ -148,21 +150,51 @@ class PrintingInvoiceController extends GetxController {
     );
   }
 
-  Directory pdfCreatDirectory(String directoryName) {
-    final directory =
-        Directory('${Platform.environment['USERPROFILE']}/Documents');
-    // For macOS and Linux use: '${Platform.environment['HOME']}/Documents'
-    final pdfDirectory = Directory(
-        SharedPr.printingPreferenceObj!.downloadPath == null ||
-                SharedPr.printingPreferenceObj!.downloadPath == ''
-            ? '${directory.path}/$directoryName'
-            : SharedPr.printingPreferenceObj!.downloadPath!);
+  // Directory pdfCreatDirectory(String directoryName) {
+  //   final directory =
+  //       Directory('${Platform.environment['USERPROFILE']}/Documents');
+  //   // For macOS and Linux use: '${Platform.environment['HOME']}/Documents'
+  //   final pdfDirectory = Directory(
+  //       SharedPr.printingPreferenceObj!.downloadPath == null ||
+  //               SharedPr.printingPreferenceObj!.downloadPath == ''
+  //           ? '${directory.path}/$directoryName'
+  //           : SharedPr.printingPreferenceObj!.downloadPath!);
 
-    if (!pdfDirectory.existsSync()) {
-      pdfDirectory.createSync(recursive: true);
+  //   if (!pdfDirectory.existsSync()) {
+  //     pdfDirectory.createSync(recursive: true);
+  //   }
+  //   return pdfDirectory;
+  // }
+  Future<Directory> pdfCreatDirectory(String directoryName) async {
+  Directory baseDir;
+
+  if (Platform.isWindows) {
+    baseDir = Directory('${Platform.environment['USERPROFILE']}/Documents');
+  } else if (Platform.isAndroid) {
+    baseDir = (await getExternalStorageDirectory())!;
+    if(kDebugMode){
+      print("Platform.isAndroid baseDir :: ${baseDir.path}");
     }
-    return pdfDirectory;
+  } else if (Platform.isMacOS || Platform.isLinux) {
+    baseDir = Directory('${Platform.environment['HOME']}/Documents');
+  } else {
+    // fallback for unsupported platform
+    baseDir = await getApplicationDocumentsDirectory();
   }
+
+  final downloadPath = SharedPr.printingPreferenceObj?.downloadPath;
+  final pdfDirectory = Directory(
+    (downloadPath == null || downloadPath.isEmpty)
+        ? '${baseDir.path}/$directoryName'
+        : downloadPath,
+  );
+
+  if (!pdfDirectory.existsSync()) {
+    pdfDirectory.createSync(recursive: true);
+  }
+
+  return pdfDirectory;
+}
 
   pdfCreatfile(
       {Document? pdfSession,
