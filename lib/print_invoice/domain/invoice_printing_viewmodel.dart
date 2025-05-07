@@ -171,7 +171,8 @@ class PrintingInvoiceController extends GetxController {
   if (Platform.isWindows) {
     baseDir = Directory('${Platform.environment['USERPROFILE']}/Documents');
   } else if (Platform.isAndroid) {
-    baseDir = (await getExternalStorageDirectory())!;
+    // baseDir = (await getExternalStorageDirectory())!;
+    baseDir = Directory('/storage/emulated/0/Download');
     if(kDebugMode){
       print("Platform.isAndroid baseDir :: ${baseDir.path}");
     }
