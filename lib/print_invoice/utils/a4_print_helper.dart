@@ -23,15 +23,46 @@ Future<pw.Document> a4Print({required bool isSimple, Customer? customer, PdfPage
   final intl.NumberFormat formatter = intl.NumberFormat('#,##0.00', 'en_US');
   printingController.config();
   final pdf = pw.Document(version: PdfVersion.pdf_1_5, compress: true);
+  // List listHeder = [
+  //   {'title': "total_price", 'expanded': 2},
+  //   {'title': "vat_amount", 'expanded': 1},
+  //   {'title': "amount", 'expanded': 1},
+  //   {'title': "taxes", 'expanded': 1},
+  //   {'title': "unit_price", 'expanded': 1},
+  //   {'title': "quantity", 'expanded': 1},
+  //   {'title': "description", 'expanded': 3},
+  // ];
+    // basic_total  quantityMultipliedByUnitPriceForSubtotalPrice
+  //discount discountAsAmount
+  //tax_excl subtotalPrice
+  //tax_total totalTax
+  //'${'total'.tr} ${'with_tax'.tr}' totalPrice
   List listHeder = [
     {'title': "total_price", 'expanded': 2},
-    {'title': "vat_amount", 'expanded': 1},
-    {'title': "amount", 'expanded': 1},
+    // {'title': "vat_amount", 'expanded': 1},
+
     {'title': "taxes", 'expanded': 1},
+
+    {'title': "amount", 'expanded': 1},
     {'title': "unit_price", 'expanded': 1},
     {'title': "quantity", 'expanded': 1},
     {'title': "description", 'expanded': 3},
   ];
+
+  if (printingController.saleOrderInvoice!.totalDiscount != 0) {
+    // listHeder.insert(
+    //   2,
+    //   {'title': "tax_excl", 'expanded': 1},
+    // );
+    listHeder.insert(
+      3,
+      {'title': "discount", 'expanded': 1},
+    );
+    listHeder.insert(
+      4,
+      {'title': "basic_total", 'expanded': 1},
+    );
+  }
   pdf.addPage(pw.MultiPage(
       textDirection: pw.TextDirection.rtl,
       pageFormat: format,
@@ -162,10 +193,18 @@ Future<pw.Document> a4Print({required bool isSimple, Customer? customer, PdfPage
                             printingController.saleOrderInvoice!.totalTaxes)),
                     a4dataRowCell(
                         isTotal: true,
-                        text: formatter.format(printingController
-                            .saleOrderInvoice!.totalPriceSubtotal)),
+                        text: formatter.format(printingController.saleOrderInvoice!.totalPriceSubtotal)),
+                    if (printingController.saleOrderInvoice!.totalDiscount !=0) ...[
+                      a4dataRowCell(
+                          isTotal: true,
+                          text: formatter.format(printingController
+                              .saleOrderInvoice!.totalDiscount)),
+                      a4dataRowCell(
+                          isTotal: true,
+                          text: formatter.format(printingController.saleOrderInvoice!.totalPriceWitoutTaxAndDiscount)),
+                    ],
                     a4dataRowCell(
-                        expanded: 7,
+                        expanded: 6,
                         isTotal: true,
                         text:
                             "${ar['quantity']} ${formatter.format(printingController.saleOrderInvoice!.totalQuantity)}"),
@@ -179,6 +218,20 @@ Future<pw.Document> a4Print({required bool isSimple, Customer? customer, PdfPage
                 child: pw.Column(children: [
                   pw.Divider(
                       thickness: 1, color: const PdfColor.fromInt(0xFFDAD5D5)),
+                  if (printingController.saleOrderInvoice!.totalDiscount !=
+                      0) ...[
+                    a4fotterItem(
+                      titel: 'basic_total',
+                      value:
+                          "${formatter.format(printingController.saleOrderInvoice!.totalPriceWitoutTaxAndDiscount)} SR",
+                    ),
+                    a4fotterItem(
+                      titel: 'discount',
+                      value:
+                          "${formatter.format(printingController.saleOrderInvoice!.totalDiscount)} SR",
+                    ),
+                  ],
+                  
                   if (SharedPr.invoiceSetting!.showSubtotal!) ...[
                     a4fotterItem(
                       titel: 'sub_total',

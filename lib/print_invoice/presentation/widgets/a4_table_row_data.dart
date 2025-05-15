@@ -21,19 +21,55 @@ List<pw.TableRow> a4TableRowData() {
               ? PdfColors.white
               : const PdfColor.fromInt(0xfff8f5f7)),
       children: [
+        // a4dataRowCell(
+        //   expanded: 2,
+        //   text: formatter.format(item.totalPrice),
+        // ),
+        // a4dataRowCell(
+        //   text: formatter.format(item.tax * item.priceUnit!).toString(),
+        // ),
+        // a4dataRowCell(
+        //   text: formatter.format(item.subtotalPrice).toString(),
+        // ),
+        // a4dataRowCell(
+        //   text: formatter.format(item.tax).toString(),
+        // ),
+        // a4dataRowCell(
+        //   text: formatter.format(item.priceUnit).toString(),
+        // ),
+        // a4dataRowCell(
+        //   text: formatter.format(item.productUomQty).toString(),
+        // ),
+        // a4dataRowCell(
+        //   expanded: 4,
+        //   text: item.name ?? '',
+        // ),
+
         a4dataRowCell(
           expanded: 2,
           text: formatter.format(item.totalPrice),
         ),
+
         a4dataRowCell(
-          text: formatter.format(item.tax * item.priceUnit!).toString(),
+          text: formatter.format(item.tax),
         ),
+
         a4dataRowCell(
-          text: formatter.format(item.subtotalPrice).toString(),
+          text: formatter.format(item.subtotalPrice),
         ),
-        a4dataRowCell(
-          text: formatter.format(item.tax).toString(),
-        ),
+        if (printingController.saleOrderInvoice!.totalDiscount != 0) ...[
+          // dataRowCell(
+          //   text: formatter.format(item.subtotalPrice).toString(),
+          // ),
+          a4dataRowCell(
+            text: formatter.format(item.discountAsPercentage).toString(),
+          ),
+          a4dataRowCell(
+            text: formatter
+                .format(item.quantityMultipliedByUnitPriceForSubtotalPrice)
+                .toString(),
+          ),
+        ],
         a4dataRowCell(
           text: formatter.format(item.priceUnit).toString(),
         ),
