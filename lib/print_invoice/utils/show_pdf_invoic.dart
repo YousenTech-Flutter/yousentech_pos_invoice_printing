@@ -43,5 +43,8 @@ showPDFInvoice({required PaymentController paymentController,
             isFromPayment: isFromPayment,
           ))).then((_) {
     paymentController.isPDFDialogOpen = false;
+    printingController.checkbox = false;
+    printingController.isDefault = true;
+    printingController.update();
   });
 }
