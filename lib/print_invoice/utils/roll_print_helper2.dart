@@ -1,7 +1,9 @@
 // ignore_for_file: unused_local_variable
 
 import 'dart:convert';
+import 'dart:typed_data';
 
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:intl/intl.dart';
@@ -21,6 +23,10 @@ Future<pw.Document> rollPrint2({PdfPageFormat? format}) async {
   Customer? company = SharedPr.currentCompanyObject;
   User? user = SharedPr.chosenUserObj;
   final intl.NumberFormat formatter = intl.NumberFormat('#,##0.00', 'en_US');
+  // تحميل الصورة من assets
+  final ByteData bytesImage = await rootBundle.load('assets/image/note_pdf.png');
+  final Uint8List imageData = bytesImage.buffer.asUint8List();
+  final note_image = pw.MemoryImage(imageData);
   bool isFind =
       printingController.saleOrderInvoice!.orderDate.toString().contains('T');
   String myString =
@@ -102,7 +108,9 @@ Future<pw.Document> rollPrint2({PdfPageFormat? format}) async {
               ...productItem(
                   saleOrderLinesList: printingController.saleOrderLinesList!,
                   formatter: formatter,
-                  font: AppInvoiceStyle.fontMedium),
+                  font: AppInvoiceStyle.fontMedium,
+                  noteImage: note_image
+                  ),
               pw.SizedBox(height: 10),
               pw.Row(mainAxisAlignment: pw.MainAxisAlignment.end, children: [
                 pw.Container(
