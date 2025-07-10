@@ -12,6 +12,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:pos_shared_preferences/models/account_journal/data/account_journal.dart';
 import 'package:pos_shared_preferences/models/authentication_data/user.dart';
 import 'package:pos_shared_preferences/models/customer_model.dart';
+import 'package:pos_shared_preferences/models/sale_order_line.dart';
 import 'package:pos_shared_preferences/pos_shared_preferences.dart';
 import 'package:shared_widgets/config/app_invoice_styles.dart';
 import '../domain/invoice_printing_viewmodel.dart';
@@ -24,7 +25,8 @@ Future<pw.Document> rollPrint2({PdfPageFormat? format}) async {
   User? user = SharedPr.chosenUserObj;
   final intl.NumberFormat formatter = intl.NumberFormat('#,##0.00', 'en_US');
   // تحميل الصورة من assets
-  final ByteData bytesImage = await rootBundle.load('assets/image/note_pdf.png');
+  final ByteData bytesImage =
+      await rootBundle.load('assets/image/note_pdf.png');
   final Uint8List imageData = bytesImage.buffer.asUint8List();
   final note_image = pw.MemoryImage(imageData);
   bool isFind =
@@ -42,18 +44,14 @@ Future<pw.Document> rollPrint2({PdfPageFormat? format}) async {
     version: PdfVersion.pdf_1_5,
     compress: true,
   );
-  // final ttf =
-  //     await rootBundle.load('assets/fonts/Hacen_Tunisia_Bold_Regular.ttf');
-  // print("before");
-  // await AppInvoiceStyle.loadFonts();
-  // final ttf = await rootBundle.load('assets/fonts/Tajawal-Medium.ttf');
-  // print("ttf");
-  // final ttf = await rootBundle.load('assets/fonts/Droid_Arabic_Kufi_Bold.ttf');
-  // final font = pw.Font.ttf(ttf.buffer.asByteData());
-  // final ByteData imageData = await rootBundle.load('assets/images/background.png');
-  // final Uint8List bytes = imageData.buffer.asUint8List();
   List listHeder = ["item".tr, "quantity".tr, "price".tr, "total".tr];
-  // await AppInvoiceStyle.loadFonts();
+  Map<String, List<SaleOrderLine>> groupedByCategory = {};
+
+  for (var item in printingController.saleOrderLinesList!) {
+    groupedByCategory
+        .putIfAbsent(item.productId!.soPosCategId.toString(), () => [])
+        .add(item);
+  }
   pdf.addPage(pw.Page(
       pageFormat: const PdfPageFormat(
         72 * PdfPageFormat.mm, // 80mm width
@@ -61,15 +59,6 @@ Future<pw.Document> rollPrint2({PdfPageFormat? format}) async {
       ),
       textDirection:
           SharedPr.lang == 'en' ? pw.TextDirection.ltr : pw.TextDirection.rtl,
-      // pageFormat: format,
-      // PdfPageFormat(
-      //   80 * mm,
-      //   double.maxFinite,
-      //   marginAll: 5 * mm,
-      // ),
-
-      // orientation: pw.PageOrientation.landscape,
-      // textDirection: lang == "ar" ? pw.TextDirection.rtl : pw.TextDirection.ltr,
       margin: const pw.EdgeInsets.symmetric(
         horizontal: 10,
         vertical: 10,
@@ -109,8 +98,7 @@ Future<pw.Document> rollPrint2({PdfPageFormat? format}) async {
                   saleOrderLinesList: printingController.saleOrderLinesList!,
                   formatter: formatter,
                   font: AppInvoiceStyle.fontMedium,
-                  noteImage: note_image
-                  ),
+                  noteImage: note_image),
               pw.SizedBox(height: 10),
               pw.Row(mainAxisAlignment: pw.MainAxisAlignment.end, children: [
                 pw.Container(
@@ -224,7 +212,95 @@ Future<pw.Document> rollPrint2({PdfPageFormat? format}) async {
               ),
             ],
           )));
-
+  groupedByCategory.forEach((category, items) {
+    pdf.addPage(pw.Page(
+        pageFormat: const PdfPageFormat(
+          72 * PdfPageFormat.mm, // 80mm width
+          double.infinity, // Example: fixed 200mm height
+        ),
+        textDirection:
+            SharedPr.lang == 'en' ? pw.TextDirection.ltr : pw.TextDirection.rtl,
+        margin: const pw.EdgeInsets.symmetric(
+          horizontal: 10,
+          vertical: 10,
+        ),
+        build: (context) => pw.Column(
+              children: [
+                pw.Container(
+                    width: 150,
+                    child: pw.Column(
+                      children: [
+                        infoText(value: printingController.title.tr),
+                        pw.SizedBox(height: 5),
+                        if (company != null) ...[
+                          infoText(value: company.name ?? ""),
+                          pw.SizedBox(height: 5),
+                          infoText(
+                              value: "${'tell'.tr}: ${company.phone ?? ""}"),
+                          pw.SizedBox(height: 5),
+                          infoText(value: company.email ?? ""),
+                        ],
+                        pw.Align(
+                            alignment: pw.Alignment.center,
+                            child:
+                                pw.Divider(borderStyle: pw.BorderStyle.dashed)),
+                        if (user != null) ...[
+                          infoText(value: "${'served_by'.tr} ${user.name!}"),
+                          pw.SizedBox(height: 5),
+                        ],
+                        infoText(
+                            isbold: true,
+                            isblack: true,
+                            value:
+                                '${'invoice_nmuber'.tr} : ${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}'),
+                      ],
+                    )),
+                pw.SizedBox(height: 10),
+                ...productItem(
+                    saleOrderLinesList: items,
+                    formatter: formatter,
+                    font: AppInvoiceStyle.fontMedium,
+                    isShowNote: true,
+                    noteImage: note_image),
+                pw.SizedBox(height: 10),
+                pw.Row(mainAxisAlignment: pw.MainAxisAlignment.end, children: [
+                  pw.Container(
+                      width: 50,
+                      alignment: pw.Alignment.center,
+                      child: pw.Divider(borderStyle: pw.BorderStyle.dashed)),
+                ]),
+                pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                    children: [
+                      infoText(
+                        value: "total".tr,
+                        isbold: true,
+                      ),
+                      infoText(
+                        value:
+                            "${formatter.format(items.fold(0.0, (sum, e) => sum + e.totalPrice))} ${"S.R".tr}",
+                        isbold: true,
+                      )
+                    ]),
+                pw.SizedBox(height: 10),
+                pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.center,
+                  children: [
+                    pw.Text(
+                      " ${!printingController.saleOrderInvoice!.orderDate.toString().contains('T') ? printingController.saleOrderInvoice!.orderDate.toString() : printingController.saleOrderInvoice!.orderDate.toString().substring(0, printingController.saleOrderInvoice!.orderDate!.indexOf('T'))}",
+                      style: AppInvoiceStyle.headerStyle(
+                          isbold: true, isblack: true, fontsize: 8),
+                    ),
+                    pw.Text(
+                      " ${!printingController.saleOrderInvoice!.orderDate.toString().contains('T') ? DateFormat("HH:mm:ss").format(DateTime.now()) : printingController.saleOrderInvoice!.orderDate.toString().substring(printingController.saleOrderInvoice!.orderDate!.indexOf('T') + 1)}",
+                      style: AppInvoiceStyle.headerStyle(
+                          isbold: true, isblack: true, fontsize: 8),
+                    ),
+                  ],
+                ),
+              ],
+            )));
+  });
   return pdf;
 }
 

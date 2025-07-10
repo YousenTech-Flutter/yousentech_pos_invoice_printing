@@ -50,6 +50,7 @@ List<pw.Column> productItem(
     {required List<SaleOrderLine> saleOrderLinesList,
     required formatter,
     required noteImage,
+    bool isShowNote = false,
     required font}) {
   return List.generate(
       saleOrderLinesList.length
@@ -58,14 +59,20 @@ List<pw.Column> productItem(
     SaleOrderLine item = saleOrderLinesList[index];
     return pw.Column(children: [
       productText(value: "${item.name}", isblack: true, isname: true),
-      if (item.note !=null) ...[
-        pw.SizedBox(height: 2),
-        pw.Row(
-          children: [
-          pw.Image(noteImage, width: 6, height: 6, dpi: 500),
-          pw.SizedBox(width: 3),
-          productText(value: "${item.note}", isblack: false, isname: true , fontsize: 6, color: AppInvoceColor.gray),
-        ])
+      if (item.note != null || item.categoryNotes != null) ...[
+        if(isShowNote)...[
+          pw.SizedBox(height: 2),
+          pw.Row(
+            children: [
+            pw.Image(noteImage, width: 6, height: 6, dpi: 500),
+            pw.SizedBox(width: 3),
+            productText(value: " ${item.note} ", isblack: false, isname: true , fontsize: 6, color: AppInvoceColor.gray),
+            if (item.categoryNotes != null && item.categoryNotes!.isNotEmpty) ...[
+              ...List.generate(item.categoryNotes!.length, (index) {
+                return 
+                productText(value: " ${item.categoryNotes![index].note} ", isblack: false, isname: true , fontsize: 6, color: AppInvoceColor.gray);})]
+          ])
+        ]
         
       ],
       pw.SizedBox(height: 5),
