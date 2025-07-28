@@ -83,6 +83,7 @@ class _PrinterInvoiceState extends State<PrinterInvoice> {
               return printingController.isCash
                   ? printingController.generateCachPdf(
                       format: format,
+                      isdownloadRoll:true 
                     )
                   : printingController.generateTermPdf(
                       format: format,

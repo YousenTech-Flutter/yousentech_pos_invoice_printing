@@ -49,31 +49,37 @@ List<pw.TableRow> rollTableRowData(
 List<pw.Column> productItem(
     {required List<SaleOrderLine> saleOrderLinesList,
     required formatter,
-    required noteImage,
     bool isShowNote = false,
     required font}) {
-  return List.generate(
-      saleOrderLinesList.length
-      // snapshot.data.length
-      , (index) {
+  return List.generate(saleOrderLinesList.length, (index) {
     SaleOrderLine item = saleOrderLinesList[index];
     return pw.Column(children: [
       productText(value: "${item.name}", isblack: true, isname: true),
       if (item.note != null || item.categoryNotes != null) ...[
-        if(isShowNote)...[
+        if (isShowNote) ...[
           pw.SizedBox(height: 2),
-          pw.Row(
-            children: [
-            pw.Image(noteImage, width: 6, height: 6, dpi: 500),
+          pw.Row(children: [
+            // pw.Image(noteImage, width: 6, height: 6, dpi: 500),
             pw.SizedBox(width: 3),
-            productText(value: " ${item.note} ", isblack: false, isname: true , fontsize: 6, color: AppInvoceColor.gray),
-            if (item.categoryNotes != null && item.categoryNotes!.isNotEmpty) ...[
+            productText(
+                value: " ${item.note} ",
+                isblack: false,
+                isname: true,
+                fontsize: 6,
+                color: AppInvoceColor.gray),
+            if (item.categoryNotes != null &&
+                item.categoryNotes!.isNotEmpty) ...[
               ...List.generate(item.categoryNotes!.length, (index) {
-                return 
-                productText(value: " ${item.categoryNotes![index].note} ", isblack: false, isname: true , fontsize: 6, color: AppInvoceColor.gray);})]
+                return productText(
+                    value: " ${item.categoryNotes![index].note} ",
+                    isblack: false,
+                    isname: true,
+                    fontsize: 6,
+                    color: AppInvoceColor.gray);
+              })
+            ]
           ])
         ]
-        
       ],
       pw.SizedBox(height: 5),
       pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceBetween, children: [
@@ -84,13 +90,17 @@ List<pw.Column> productItem(
               productText(
                 value: " x ",
               ),
-              productText(
-                value: "${formatter.format(item.priceUnit)} ${"S.R".tr}",
-              ),
+              if (!isShowNote) ...[
+                productText(
+                  value: "${formatter.format(item.priceUnit)} ${"S.R".tr}",
+                ),
+              ],
             ])),
-        productText(
-            value: "${formatter.format(item.totalPrice)} ${"S.R".tr}",
-            isblack: true),
+        if (!isShowNote) ...[
+          productText(
+              value: "${formatter.format(item.totalPrice)} ${"S.R".tr}",
+              isblack: true),
+        ]
       ]),
       pw.SizedBox(height: 10),
     ]);
@@ -102,15 +112,76 @@ pw.Align productText({
   bool isbold = true,
   bool isname = false,
   bool isblack = true,
+  bool isAlignmentCenter = false,
   double? fontsize,
   PdfColor? color,
 }) {
   return pw.Align(
-      alignment: pw.AlignmentDirectional.centerStart,
+      alignment: !isAlignmentCenter
+          ? pw.AlignmentDirectional.centerStart
+          : pw.AlignmentDirectional.center,
       child: pw.Text(
         textDirection: isname ? pw.TextDirection.rtl : null,
         value,
         style: AppInvoiceStyle.headerStyle(
-            isblack: isblack, isbold: isbold, fontsize:fontsize?? 8 , color: color),
+            isblack: isblack,
+            isbold: isbold,
+            fontsize: fontsize ?? 8,
+            color: color),
       ));
+}
+
+List<pw.Column> catogProductItem(
+    {required List<SaleOrderLine> saleOrderLinesList,
+    required formatter,
+    bool isShowNote = false,
+    required font}) {
+  return List.generate(saleOrderLinesList.length, (index) {
+    SaleOrderLine item = saleOrderLinesList[index];
+    return pw.Column(children: [
+      pw.SizedBox(height: 10),
+      pw.Row(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
+        pw.Container(
+            width: 15,
+            child: productText(
+                value: "${index + 1}.", isblack: true, isname: true)),
+        pw.Container(
+          width: 145,
+          child: productText(
+            value: buildProductNameWithNotes(item),
+            isblack: true,
+            isname: true,
+          ),
+        ),
+
+        pw.Container(
+            width: 25,
+            child: productText(
+                value: "${item.productUomQty}",
+                isblack: true,
+                isAlignmentCenter: true)),
+      ]),
+    ]);
+  });
+}
+
+String buildProductNameWithNotes(item) {
+  final notes = <String>[];
+
+  if (item.note != null && item.note!.trim().isNotEmpty) {
+    notes.add(item.note!.trim());
+  }
+
+  if (item.categoryNotes != null && item.categoryNotes!.isNotEmpty) {
+    notes.addAll(item.categoryNotes!
+        .map((e) => e.note?.trim())
+        .where((note) => note != null && note!.isNotEmpty)
+        .cast<String>());
+  }
+
+  if (notes.isEmpty) {
+    return item.name;
+  }
+
+  return "${item.name} (${notes.join(', ')})";
 }

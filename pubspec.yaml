@@ -44,6 +44,10 @@ dependencies:
     git:
       url: https://github.com/YousenTech-Flutter/yousentech_pos_printing.git
       ref: master
+  yousentech_pos_local_db:
+    git:
+      url: https://github.com/YousenTech-Flutter/yousentech_pos_local_db.git
+      ref: master
   path_provider: ^2.1.5
 dev_dependencies:
   flutter_test:
