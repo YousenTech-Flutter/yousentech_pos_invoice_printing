@@ -79,11 +79,14 @@ class PrintingInvoiceController extends GetxController {
 
   // ================================================================ [ GET ACCOUNT JOURNAL ] ===============================================================
   nextPressed({required String format,bool isFromPayment = false,bool skipDisablePrinting = false,bool skipDisablePrintOrderInvoice = false}) async {
+    print("=================== printToEpsonM267F===========");
+    await printToEpsonM267F();
+    
     // PdfPageFormat.roll80
-    PdfPageFormat pdfFormat = getFormatByName(formatName: format);
-    if (isFromPayment) {
-      if (format == "Roll80") {
-        await printToEpsonM267F();
+    // PdfPageFormat pdfFormat = getFormatByName(formatName: format);
+    // if (isFromPayment) {
+    //   if (format == "Roll80") {
+        
         // if (SharedPr.printingPreferenceObj!.isSilentPrinting!) {
         //   await printingInvoiceDirectPrintPdf(
         //       format: format,
@@ -108,12 +111,12 @@ class PrintingInvoiceController extends GetxController {
         //           ? false
         //           : SharedPr.currentPosObject!.disableNetworkPrinting!);
         // }
-      } else if (SharedPr.printingPreferenceObj!.isDownloadPDF!) {
-        await downloadPDF(format: pdfFormat);
-      }
-    } else {
-      await printingInvoiceDirectPrintPdf(pdfFormat: pdfFormat, format: format);
-    }
+    //   } else if (SharedPr.printingPreferenceObj!.isDownloadPDF!) {
+    //     await downloadPDF(format: pdfFormat);
+    //   }
+    // } else {
+    //   await printingInvoiceDirectPrintPdf(pdfFormat: pdfFormat, format: format);
+    // }
   }
 
   downloadPDF({required format, bool isdownloadRoll = false}) async {
