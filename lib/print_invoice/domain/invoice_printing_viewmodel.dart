@@ -3,6 +3,8 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:esc_pos_printer/esc_pos_printer.dart';
+import 'package:esc_pos_utils/esc_pos_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -36,9 +38,9 @@ import 'package:yousentech_pos_printing/printing/domain/app_connected_printers/c
 import 'package:yousentech_pos_printing/printing/utils/subnet_determination.dart';
 
 import '../utils/a4_print_helper.dart';
-import 'package:pdf/widgets.dart' as pw;
+// import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
-
+import 'package:image/image.dart' as img;
 class PrintingInvoiceController extends GetxController {
   SaleOrderInvoice? saleOrderInvoice;
   List<SaleOrderLine>? saleOrderLinesList;
@@ -81,30 +83,31 @@ class PrintingInvoiceController extends GetxController {
     PdfPageFormat pdfFormat = getFormatByName(formatName: format);
     if (isFromPayment) {
       if (format == "Roll80") {
-        if (SharedPr.printingPreferenceObj!.isSilentPrinting!) {
-          await printingInvoiceDirectPrintPdf(
-              format: format,
-              pdfFormat: pdfFormat,
-              disablePrintFullInvoice:
-                  (!SharedPr.printingPreferenceObj!.disablePrinting! ||
-                          skipDisablePrinting)
-                      ? false
-                      : true,
-              disablePrintOrderInvoice: skipDisablePrintOrderInvoice
-                  ? false
-                  : SharedPr.currentPosObject!.disableNetworkPrinting!);
-        } else {
-          await printingInvoiceLayoutPdf(
-              pdfFormat: pdfFormat,
-              disablePrintFullInvoice:
-                  (!SharedPr.printingPreferenceObj!.disablePrinting! ||
-                          skipDisablePrinting)
-                      ? false
-                      : true,
-              disablePrintOrderInvoice: skipDisablePrintOrderInvoice
-                  ? false
-                  : SharedPr.currentPosObject!.disableNetworkPrinting!);
-        }
+        await printToEpsonM267F();
+        // if (SharedPr.printingPreferenceObj!.isSilentPrinting!) {
+        //   await printingInvoiceDirectPrintPdf(
+        //       format: format,
+        //       pdfFormat: pdfFormat,
+        //       disablePrintFullInvoice:
+        //           (!SharedPr.printingPreferenceObj!.disablePrinting! ||
+        //                   skipDisablePrinting)
+        //               ? false
+        //               : true,
+        //       disablePrintOrderInvoice: skipDisablePrintOrderInvoice
+        //           ? false
+        //           : SharedPr.currentPosObject!.disableNetworkPrinting!);
+        // } else {
+        //   await printingInvoiceLayoutPdf(
+        //       pdfFormat: pdfFormat,
+        //       disablePrintFullInvoice:
+        //           (!SharedPr.printingPreferenceObj!.disablePrinting! ||
+        //                   skipDisablePrinting)
+        //               ? false
+        //               : true,
+        //       disablePrintOrderInvoice: skipDisablePrintOrderInvoice
+        //           ? false
+        //           : SharedPr.currentPosObject!.disableNetworkPrinting!);
+        // }
       } else if (SharedPr.printingPreferenceObj!.isDownloadPDF!) {
         await downloadPDF(format: pdfFormat);
       }
@@ -224,25 +227,25 @@ class PrintingInvoiceController extends GetxController {
             ? Get.find<ConnectedPrinterController>()
             : Get.put(ConnectedPrinterController());
 
-    // if (printingController.connectedPrinterList.isNotEmpty &&
-    //     printingController.connectedPrinterList.any(
-    //       (elem) => elem.paperType == format,
-    //     )) {
-    //   String? printerName = printingController.connectedPrinterList
-    //       .firstWhere(
-    //         (elem) => elem.paperType == format,
-    //       )
-    //       .printerName;
+    if (printingController.connectedPrinterList.isNotEmpty &&
+        printingController.connectedPrinterList.any(
+          (elem) => elem.paperType == format,
+        )) {
+      String? printerName = printingController.connectedPrinterList
+          .firstWhere(
+            (elem) => elem.paperType == format,
+          )
+          .printerName;
 
-    //   printer = printingController.systemPrinterList
-    //       .firstWhere((elem) => elem.name == printerName);
-    // } else {
-    //   defaultPrinter = await PrintHelper.setDefaultPrinter();
-    // }
+      printer = printingController.systemPrinterList
+          .firstWhere((elem) => elem.name == printerName);
+    } else {
+      defaultPrinter = await PrintHelper.setDefaultPrinter();
+    }
     if (!disablePrintOrderInvoice) {
       var printingSetting = await getPrintingSetting();
       var ipPorts = await LanPrintingHelper.listSharedPrintersWithIP();
-      // List<Printer> printers = await PrintHelper.getPrinters();
+      List<Printer> printers = await PrintHelper.getPrinters();
       Map<String, List<SaleOrderLine>> printerToItems = {};
       // IP + تصنيف → سطور الأصناف
       for (var printer in printingSetting) {
@@ -272,10 +275,9 @@ class PrintingInvoiceController extends GetxController {
         if (entry.key.split(':').last == PrintingType.is_silent_printing.name) {
           result = await Printing.directPrintPdf(
             format: pdfFormat,
-            printer: findPort,
-            // printers.firstWhere(
-            //     (p) => p.name.trim() == findPort.name.trim(),
-            //     orElse: () => printer ?? defaultPrinter),
+            printer: printers.firstWhere(
+                (p) => p.name.trim() == findPort.name.trim(),
+                orElse: () => printer ?? defaultPrinter),
             onLayout: await buildPDFLayout(
               format: pdfFormat,
               isdownloadRoll: false,
@@ -598,4 +600,24 @@ class PrintingInvoiceController extends GetxController {
     var ff = await generalLocalDBInstance!.index();
     return ff;
   }
+
+Future<void> printToEpsonM267F() async {
+  final profile = await CapabilityProfile.load();
+  final printer = NetworkPrinter(PaperSize.mm80, profile);
+
+  final PosPrintResult res = await printer.connect(
+    '192.168.12.122', // استبدل هذا بالـ IP الفعلي للطابعة
+    port: 9100, // المنفذ الشائع لطابعات Epson POS
+  );
+
+  if (res == PosPrintResult.success) {
+    printer.text('🍽️ طلب جديد');
+    printer.text('1x كبسة دجاج');
+    printer.text('1x ماء');
+    printer.cut();
+    printer.disconnect();
+  } else {
+    print('فشل الاتصال بالطابعة: $res');
+  }
+}
 }
