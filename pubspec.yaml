@@ -12,12 +12,16 @@ dependencies:
     sdk: flutter
   get: ^4.6.6
   intl: ^0.20.2
+  # pdf: ^3.11.3
   pdf: ^3.6.5
-  printing: ^5.14.2
+  # printing: ^5.14.2
+  printing: ^5.0.0
   flutter_screenutil: ^5.9.3
   esc_pos_printer: ^4.1.0
   esc_pos_utils: ^1.1.0
   image: ^3.0.2
+
+  # image: ^4.5.0
 
   pos_shared_preferences:
     git:
@@ -58,8 +62,8 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^5.0.0
 
-dependency_overrides:
-  image: ^4.1.0
+# dependency_overrides:
+#   image: ^4.1.0
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
