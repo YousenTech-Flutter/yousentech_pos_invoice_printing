@@ -2,9 +2,6 @@
 
 import 'dart:async';
 import 'dart:io';
-
-import 'package:esc_pos_printer/esc_pos_printer.dart';
-import 'package:esc_pos_utils/esc_pos_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -79,44 +76,44 @@ class PrintingInvoiceController extends GetxController {
 
   // ================================================================ [ GET ACCOUNT JOURNAL ] ===============================================================
   nextPressed({required String format,bool isFromPayment = false,bool skipDisablePrinting = false,bool skipDisablePrintOrderInvoice = false}) async {
-    print("=================== printToEpsonM267F===========");
-    await printToEpsonM267F();
+    // print("=================== printToEpsonM267F===========");
+    // await printToEpsonM267F();
     
     // PdfPageFormat.roll80
-    // PdfPageFormat pdfFormat = getFormatByName(formatName: format);
-    // if (isFromPayment) {
-    //   if (format == "Roll80") {
+    PdfPageFormat pdfFormat = getFormatByName(formatName: format);
+    if (isFromPayment) {
+      if (format == "Roll80") {
         
-        // if (SharedPr.printingPreferenceObj!.isSilentPrinting!) {
-        //   await printingInvoiceDirectPrintPdf(
-        //       format: format,
-        //       pdfFormat: pdfFormat,
-        //       disablePrintFullInvoice:
-        //           (!SharedPr.printingPreferenceObj!.disablePrinting! ||
-        //                   skipDisablePrinting)
-        //               ? false
-        //               : true,
-        //       disablePrintOrderInvoice: skipDisablePrintOrderInvoice
-        //           ? false
-        //           : SharedPr.currentPosObject!.disableNetworkPrinting!);
-        // } else {
-        //   await printingInvoiceLayoutPdf(
-        //       pdfFormat: pdfFormat,
-        //       disablePrintFullInvoice:
-        //           (!SharedPr.printingPreferenceObj!.disablePrinting! ||
-        //                   skipDisablePrinting)
-        //               ? false
-        //               : true,
-        //       disablePrintOrderInvoice: skipDisablePrintOrderInvoice
-        //           ? false
-        //           : SharedPr.currentPosObject!.disableNetworkPrinting!);
-        // }
-    //   } else if (SharedPr.printingPreferenceObj!.isDownloadPDF!) {
-    //     await downloadPDF(format: pdfFormat);
-    //   }
-    // } else {
-    //   await printingInvoiceDirectPrintPdf(pdfFormat: pdfFormat, format: format);
-    // }
+        if (SharedPr.printingPreferenceObj!.isSilentPrinting!) {
+          await printingInvoiceDirectPrintPdf(
+              format: format,
+              pdfFormat: pdfFormat,
+              disablePrintFullInvoice:
+                  (!SharedPr.printingPreferenceObj!.disablePrinting! ||
+                          skipDisablePrinting)
+                      ? false
+                      : true,
+              disablePrintOrderInvoice: skipDisablePrintOrderInvoice
+                  ? false
+                  : SharedPr.currentPosObject!.disableNetworkPrinting!);
+        } else {
+          await printingInvoiceLayoutPdf(
+              pdfFormat: pdfFormat,
+              disablePrintFullInvoice:
+                  (!SharedPr.printingPreferenceObj!.disablePrinting! ||
+                          skipDisablePrinting)
+                      ? false
+                      : true,
+              disablePrintOrderInvoice: skipDisablePrintOrderInvoice
+                  ? false
+                  : SharedPr.currentPosObject!.disableNetworkPrinting!);
+        }
+      } else if (SharedPr.printingPreferenceObj!.isDownloadPDF!) {
+        await downloadPDF(format: pdfFormat);
+      }
+    } else {
+      await printingInvoiceDirectPrintPdf(pdfFormat: pdfFormat, format: format);
+    }
   }
 
   downloadPDF({required format, bool isdownloadRoll = false}) async {
