@@ -224,21 +224,21 @@ class PrintingInvoiceController extends GetxController {
             ? Get.find<ConnectedPrinterController>()
             : Get.put(ConnectedPrinterController());
 
-    if (printingController.connectedPrinterList.isNotEmpty &&
-        printingController.connectedPrinterList.any(
-          (elem) => elem.paperType == format,
-        )) {
-      String? printerName = printingController.connectedPrinterList
-          .firstWhere(
-            (elem) => elem.paperType == format,
-          )
-          .printerName;
+    // if (printingController.connectedPrinterList.isNotEmpty &&
+    //     printingController.connectedPrinterList.any(
+    //       (elem) => elem.paperType == format,
+    //     )) {
+    //   String? printerName = printingController.connectedPrinterList
+    //       .firstWhere(
+    //         (elem) => elem.paperType == format,
+    //       )
+    //       .printerName;
 
-      printer = printingController.systemPrinterList
-          .firstWhere((elem) => elem.name == printerName);
-    } else {
-      defaultPrinter = await PrintHelper.setDefaultPrinter();
-    }
+    //   printer = printingController.systemPrinterList
+    //       .firstWhere((elem) => elem.name == printerName);
+    // } else {
+    //   defaultPrinter = await PrintHelper.setDefaultPrinter();
+    // }
     if (!disablePrintOrderInvoice) {
       var printingSetting = await getPrintingSetting();
       var ipPorts = await LanPrintingHelper.listSharedPrintersWithIP();
