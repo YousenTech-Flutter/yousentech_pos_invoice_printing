@@ -18,6 +18,7 @@ dependencies:
   esc_pos_printer: ^4.1.0
   esc_pos_utils: ^1.1.0
   image: ^3.0.2
+
   pos_shared_preferences:
     git:
       url: https://github.com/YousenTech-Flutter/yousentech_pos_shared_preferences.git
@@ -58,7 +59,7 @@ dev_dependencies:
   flutter_lints: ^5.0.0
 
 dependency_overrides:
-  image: ^4.1.0
+  image: ^3.0.2
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
