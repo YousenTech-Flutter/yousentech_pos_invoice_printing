@@ -242,7 +242,7 @@ class PrintingInvoiceController extends GetxController {
     if (!disablePrintOrderInvoice) {
       var printingSetting = await getPrintingSetting();
       var ipPorts = await LanPrintingHelper.listSharedPrintersWithIP();
-      List<Printer> printers = await PrintHelper.getPrinters();
+      // List<Printer> printers = await PrintHelper.getPrinters();
       Map<String, List<SaleOrderLine>> printerToItems = {};
       // IP + تصنيف → سطور الأصناف
       for (var printer in printingSetting) {
@@ -272,9 +272,10 @@ class PrintingInvoiceController extends GetxController {
         if (entry.key.split(':').last == PrintingType.is_silent_printing.name) {
           result = await Printing.directPrintPdf(
             format: pdfFormat,
-            printer: printers.firstWhere(
-                (p) => p.name.trim() == findPort.name.trim(),
-                orElse: () => printer ?? defaultPrinter),
+            printer: findPort,
+            // printers.firstWhere(
+            //     (p) => p.name.trim() == findPort.name.trim(),
+            //     orElse: () => printer ?? defaultPrinter),
             onLayout: await buildPDFLayout(
               format: pdfFormat,
               isdownloadRoll: false,
@@ -294,41 +295,40 @@ class PrintingInvoiceController extends GetxController {
           );
         }
       }
-      if (printerToItems.entries.isEmpty &&
-          SharedPr.currentPosObject!.disableNetworkPrinting!) {
-        // نجمع المنتجات حسب الفئة
-        Map<int?, List<SaleOrderLine>> categoryToItems = {};
-        for (var line in saleOrderLinesList!) {
-          final category = line.productId?.soPosCategId;
-          categoryToItems.putIfAbsent(category, () => []).add(line);
-        }
-        for (var entry in categoryToItems.entries) {
-          final items = entry.value;
-          result = await Printing.directPrintPdf(
-            format: pdfFormat,
-            printer: printer ?? defaultPrinter,
-            onLayout: await buildPDFLayout(
-              format: pdfFormat,
-              isdownloadRoll: false,
-              items: items,
-            ),
-            name: '${items[0].productId?.soPosCategName}',
-          );
-        }
-      }
+      // if (printerToItems.entries.isEmpty && SharedPr.currentPosObject!.disableNetworkPrinting!) {
+      //   // نجمع المنتجات حسب الفئة
+      //   Map<int?, List<SaleOrderLine>> categoryToItems = {};
+      //   for (var line in saleOrderLinesList!) {
+      //     final category = line.productId?.soPosCategId;
+      //     categoryToItems.putIfAbsent(category, () => []).add(line);
+      //   }
+      //   for (var entry in categoryToItems.entries) {
+      //     final items = entry.value;
+      //     result = await Printing.directPrintPdf(
+      //       format: pdfFormat,
+      //       printer: printer ?? defaultPrinter,
+      //       onLayout: await buildPDFLayout(
+      //         format: pdfFormat,
+      //         isdownloadRoll: false,
+      //         items: items,
+      //       ),
+      //       name: '${items[0].productId?.soPosCategName}',
+      //     );
+      //   }
+      // }
     }
-    if (!disablePrintFullInvoice) {
-      // ✅ اطبع كل الفاتورة كاملة (الكل)
-      result = await Printing.directPrintPdf(
-        format: pdfFormat,
-        printer: printer ?? defaultPrinter,
-        onLayout: await buildPDFLayout(
-          format: pdfFormat,
-          isdownloadRoll: true,
-        ),
-        name: saleOrderInvoice!.id.toString(),
-      );
-    }
+    // if (!disablePrintFullInvoice) {
+    //   // ✅ اطبع كل الفاتورة كاملة (الكل)
+    //   result = await Printing.directPrintPdf(
+    //     format: pdfFormat,
+    //     printer: printer ?? defaultPrinter,
+    //     onLayout: await buildPDFLayout(
+    //       format: pdfFormat,
+    //       isdownloadRoll: true,
+    //     ),
+    //     name: saleOrderInvoice!.id.toString(),
+    //   );
+    // }
   }
   Future<Directory> pdfCreatDirectory(String directoryName) async {
   Directory baseDir;
