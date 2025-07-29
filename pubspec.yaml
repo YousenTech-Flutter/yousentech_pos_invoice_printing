@@ -12,12 +12,12 @@ dependencies:
     sdk: flutter
   get: ^4.6.6
   intl: ^0.20.2
-  pdf: ^3.11.3
+  pdf: ^3.6.5
   printing: ^5.14.2
   flutter_screenutil: ^5.9.3
   esc_pos_printer: ^4.1.0
   esc_pos_utils: ^1.1.0
-
+  image: ^3.0.2
   pos_shared_preferences:
     git:
       url: https://github.com/YousenTech-Flutter/yousentech_pos_shared_preferences.git
