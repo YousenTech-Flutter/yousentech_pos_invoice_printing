@@ -604,23 +604,23 @@ class PrintingInvoiceController extends GetxController {
     return ff;
   }
 
-Future<void> printToEpsonM267F() async {
-  final profile = await CapabilityProfile.load();
-  final printer = NetworkPrinter(PaperSize.mm80, profile);
+// Future<void> printToEpsonM267F() async {
+//   final profile = await CapabilityProfile.load();
+//   final printer = NetworkPrinter(PaperSize.mm80, profile);
 
-  final PosPrintResult res = await printer.connect(
-    '192.168.12.122', // استبدل هذا بالـ IP الفعلي للطابعة
-    port: 9100, // المنفذ الشائع لطابعات Epson POS
-  );
+//   final PosPrintResult res = await printer.connect(
+//     '192.168.12.122', // استبدل هذا بالـ IP الفعلي للطابعة
+//     port: 9100, // المنفذ الشائع لطابعات Epson POS
+//   );
 
-  if (res == PosPrintResult.success) {
-    printer.text('🍽️ طلب جديد');
-    printer.text('1x كبسة دجاج');
-    printer.text('1x ماء');
-    printer.cut();
-    printer.disconnect();
-  } else {
-    print('فشل الاتصال بالطابعة: $res');
-  }
-}
+//   if (res == PosPrintResult.success) {
+//     printer.text('🍽️ طلب جديد');
+//     printer.text('1x كبسة دجاج');
+//     printer.text('1x ماء');
+//     printer.cut();
+//     printer.disconnect();
+//   } else {
+//     print('فشل الاتصال بالطابعة: $res');
+//   }
+// }
 }
