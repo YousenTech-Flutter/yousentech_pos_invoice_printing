@@ -33,6 +33,7 @@ import 'package:yousentech_pos_payment/payment/domain/payment_viewmodel.dart';
 import 'package:yousentech_pos_payment_summary/payment_summary/presentation/payment_sammry_screen.dart';
 import 'package:yousentech_pos_printing/printing/domain/app_connected_printers/connected_printer_viewmodel.dart';
 import 'package:yousentech_pos_printing/printing/utils/subnet_determination.dart';
+import 'package:ysn_pos_android_printer/android_printer/printer.dart';
 
 import '../utils/a4_print_helper.dart';
 // import 'package:pdf/widgets.dart' as pw;
@@ -76,44 +77,44 @@ class PrintingInvoiceController extends GetxController {
 
   // ================================================================ [ GET ACCOUNT JOURNAL ] ===============================================================
   nextPressed({required String format,bool isFromPayment = false,bool skipDisablePrinting = false,bool skipDisablePrintOrderInvoice = false}) async {
-    // print("=================== printToEpsonM267F===========");
-    // await printToEpsonM267F();
+    print("=================== printToEpsonM267F===========");
+    await printToEpsonM267F();
     
     // PdfPageFormat.roll80
-    PdfPageFormat pdfFormat = getFormatByName(formatName: format);
-    if (isFromPayment) {
-      if (format == "Roll80") {
+    // PdfPageFormat pdfFormat = getFormatByName(formatName: format);
+    // if (isFromPayment) {
+    //   if (format == "Roll80") {
         
-        if (SharedPr.printingPreferenceObj!.isSilentPrinting!) {
-          await printingInvoiceDirectPrintPdf(
-              format: format,
-              pdfFormat: pdfFormat,
-              disablePrintFullInvoice:
-                  (!SharedPr.printingPreferenceObj!.disablePrinting! ||
-                          skipDisablePrinting)
-                      ? false
-                      : true,
-              disablePrintOrderInvoice: skipDisablePrintOrderInvoice
-                  ? false
-                  : SharedPr.currentPosObject!.disableNetworkPrinting!);
-        } else {
-          await printingInvoiceLayoutPdf(
-              pdfFormat: pdfFormat,
-              disablePrintFullInvoice:
-                  (!SharedPr.printingPreferenceObj!.disablePrinting! ||
-                          skipDisablePrinting)
-                      ? false
-                      : true,
-              disablePrintOrderInvoice: skipDisablePrintOrderInvoice
-                  ? false
-                  : SharedPr.currentPosObject!.disableNetworkPrinting!);
-        }
-      } else if (SharedPr.printingPreferenceObj!.isDownloadPDF!) {
-        await downloadPDF(format: pdfFormat);
-      }
-    } else {
-      await printingInvoiceDirectPrintPdf(pdfFormat: pdfFormat, format: format);
-    }
+    //     if (SharedPr.printingPreferenceObj!.isSilentPrinting!) {
+    //       await printingInvoiceDirectPrintPdf(
+    //           format: format,
+    //           pdfFormat: pdfFormat,
+    //           disablePrintFullInvoice:
+    //               (!SharedPr.printingPreferenceObj!.disablePrinting! ||
+    //                       skipDisablePrinting)
+    //                   ? false
+    //                   : true,
+    //           disablePrintOrderInvoice: skipDisablePrintOrderInvoice
+    //               ? false
+    //               : SharedPr.currentPosObject!.disableNetworkPrinting!);
+    //     } else {
+    //       await printingInvoiceLayoutPdf(
+    //           pdfFormat: pdfFormat,
+    //           disablePrintFullInvoice:
+    //               (!SharedPr.printingPreferenceObj!.disablePrinting! ||
+    //                       skipDisablePrinting)
+    //                   ? false
+    //                   : true,
+    //           disablePrintOrderInvoice: skipDisablePrintOrderInvoice
+    //               ? false
+    //               : SharedPr.currentPosObject!.disableNetworkPrinting!);
+    //     }
+    //   } else if (SharedPr.printingPreferenceObj!.isDownloadPDF!) {
+    //     await downloadPDF(format: pdfFormat);
+    //   }
+    // } else {
+    //   await printingInvoiceDirectPrintPdf(pdfFormat: pdfFormat, format: format);
+    // }
   }
 
   downloadPDF({required format, bool isdownloadRoll = false}) async {
@@ -601,23 +602,5 @@ class PrintingInvoiceController extends GetxController {
     return ff;
   }
 
-// Future<void> printToEpsonM267F() async {
-//   final profile = await CapabilityProfile.load();
-//   final printer = NetworkPrinter(PaperSize.mm80, profile);
 
-//   final PosPrintResult res = await printer.connect(
-//     '192.168.12.122', // استبدل هذا بالـ IP الفعلي للطابعة
-//     port: 9100, // المنفذ الشائع لطابعات Epson POS
-//   );
-
-//   if (res == PosPrintResult.success) {
-//     printer.text('🍽️ طلب جديد');
-//     printer.text('1x كبسة دجاج');
-//     printer.text('1x ماء');
-//     printer.cut();
-//     printer.disconnect();
-//   } else {
-//     print('فشل الاتصال بالطابعة: $res');
-//   }
-// }
 }
