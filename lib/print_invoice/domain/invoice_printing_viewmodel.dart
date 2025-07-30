@@ -85,6 +85,7 @@ class PrintingInvoiceController extends GetxController {
               isdownloadRoll: false,
               items: saleOrderLinesList,
             );
+    print("=================== gg===========${gg.runtimeType}");
     await printPdfFile(gg);
     // PdfPageFormat.roll80
     // PdfPageFormat pdfFormat = getFormatByName(formatName: format);
