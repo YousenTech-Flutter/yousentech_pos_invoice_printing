@@ -320,6 +320,8 @@ Future<pw.Document> rollPrint2({PdfPageFormat? format,isdownloadRoll = false,Lis
   return pdf;
 }
 
+
+
 pw.Align infoText(
     {required String value,
     bool isbold = true,

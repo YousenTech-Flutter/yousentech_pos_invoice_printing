@@ -84,8 +84,9 @@ class PrintingInvoiceController extends GetxController {
     pdf = await rollPrint2(
           format: pdfFormat, isdownloadRoll: false, items: saleOrderLinesList);
     var gg =  pdf!.save();
+    
     print("=================== gg===========${gg.runtimeType}");
-    await printPdfFile(gg);
+    await printReceipt();
     // PdfPageFormat.roll80
     // PdfPageFormat pdfFormat = getFormatByName(formatName: format);
     // if (isFromPayment) {
