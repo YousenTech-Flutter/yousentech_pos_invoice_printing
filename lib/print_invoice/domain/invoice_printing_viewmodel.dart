@@ -33,6 +33,7 @@ import 'package:yousentech_pos_payment/payment/domain/payment_viewmodel.dart';
 import 'package:yousentech_pos_payment_summary/payment_summary/presentation/payment_sammry_screen.dart';
 import 'package:yousentech_pos_printing/printing/domain/app_connected_printers/connected_printer_viewmodel.dart';
 import 'package:yousentech_pos_printing/printing/utils/subnet_determination.dart';
+import 'package:ysn_pos_android_printer/android_printer/printer.dart';
 
 
 import '../utils/a4_print_helper.dart';
