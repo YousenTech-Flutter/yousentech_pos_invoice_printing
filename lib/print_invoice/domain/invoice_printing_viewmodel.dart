@@ -80,11 +80,10 @@ class PrintingInvoiceController extends GetxController {
     print("=================== printToEpsonM267F===========");
     // await printToEpsonM267F();
     PdfPageFormat pdfFormat = getFormatByName(formatName: format);
-    var gg = await buildPDFLayout(
-              format: pdfFormat,
-              isdownloadRoll: false,
-              items: saleOrderLinesList,
-            );
+     
+    pdf = await rollPrint2(
+          format: pdfFormat, isdownloadRoll: false, items: saleOrderLinesList);
+    var gg =  pdf!.save();
     print("=================== gg===========${gg.runtimeType}");
     await printPdfFile(gg);
     // PdfPageFormat.roll80
