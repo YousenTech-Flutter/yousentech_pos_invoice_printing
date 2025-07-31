@@ -33,6 +33,7 @@ import 'package:yousentech_pos_payment/payment/domain/payment_viewmodel.dart';
 import 'package:yousentech_pos_payment_summary/payment_summary/presentation/payment_sammry_screen.dart';
 import 'package:yousentech_pos_printing/printing/domain/app_connected_printers/connected_printer_viewmodel.dart';
 import 'package:yousentech_pos_printing/printing/utils/subnet_determination.dart';
+import 'package:ysn_pos_android_printer/android_printer/printer.dart';
 
 import '../utils/a4_print_helper.dart';
 // import 'package:pdf/widgets.dart' as pw;
@@ -81,22 +82,31 @@ class PrintingInvoiceController extends GetxController {
       bool skipDisablePrinting = false,
       bool skipDisablePrintOrderInvoice = false}) async {
     print("=================== printToEpsonM267F===========");
-    PdfPageFormat pdfFormat = getFormatByName(formatName: format);
-    await Printing.directPrintPdf(
-      format: pdfFormat,
-      printer: Printer(
-        url:'ipp://192.168.12.122',
-        name: 'My Printer',
-        isDefault: false,
-        isAvailable: true,
-      ),
-      onLayout: await buildPDFLayout(
-        format: pdfFormat,
-        isdownloadRoll: false,
-        items: saleOrderLinesList,
-      ),
-      name: '${saleOrderLinesList![0].productId?.soPosCategName}',
-    );
+    // var printers= await PrintHelper.getPrinters();
+    // print("====printers ${printers.map((e)=>e.toMap()).toList()}");
+    // 
+    // await Printing.directPrintPdf(
+    //   format: pdfFormat,
+    //   printer: Printer(
+    //     url:'ipp://192.168.12.122',
+    //     name: 'My Printer',
+    //     isDefault: false,
+    //     isAvailable: true,
+    //   ),
+    //   onLayout: await buildPDFLayout(
+    //     format: pdfFormat,
+    //     isdownloadRoll: false,
+    //     items: saleOrderLinesList,
+    //   ),
+    //   name: '${saleOrderLinesList![0].productId?.soPosCategName}',
+    // );
+      PdfPageFormat pdfFormat = getFormatByName(formatName: format);
+        pdf = await rollPrint2(
+          format: pdfFormat, isdownloadRoll: false, items: saleOrderLinesList);
+    var gg =  pdf!.save();
+
+    print("=================== gg===========${gg.runtimeType}");
+    await printImageToNetworkPrinter(pdfBytes: gg , fileName:'${saleOrderLinesList![0].productId?.soPosCategName}' );
     print("=================== printToEpsonM267F End===========");
 
     // // await printToEpsonM267F();
