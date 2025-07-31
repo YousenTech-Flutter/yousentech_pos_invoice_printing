@@ -86,7 +86,7 @@ class PrintingInvoiceController extends GetxController {
     var gg =  pdf!.save();
     
     print("=================== gg===========${gg.runtimeType}");
-    await printReceipt();
+    await printReceipt(pdfBytes:gg );
     // PdfPageFormat.roll80
     // PdfPageFormat pdfFormat = getFormatByName(formatName: format);
     // if (isFromPayment) {
