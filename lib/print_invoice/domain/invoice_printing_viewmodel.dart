@@ -35,10 +35,10 @@ import 'package:yousentech_pos_printing/printing/domain/app_connected_printers/c
 import 'package:yousentech_pos_printing/printing/utils/subnet_determination.dart';
 import 'package:ysn_pos_android_printer/android_printer/printer.dart';
 
-
 import '../utils/a4_print_helper.dart';
 // import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
+
 class PrintingInvoiceController extends GetxController {
   SaleOrderInvoice? saleOrderInvoice;
   List<SaleOrderLine>? saleOrderLinesList;
@@ -76,22 +76,45 @@ class PrintingInvoiceController extends GetxController {
   }
 
   // ================================================================ [ GET ACCOUNT JOURNAL ] ===============================================================
-  nextPressed({required String format,bool isFromPayment = false,bool skipDisablePrinting = false,bool skipDisablePrintOrderInvoice = false}) async {
+  nextPressed(
+      {required String format,
+      bool isFromPayment = false,
+      bool skipDisablePrinting = false,
+      bool skipDisablePrintOrderInvoice = false}) async {
     print("=================== printToEpsonM267F===========");
-    // await printToEpsonM267F();
     PdfPageFormat pdfFormat = getFormatByName(formatName: format);
-     
-    pdf = await rollPrint2(
-          format: pdfFormat, isdownloadRoll: false, items: saleOrderLinesList);
-    var gg =  pdf!.save();
-    
-    print("=================== gg===========${gg.runtimeType}");
-    await printReceipt(pdfBytes:gg );
+    await Printing.directPrintPdf(
+      format: pdfFormat,
+      printer: Printer(
+        url:'ipp://192.168.12.122',
+        name: 'My Printer',
+        isDefault: false,
+        isAvailable: true,
+      ),
+      onLayout: await buildPDFLayout(
+        format: pdfFormat,
+        isdownloadRoll: false,
+        items: saleOrderLinesList,
+      ),
+      name: '${saleOrderLinesList![0].productId?.soPosCategName}',
+    );
+    print("=================== printToEpsonM267F End===========");
+
+    // // await printToEpsonM267F();
+    // PdfPageFormat pdfFormat = getFormatByName(formatName: format);
+
+    // pdf = await rollPrint2(
+    //       format: pdfFormat, isdownloadRoll: false, items: saleOrderLinesList);
+    // var gg =  pdf!.;
+
+    // print("=================== gg===========${gg.runtimeType}");
+    // await printReceipt(pdfBytes:gg );
+
     // PdfPageFormat.roll80
     // PdfPageFormat pdfFormat = getFormatByName(formatName: format);
     // if (isFromPayment) {
     //   if (format == "Roll80") {
-        
+
     //     if (SharedPr.printingPreferenceObj!.isSilentPrinting!) {
     //       await printingInvoiceDirectPrintPdf(
     //           format: format,
@@ -135,7 +158,10 @@ class PrintingInvoiceController extends GetxController {
         pdfDirectory: pdfDirectory, filename: saleOrderInvoice!.id.toString());
   }
 
-  printingInvoiceLayoutPdf({required PdfPageFormat pdfFormat,bool disablePrintFullInvoice = false,bool disablePrintOrderInvoice = false}) async {
+  printingInvoiceLayoutPdf(
+      {required PdfPageFormat pdfFormat,
+      bool disablePrintFullInvoice = false,
+      bool disablePrintOrderInvoice = false}) async {
     if (!disablePrintOrderInvoice) {
       var printingSetting = await getPrintingSetting();
       Map<String, List<SaleOrderLine>> printerToItems = {};
@@ -226,7 +252,11 @@ class PrintingInvoiceController extends GetxController {
     }
   }
 
-  printingInvoiceDirectPrintPdf({required PdfPageFormat pdfFormat,required String format,bool disablePrintFullInvoice = false,bool disablePrintOrderInvoice = false}) async {
+  printingInvoiceDirectPrintPdf(
+      {required PdfPageFormat pdfFormat,
+      required String format,
+      bool disablePrintFullInvoice = false,
+      bool disablePrintOrderInvoice = false}) async {
     bool result;
     Printer? printer;
     late Printer defaultPrinter;
@@ -340,37 +370,38 @@ class PrintingInvoiceController extends GetxController {
     //   );
     // }
   }
+
   Future<Directory> pdfCreatDirectory(String directoryName) async {
-  Directory baseDir;
+    Directory baseDir;
 
-  if (Platform.isWindows) {
-    baseDir = Directory('${Platform.environment['USERPROFILE']}/Documents');
-  } else if (Platform.isAndroid) {
-    // baseDir = (await getExternalStorageDirectory())!;
-    baseDir = Directory('/storage/emulated/0/Download');
-    if(kDebugMode){
-      print("Platform.isAndroid baseDir :: ${baseDir.path}");
+    if (Platform.isWindows) {
+      baseDir = Directory('${Platform.environment['USERPROFILE']}/Documents');
+    } else if (Platform.isAndroid) {
+      // baseDir = (await getExternalStorageDirectory())!;
+      baseDir = Directory('/storage/emulated/0/Download');
+      if (kDebugMode) {
+        print("Platform.isAndroid baseDir :: ${baseDir.path}");
+      }
+    } else if (Platform.isMacOS || Platform.isLinux) {
+      baseDir = Directory('${Platform.environment['HOME']}/Documents');
+    } else {
+      // fallback for unsupported platform
+      baseDir = await getApplicationDocumentsDirectory();
     }
-  } else if (Platform.isMacOS || Platform.isLinux) {
-    baseDir = Directory('${Platform.environment['HOME']}/Documents');
-  } else {
-    // fallback for unsupported platform
-    baseDir = await getApplicationDocumentsDirectory();
+
+    final downloadPath = SharedPr.printingPreferenceObj?.downloadPath;
+    final pdfDirectory = Directory(
+      (downloadPath == null || downloadPath.isEmpty)
+          ? '${baseDir.path}/$directoryName'
+          : downloadPath,
+    );
+
+    if (!pdfDirectory.existsSync()) {
+      pdfDirectory.createSync(recursive: true);
+    }
+
+    return pdfDirectory;
   }
-
-  final downloadPath = SharedPr.printingPreferenceObj?.downloadPath;
-  final pdfDirectory = Directory(
-    (downloadPath == null || downloadPath.isEmpty)
-        ? '${baseDir.path}/$directoryName'
-        : downloadPath,
-  );
-
-  if (!pdfDirectory.existsSync()) {
-    pdfDirectory.createSync(recursive: true);
-  }
-
-  return pdfDirectory;
-}
 
   pdfCreatfile(
       {Document? pdfSession,
@@ -420,7 +451,10 @@ class PrintingInvoiceController extends GetxController {
     }
   }
 
-  buildPDFLayout({required PdfPageFormat format,bool isdownloadRoll = false,List<SaleOrderLine>? items}) {
+  buildPDFLayout(
+      {required PdfPageFormat format,
+      bool isdownloadRoll = false,
+      List<SaleOrderLine>? items}) {
     return (format) => isCash
         ? generateCachPdf(
             format: format, isdownloadRoll: isdownloadRoll, items: items)
@@ -459,7 +493,10 @@ class PrintingInvoiceController extends GetxController {
     return pdf!.save();
   }
 
-  Future<Uint8List> generateCachPdf({required PdfPageFormat format,required bool isdownloadRoll,List<SaleOrderLine>? items}) async {
+  Future<Uint8List> generateCachPdf(
+      {required PdfPageFormat format,
+      required bool isdownloadRoll,
+      List<SaleOrderLine>? items}) async {
     if (isDefault) {
       pdf = await rollPrint2(
           format: format, isdownloadRoll: isdownloadRoll, items: items);
@@ -608,6 +645,4 @@ class PrintingInvoiceController extends GetxController {
     var ff = await generalLocalDBInstance!.index();
     return ff;
   }
-
-
 }

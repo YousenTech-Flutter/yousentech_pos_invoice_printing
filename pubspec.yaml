@@ -48,10 +48,10 @@ dependencies:
     git:
       url: https://github.com/YousenTech-Flutter/yousentech_pos_local_db.git
       ref: master
-  ysn_pos_android_printer:
-    git:
-      url: https://github.com/YousenTech-Flutter/ysn_pos_android_printer.git
-      ref: main
+  # ysn_pos_android_printer:
+  #   git:
+  #     url: https://github.com/YousenTech-Flutter/ysn_pos_android_printer.git
+  #     ref: main
   path_provider: ^2.1.5
 
 dev_dependencies:
