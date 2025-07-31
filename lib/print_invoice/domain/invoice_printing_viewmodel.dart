@@ -108,6 +108,9 @@ class PrintingInvoiceController extends GetxController {
     print("=================== gg===========${gg.runtimeType}");
     await printImageToNetworkPrinter(pdfBytes: gg , fileName:'${saleOrderLinesList![0].productId?.soPosCategName}' );
     print("=================== printToEpsonM267F End===========");
+    print("=================== printImage Start===========");
+    await  printImage();
+    print("=================== printImage End===========");
 
     // // await printToEpsonM267F();
     // PdfPageFormat pdfFormat = getFormatByName(formatName: format);
