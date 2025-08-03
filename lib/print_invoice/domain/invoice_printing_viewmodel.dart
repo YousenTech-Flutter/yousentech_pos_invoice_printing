@@ -81,82 +81,71 @@ class PrintingInvoiceController extends GetxController {
       bool isFromPayment = false,
       bool skipDisablePrinting = false,
       bool skipDisablePrintOrderInvoice = false}) async {
-    print("=================== printToEpsonM267F===========");
-    // var printers= await PrintHelper.getPrinters();
-    // print("====printers ${printers.map((e)=>e.toMap()).toList()}");
-    // 
-    // await Printing.directPrintPdf(
-    //   format: pdfFormat,
-    //   printer: Printer(
-    //     url:'ipp://192.168.12.122',
-    //     name: 'My Printer',
-    //     isDefault: false,
-    //     isAvailable: true,
-    //   ),
-    //   onLayout: await buildPDFLayout(
-    //     format: pdfFormat,
-    //     isdownloadRoll: false,
-    //     items: saleOrderLinesList,
-    //   ),
-    //   name: '${saleOrderLinesList![0].productId?.soPosCategName}',
-    // );
-      PdfPageFormat pdfFormat = getFormatByName(formatName: format);
-        pdf = await rollPrint2(
-          format: pdfFormat, isdownloadRoll: false, items: saleOrderLinesList);
-    var gg =  pdf!.save();
-
-    print("=================== gg===========${gg.runtimeType}");
-    await printImageToNetworkPrinter(pdfBytes: gg , fileName:'${saleOrderLinesList![0].productId?.soPosCategName}' );
-    print("=================== printToEpsonM267F End===========");
-    print("=================== printImage Start===========");
-    await  printImage();
-    print("=================== printImage End===========");
-
-    // // await printToEpsonM267F();
-    // PdfPageFormat pdfFormat = getFormatByName(formatName: format);
-
-    // pdf = await rollPrint2(
+    // print("=================== printToEpsonM267F===========");
+    // // var printers= await PrintHelper.getPrinters();
+    // // print("====printers ${printers.map((e)=>e.toMap()).toList()}");
+    // // 
+    // // await Printing.directPrintPdf(
+    // //   format: pdfFormat,
+    // //   printer: Printer(
+    // //     url:'ipp://192.168.12.122',
+    // //     name: 'My Printer',
+    // //     isDefault: false,
+    // //     isAvailable: true,
+    // //   ),
+    // //   onLayout: await buildPDFLayout(
+    // //     format: pdfFormat,
+    // //     isdownloadRoll: false,
+    // //     items: saleOrderLinesList,
+    // //   ),
+    // //   name: '${saleOrderLinesList![0].productId?.soPosCategName}',
+    // // );
+    //   PdfPageFormat pdfFormat = getFormatByName(formatName: format);
+    //     pdf = await rollPrint2(
     //       format: pdfFormat, isdownloadRoll: false, items: saleOrderLinesList);
-    // var gg =  pdf!.;
+    // var gg =  pdf!.save();
 
     // print("=================== gg===========${gg.runtimeType}");
-    // await printReceipt(pdfBytes:gg );
+    // await printImageToNetworkPrinter(pdfBytes: gg , fileName:'${saleOrderLinesList![0].productId?.soPosCategName}' );
+    // print("=================== printToEpsonM267F End===========");
+    // print("=================== printImage Start===========");
+    // await  printImage();
+    // print("=================== printImage End===========");
 
     // PdfPageFormat.roll80
-    // PdfPageFormat pdfFormat = getFormatByName(formatName: format);
-    // if (isFromPayment) {
-    //   if (format == "Roll80") {
-
-    //     if (SharedPr.printingPreferenceObj!.isSilentPrinting!) {
-    //       await printingInvoiceDirectPrintPdf(
-    //           format: format,
-    //           pdfFormat: pdfFormat,
-    //           disablePrintFullInvoice:
-    //               (!SharedPr.printingPreferenceObj!.disablePrinting! ||
-    //                       skipDisablePrinting)
-    //                   ? false
-    //                   : true,
-    //           disablePrintOrderInvoice: skipDisablePrintOrderInvoice
-    //               ? false
-    //               : SharedPr.currentPosObject!.disableNetworkPrinting!);
-    //     } else {
-    //       await printingInvoiceLayoutPdf(
-    //           pdfFormat: pdfFormat,
-    //           disablePrintFullInvoice:
-    //               (!SharedPr.printingPreferenceObj!.disablePrinting! ||
-    //                       skipDisablePrinting)
-    //                   ? false
-    //                   : true,
-    //           disablePrintOrderInvoice: skipDisablePrintOrderInvoice
-    //               ? false
-    //               : SharedPr.currentPosObject!.disableNetworkPrinting!);
-    //     }
-    //   } else if (SharedPr.printingPreferenceObj!.isDownloadPDF!) {
-    //     await downloadPDF(format: pdfFormat);
-    //   }
-    // } else {
-    //   await printingInvoiceDirectPrintPdf(pdfFormat: pdfFormat, format: format);
-    // }
+    PdfPageFormat pdfFormat = getFormatByName(formatName: format);
+    if (isFromPayment) {
+      if (format == "Roll80") {
+        if (SharedPr.printingPreferenceObj!.isSilentPrinting!) {
+          await printingInvoiceDirectPrintPdf(
+              format: format,
+              pdfFormat: pdfFormat,
+              disablePrintFullInvoice:
+                  (!SharedPr.printingPreferenceObj!.disablePrinting! ||
+                          skipDisablePrinting)
+                      ? false
+                      : true,
+              disablePrintOrderInvoice: skipDisablePrintOrderInvoice
+                  ? false
+                  : SharedPr.currentPosObject!.disableNetworkPrinting!);
+        } else {
+          await printingInvoiceLayoutPdf(
+              pdfFormat: pdfFormat,
+              disablePrintFullInvoice:
+                  (!SharedPr.printingPreferenceObj!.disablePrinting! ||
+                          skipDisablePrinting)
+                      ? false
+                      : true,
+              disablePrintOrderInvoice: skipDisablePrintOrderInvoice
+                  ? false
+                  : SharedPr.currentPosObject!.disableNetworkPrinting!);
+        }
+      } else if (SharedPr.printingPreferenceObj!.isDownloadPDF!) {
+        await downloadPDF(format: pdfFormat);
+      }
+    } else {
+      await printingInvoiceDirectPrintPdf(pdfFormat: pdfFormat, format: format);
+    }
   }
 
   downloadPDF({required format, bool isdownloadRoll = false}) async {
