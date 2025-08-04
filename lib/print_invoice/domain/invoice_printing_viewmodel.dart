@@ -265,7 +265,15 @@ class PrintingInvoiceController extends GetxController {
         Get.isRegistered<ConnectedPrinterController>()
             ? Get.find<ConnectedPrinterController>()
             : Get.put(ConnectedPrinterController());
-
+    Printer ? defaultPrinterinIP;
+    var printingSetting = await getPrintingSetting();
+    var ipPorts = await LanPrintingHelper.listSharedPrintersWithIP();
+    List<Printer> printers = await PrintHelper.getPrinters();
+    for (var setting in printingSetting) {
+      var findPort = ipPorts.firstWhere((port) => port.portName == setting.ipAddress && setting.isCustomerPrinter,
+            orElse: () => PowerShellSharedPrinter(name: '', portName: ''));
+      defaultPrinterinIP = printers.firstWhere((p) => p.name.trim() == findPort.name.trim());
+    }
     if (printingController.connectedPrinterList.isNotEmpty &&
         printingController.connectedPrinterList.any(
           (elem) => elem.paperType == format,
@@ -282,9 +290,9 @@ class PrintingInvoiceController extends GetxController {
       defaultPrinter = await PrintHelper.setDefaultPrinter();
     }
     if (!disablePrintOrderInvoice) {
-      var printingSetting = await getPrintingSetting();
-      var ipPorts = await LanPrintingHelper.listSharedPrintersWithIP();
-      List<Printer> printers = await PrintHelper.getPrinters();
+      // var printingSetting = await getPrintingSetting();
+      // var ipPorts = await LanPrintingHelper.listSharedPrintersWithIP();
+      // List<Printer> printers = await PrintHelper.getPrinters();
       Map<String, List<SaleOrderLine>> printerToItems = {};
       // IP + تصنيف → سطور الأصناف
       for (var printer in printingSetting) {
