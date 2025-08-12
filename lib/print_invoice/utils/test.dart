@@ -49,8 +49,9 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
   @override
   Widget build(BuildContext context) {
     print("===============Widget build");
-    return Offstage(
-      offstage: true,
+    return Opacity(
+      // offstage: true,
+      opacity: 0,
       child: Screenshot(
         controller:screenshotController,
         child: SizedBox(width: 150.w, child: widget.child),
