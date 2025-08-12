@@ -977,7 +977,8 @@ class PrintingInvoiceController extends GetxController {
     pipelineOwner.flushLayout();
     pipelineOwner.flushCompositingBits();
     pipelineOwner.flushPaint();
-
+    
+    await Future.delayed(Duration(milliseconds: 20));
     // تحويل إلى ui.Image
     final image = await repaintBoundary.toImage(pixelRatio: pixelRatio);
     final byteData = await image.toByteData(format: ImageByteFormat.png);
