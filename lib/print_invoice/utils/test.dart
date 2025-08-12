@@ -9,6 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:pos_shared_preferences/pos_shared_preferences.dart';
 import 'package:screenshot/screenshot.dart';
+import 'package:shared_widgets/config/app_colors.dart';
 import 'package:ysn_pos_android_printer/android_printer/printer.dart';
 
 class ScreenshotWidget extends StatefulWidget {
@@ -49,12 +50,15 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
   @override
   Widget build(BuildContext context) {
     print("===============Widget build");
-    return Opacity(
-      // offstage: true,
-      opacity: 0,
-      child: Screenshot(
-        controller:screenshotController,
-        child: SizedBox(width: 150.w, child: widget.child),
+    return Scaffold(
+      backgroundColor: AppColor.white,
+      body: Opacity(
+        // offstage: true,
+        opacity: 0,
+        child: Screenshot(
+          controller:screenshotController,
+          child: SizedBox(width: 150.w, child: widget.child),
+        ),
       ),
     );
   }
