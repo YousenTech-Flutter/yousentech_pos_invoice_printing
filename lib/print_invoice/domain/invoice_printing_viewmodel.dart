@@ -625,11 +625,10 @@ class PrintingInvoiceController extends GetxController {
         // }).catchError((onError) {});
         print("_printItems=================");
         
-        Get.to(() => ScreenshotWidget(
+        await   Get.to(() => ScreenshotWidget(
               printerIp: printerIp,
               child: rollAndroidPrint(isdownloadRoll: false, items: items),
             ));
-        await Future.delayed(Duration(seconds: 2));
         print("after ScreenshotWidget =================");
       }
     } else if (silent) {

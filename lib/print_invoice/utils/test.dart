@@ -41,7 +41,7 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
         await testPrint(imageThatC: image, printerIp: widget.printerIp);
       }).whenComplete(() {
         print("=========whenComplete");
-        Get.back();
+        Get.back(result: true);
       });
     });
   }
