@@ -32,10 +32,10 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
     super.initState();
     print("===============initState");
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await Future.delayed(Duration.zero);
+      await Future.delayed(Duration.zero);
       print("WidgetsBinding.instance.addPostFrameCallback ===============");
-      screenshotController
-          .capture(
-        delay: const Duration(milliseconds: 200),
+      screenshotController.capture(delay: const Duration(milliseconds: 200),
       )
       .then((image) async {
         print("=========image ${image!.length}");
