@@ -624,10 +624,13 @@ class PrintingInvoiceController extends GetxController {
         //   testPrint(imageThatC: image!, printerIp: printerIp);
         // }).catchError((onError) {});
         print("_printItems=================");
-        ScreenshotWidget(
-          printerIp:printerIp,
-          child: rollAndroidPrint(isdownloadRoll: false, items: items),
-        );
+        var result = await   generateInvoiceImage(items);
+        print("result=================${result.length}");
+        testPrint(imageThatC: result, printerIp: printerIp);
+        // ScreenshotWidget(
+        //   printerIp:printerIp,
+        //   child: rollAndroidPrint(isdownloadRoll: false, items: items),
+        // );
 
 
       }
@@ -980,5 +983,43 @@ class PrintingInvoiceController extends GetxController {
 //   // return byteData!.buffer.asUint8List();
 //   return repaintBoundary;
 // }
+Future<Uint8List> generateInvoiceImage(List<SaleOrderLine> items, {int width = 600, int height = 800}) async {
+  final recorder = PictureRecorder();
+  final canvas = Canvas(recorder);
 
+  final paint = Paint()..color = const Color(0xFFFFFFFF);
+  // ارسم خلفية بيضاء
+  canvas.drawRect(Rect.fromLTWH(0, 0, width.toDouble(), height.toDouble()), paint);
+
+  final textPainter = TextPainter(
+    textDirection: TextDirection.rtl, // لو لغتك عربية
+  );
+
+  // ارسم عنوان الفاتورة
+  textPainter.text = TextSpan(
+    text: 'فاتورة',
+    style: TextStyle(color: Color(0xFF000000), fontSize: 30),
+  );
+  textPainter.layout(minWidth: 0, maxWidth: width.toDouble());
+  textPainter.paint(canvas, Offset(20, 20));
+
+  // ارسم جدول أو بيانات العناصر
+  double yPosition = 70;
+  final textStyle = TextStyle(color: Color(0xFF000000), fontSize: 18);
+
+  for (var item in items) {
+    final line = '${item.name}  x ${item.productUomQty}  -  ${item.priceUnit}';
+    textPainter.text = TextSpan(text: line, style: textStyle);
+    textPainter.layout(minWidth: 0, maxWidth: width.toDouble());
+    textPainter.paint(canvas, Offset(20, yPosition));
+    yPosition += 30;
+  }
+
+  // أنهي الرسم وحصل على الصورة
+  final picture = recorder.endRecording();
+  final image = await picture.toImage(width, height);
+  final byteData = await image.toByteData(format: ImageByteFormat.png);
+
+  return byteData!.buffer.asUint8List();
+}
 }
