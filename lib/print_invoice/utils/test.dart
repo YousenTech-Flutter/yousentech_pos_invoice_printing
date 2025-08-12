@@ -39,7 +39,7 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
       )
       .then((image) async {
         print("=========image ${image!.length}");
-        testPrint(imageThatC: image, printerIp: widget.printerIp);
+        await testPrint(imageThatC: image, printerIp: widget.printerIp);
       }).whenComplete(() {
         print("=========whenComplete");
         Get.back();
