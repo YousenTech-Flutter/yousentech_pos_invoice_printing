@@ -493,7 +493,7 @@ class PrintingInvoiceController extends GetxController {
     Printer? defaultPrinter;
     List<dynamic> printingSetting = await getPrintingSetting();
     print("Platform.isAndroid ${Platform.isAndroid} Platform.isIOS ${Platform.isIOS}");
-    if ((!Platform.isAndroid || !Platform.isIOS)){
+    if ((!Platform.isAndroid && !Platform.isIOS)){
         ipPorts = await LanPrintingHelper.listSharedPrintersWithIP();
         printers = await PrintHelper.getPrinters();
         defaultPrinter = await PrintHelper.setDefaultPrinter();
