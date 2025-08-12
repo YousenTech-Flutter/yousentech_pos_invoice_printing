@@ -518,7 +518,7 @@ class PrintingInvoiceController extends GetxController {
         for (var setting in printingSetting) {
           if (setting.disablePrinting) continue;
           Printer  ? targetPrinter;
-          if((!Platform.isAndroid || !Platform.isIOS)){
+          if((!Platform.isAndroid && !Platform.isIOS)){
               var findPort = ipPorts.firstWhere(
                 (port) => port.portName == setting.ipAddress,
                 orElse: () => PowerShellSharedPrinter(name: '', portName: ''),
@@ -542,7 +542,7 @@ class PrintingInvoiceController extends GetxController {
           }
         }
       } else {
-        if((!Platform.isAndroid || !Platform.isIOS)){
+        if((!Platform.isAndroid && !Platform.isIOS)){
           // بدون إعدادات مخصصة: اطبع حسب الفئات
           var categoryToItems = <int?, List<SaleOrderLine>>{};
           for (var line in saleOrderLinesList!) {
