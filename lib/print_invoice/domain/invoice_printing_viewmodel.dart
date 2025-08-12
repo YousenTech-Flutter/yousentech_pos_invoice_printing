@@ -623,10 +623,15 @@ class PrintingInvoiceController extends GetxController {
         //   testPrint(imageThatC: image!, printerIp: printerIp);
         // }).catchError((onError) {});
 
-        final imageBytes = await widgetToImage(rollAndroidPrint(isdownloadRoll: false, items: items));
-        print("_printItems $imageBytes");
+        final repaintBoundary = await widgetToImage(rollAndroidPrint(isdownloadRoll: false, items: items));
+        print("repaintBoundary $repaintBoundary");
+        
+        // تحويل للصورة
+        final image = await repaintBoundary.toImage(pixelRatio: 3.0);
+        final byteData = await image.toByteData(format: ImageByteFormat.png);
+        print("byteData $byteData");
         // الآن تقدر ترسله للطابعة
-        testPrint(imageThatC: imageBytes, printerIp: printerIp);
+        testPrint(imageThatC: byteData!.buffer.asUint8List(), printerIp: printerIp);
 
       }
     } else if (silent) {
@@ -935,7 +940,7 @@ class PrintingInvoiceController extends GetxController {
     return await generalLocalDBInstance!.index();
   }
 
-Future<Uint8List> widgetToImage(Widget widget, {double pixelRatio = 3.0}) async {
+Future<RenderRepaintBoundary> widgetToImage(Widget widget, {double pixelRatio = 3.0}) async {
   final repaintBoundary = RenderRepaintBoundary();
 
   final renderView = RenderView(
@@ -975,10 +980,11 @@ Future<Uint8List> widgetToImage(Widget widget, {double pixelRatio = 3.0}) async 
   SchedulerBinding.instance.scheduleFrame();
   await SchedulerBinding.instance.endOfFrame;
 
-  // تحويل للصورة
-  final image = await repaintBoundary.toImage(pixelRatio: pixelRatio);
-  final byteData = await image.toByteData(format: ImageByteFormat.png);
-  return byteData!.buffer.asUint8List();
+  // // تحويل للصورة
+  // final image = await repaintBoundary.toImage(pixelRatio: pixelRatio);
+  // final byteData = await image.toByteData(format: ImageByteFormat.png);
+  // return byteData!.buffer.asUint8List();
+  return repaintBoundary;
 }
 
 }
