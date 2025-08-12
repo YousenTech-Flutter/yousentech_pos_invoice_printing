@@ -38,9 +38,11 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
         print("=========image ${image!.length}");
         testPrint(imageThatC: image ,printerIp:widget.printerIp );
         
-      }).catchError((onError) {
+      }).whenComplete((){
+        print("=========whenComplete");
+        Get.back();
       });
-      Get.back();
+      
     });
   }
 
