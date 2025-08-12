@@ -623,7 +623,7 @@ class PrintingInvoiceController extends GetxController {
         //   print("_printItems $image");
         //   testPrint(imageThatC: image!, printerIp: printerIp);
         // }).catchError((onError) {});
-
+        print("_printItems=================");
         ScreenshotWidget(
           printerIp:printerIp,
           child: rollAndroidPrint(isdownloadRoll: false, items: items),
