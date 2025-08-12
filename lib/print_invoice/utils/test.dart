@@ -35,8 +35,7 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
       await Future.delayed(Duration.zero);
       await Future.delayed(Duration.zero);
       print("WidgetsBinding.instance.addPostFrameCallback ===============");
-      screenshotController.capture(delay: const Duration(milliseconds: 200),
-      )
+      await screenshotController.capture()
       .then((image) async {
         print("=========image ${image!.length}");
         await testPrint(imageThatC: image, printerIp: widget.printerIp);
@@ -45,6 +44,12 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
         Get.back();
       });
     });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
   }
 
   @override
