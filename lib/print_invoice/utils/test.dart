@@ -30,38 +30,27 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
   @override
   void initState() {
     super.initState();
-    print("===============initState");
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await Future.delayed(Duration.zero);
       await Future.delayed(Duration.zero);
-      print("WidgetsBinding.instance.addPostFrameCallback ===============");
       await screenshotController.capture()
       .then((image) async {
-        print("=========image ${image!.length}");
-        await testPrint(imageThatC: image, printerIp: widget.printerIp);
+        await testPrint(imageThatC: image!, printerIp: widget.printerIp);
       }).whenComplete(() {
-        print("=========whenComplete");
         Get.back(result: true);
       });
     });
   }
 
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
-    print("===============Widget build");
     return Scaffold(
       backgroundColor: AppColor.white,
       body: Receipt(
         builder: (context) => Screenshot(
           controller: screenshotController,
-          child: SizedBox(
-              width: 150.w, child: widget.child),
+          child: widget.child,
         ),
         onInitialized: (controller) {
           controller.paperSize = PaperSize.mm80;
