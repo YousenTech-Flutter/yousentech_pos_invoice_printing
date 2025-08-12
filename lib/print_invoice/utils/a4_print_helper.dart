@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:get/get.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:pdf/pdf.dart';
@@ -16,31 +18,25 @@ import 'package:yousentech_pos_invoice_printing/print_invoice/presentation/widge
 import 'package:yousentech_pos_invoice_printing/print_invoice/presentation/widgets/a4_header_table_item.dart';
 import 'package:yousentech_pos_invoice_printing/print_invoice/presentation/widgets/a4_table_row_data.dart';
 
-Future<pw.Document> a4Print({required bool isSimple, Customer? customer, PdfPageFormat? format}) async {
+Future<pw.Document> a4Print({required bool isSimple, Customer? customer, PdfPageFormat? format , bool isRefundInvoice=false}) async {
   PrintingInvoiceController printingController =
       Get.put(PrintingInvoiceController());
   Customer? company = SharedPr.currentCompanyObject;
   final intl.NumberFormat formatter = intl.NumberFormat('#,##0.00', 'en_US');
   printingController.config();
   final pdf = pw.Document(version: PdfVersion.pdf_1_5, compress: true);
-  // List listHeder = [
-  //   {'title': "total_price", 'expanded': 2},
-  //   {'title': "vat_amount", 'expanded': 1},
-  //   {'title': "amount", 'expanded': 1},
-  //   {'title': "taxes", 'expanded': 1},
-  //   {'title': "unit_price", 'expanded': 1},
-  //   {'title': "quantity", 'expanded': 1},
-  //   {'title': "description", 'expanded': 3},
-  // ];
-    // basic_total  quantityMultipliedByUnitPriceForSubtotalPrice
-  //discount discountAsAmount
-  //tax_excl subtotalPrice
-  //tax_total totalTax
-  //'${'total'.tr} ${'with_tax'.tr}' totalPrice
+    pw.ImageProvider? imageHeader  ;
+  pw.ImageProvider? imageFooter ;
+  if(SharedPr.currentPosObject!.imageinvoiceHeader != null){
+      imageHeader = pw.MemoryImage(base64Decode(SharedPr.currentPosObject!.imageinvoiceHeader!));
+  }
+  if(SharedPr.currentPosObject!.imageinvoiceFooter != null){
+      imageFooter = pw.MemoryImage(base64Decode(SharedPr.currentPosObject!.imageinvoiceFooter!));
+  }
+  List<String> headerLines = SharedPr.currentPosObject!.invoiceHeaderLines == '' ?[]: SharedPr.currentPosObject!.invoiceHeaderLines!.trim().split('\n');
+  List<String> footerLines =SharedPr.currentPosObject!.invoiceFooterLines == '' ?[]: SharedPr.currentPosObject!.invoiceFooterLines!.trim().split('\n');
   List listHeder = [
     {'title': "total_price", 'expanded': 2},
-    // {'title': "vat_amount", 'expanded': 1},
-
     {'title': "taxes", 'expanded': 1},
 
     {'title': "amount", 'expanded': 1},
@@ -50,10 +46,6 @@ Future<pw.Document> a4Print({required bool isSimple, Customer? customer, PdfPage
   ];
 
   if (printingController.saleOrderInvoice!.totalDiscount != 0) {
-    // listHeder.insert(
-    //   2,
-    //   {'title': "tax_excl", 'expanded': 1},
-    // );
     listHeder.insert(
       3,
       {'title': "discount", 'expanded': 1},
@@ -66,15 +58,34 @@ Future<pw.Document> a4Print({required bool isSimple, Customer? customer, PdfPage
   pdf.addPage(pw.MultiPage(
       textDirection: pw.TextDirection.rtl,
       pageFormat: format,
-      header: (pw.Context context) => pw.Container(
-            height: 70,
-          ),
-      margin: const pw.EdgeInsets.only(
-        top: 45,
-        bottom: 32,
+      header: 
+      (pw.Context context) =>imageHeader==null ?  pw.Center(child: pw.Container(
+            child:pw.Column(
+              children: [... headerLines.map((line) => pw.Padding(padding:const pw.EdgeInsets.only(bottom: 5), 
+              child:  pw.Text(line,style: AppInvoiceStyle.titlInvoiceStyle())),),]
+            )  
+            
+          )): pw.Image(imageHeader),
+      footer:(pw.Context context) =>
+      imageFooter==null?  pw.Center(child: 
+      pw.Container(
+            child:  pw.Column(
+              children: [... footerLines.map((line) => pw.Padding(padding:const pw.EdgeInsets.only(bottom: 5), 
+              child:  pw.Text(line,style: AppInvoiceStyle.titlInvoiceStyle())),),]
+            )
+          )) : pw.Image(imageFooter),
+      margin: 
+      
+      const pw.EdgeInsets.only(
+        top: 30,
+        // bottom: 20,
         right: 30,
         left: 30,
       ),
+      //   margin: const pw.EdgeInsets.only(
+      //   right: 20,
+      //   left: 20,
+      // ),
       build: (context) {
         return [
           pw.Row(children: [
@@ -85,7 +96,8 @@ Future<pw.Document> a4Print({required bool isSimple, Customer? customer, PdfPage
                 mainAxisAlignment: pw.MainAxisAlignment.center,
                 children: [
                   pw.Text(
-                    '${en[isSimple ? printingController.title : 'tax_invoice']!} / ${ar[isSimple ? printingController.title : 'tax_invoice']!}', // Arabic text // Arabic text
+                   !isRefundInvoice ? '${en[isSimple ? printingController.title : 'tax_invoice']!} / ${ar[isSimple ? printingController.title : 'tax_invoice']!}' :
+                   '${en['credit_note']} / ${ar['credit_note']}' , // Arabic text
                     style: AppInvoiceStyle.titlInvoiceStyle(),
                   ),
                   pw.Divider(thickness: 1, color: AppInvoceColor.graydivider),
@@ -106,6 +118,12 @@ Future<pw.Document> a4Print({required bool isSimple, Customer? customer, PdfPage
                     value:
                         "${printingController.dayOrder} ${printingController.monthOrder} ${printingController.yearOrder}",
                   ),
+                  if(isRefundInvoice)...[
+                    headerItem(
+                    titel: 'credit_note_invoice',
+                    value:" Reversal of:  ${printingController.saleOrderInvoice!.originalInvoiceId![1]}, ${printingController.saleOrderInvoice!.refundNote}",
+                  ),
+                  ]
                 ],
               ),
             ),

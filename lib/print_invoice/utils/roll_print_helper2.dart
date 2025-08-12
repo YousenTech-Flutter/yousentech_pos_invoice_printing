@@ -62,7 +62,7 @@ Future<pw.Document> rollPrint2({PdfPageFormat? format,isdownloadRoll = false,Lis
                             pw.Container(height: 25,width: 25,child: pw.Image(companyImage),),
                             pw.SizedBox(height: 5),
                         ],
-                        infoText(value: printingController.title.tr),
+                        infoText(value:printingController.saleOrderInvoice!.refundNote != null && printingController.saleOrderInvoice!.refundNote != ''? "${"invoice".tr} ${'credit_note'.tr}" :  printingController.title.tr),
                         
                         if (company != null) ...[
                           pw.SizedBox(height: 5),
@@ -92,6 +92,14 @@ Future<pw.Document> rollPrint2({PdfPageFormat? format,isdownloadRoll = false,Lis
                                 '${'invoice_nmuber'.tr} : ${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}'),
                       ],
                     )),
+                                        pw.SizedBox(height: 3),
+                        pw.BarcodeWidget(
+                              data:'${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}',
+                              barcode:pw. Barcode.code128(),
+                              width: 100,
+                              height: 20,
+                              drawText: false,
+                              ),
                 pw.SizedBox(height: 10),
                 ...productItem(
                     saleOrderLinesList: printingController.saleOrderLinesList!,

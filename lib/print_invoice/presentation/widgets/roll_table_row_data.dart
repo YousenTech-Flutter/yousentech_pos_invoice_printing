@@ -1,8 +1,11 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:pos_shared_preferences/models/sale_order_line.dart';
 import 'package:pos_shared_preferences/pos_shared_preferences.dart';
+import 'package:shared_widgets/config/app_colors.dart';
 import 'package:shared_widgets/config/app_invoice_colors.dart';
 import 'package:shared_widgets/config/app_invoice_styles.dart';
 
@@ -106,7 +109,66 @@ List<pw.Column> productItem(
     ]);
   });
 }
-
+List<Column> productAndriodItem(
+    {required List<SaleOrderLine> saleOrderLinesList,
+    required formatter,
+    bool isShowNote = false,
+    required font}) {
+  return List.generate(saleOrderLinesList.length, (index) {
+    SaleOrderLine item = saleOrderLinesList[index];
+    return Column(children: [
+      productAndriodText(value: "${item.name}", isblack: true, isname: true),
+      if (item.note != null || item.categoryNotes != null) ...[
+        if (isShowNote) ...[
+          SizedBox(height: 2.h),
+          Row(children: [
+            // pw.Image(noteImage, width: 6, height: 6, dpi: 500),
+            SizedBox(width: 3.h),
+            productAndriodText(
+                value: " ${item.note} ",
+                isblack: false,
+                isname: true,
+                fontsize: 4.sp,
+                color: AppColor.gray),
+            if (item.categoryNotes != null &&
+                item.categoryNotes!.isNotEmpty) ...[
+              ...List.generate(item.categoryNotes!.length, (index) {
+                return productAndriodText(
+                    value: " ${item.categoryNotes![index].note} ",
+                    isblack: false,
+                    isname: true,
+                    fontsize:4.sp,
+                    color: AppColor.gray);
+              })
+            ]
+          ])
+        ]
+      ],
+      SizedBox(height: 5.h),
+      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        Padding(
+            padding: EdgeInsetsDirectional.only(start: 20.r),
+            child: Row(children: [
+              productAndriodText(value: "${item.productUomQty}", isblack: true),
+              productAndriodText(
+                value: " x ",
+              ),
+              if (!isShowNote) ...[
+                productAndriodText(
+                  value: "${formatter.format(item.priceUnit)} ${"S.R".tr}",
+                ),
+              ],
+            ])),
+        if (!isShowNote) ...[
+          productAndriodText(
+              value: "${formatter.format(item.totalPrice)} ${"S.R".tr}",
+              isblack: true),
+        ]
+      ]),
+      SizedBox(height: 10.h),
+    ]);
+  });
+}
 pw.Align productText({
   required String value,
   bool isbold = true,
@@ -130,7 +192,29 @@ pw.Align productText({
             color: color),
       ));
 }
-
+Align productAndriodText({
+  required String value,
+  bool isbold = true,
+  bool isname = false,
+  bool isblack = true,
+  bool isAlignmentCenter = false,
+  double? fontsize,
+  Color? color,
+}) {
+  return Align(
+      alignment: !isAlignmentCenter
+          ? AlignmentDirectional.centerStart
+          : AlignmentDirectional.center,
+      child: Text(
+        textDirection: isname ? TextDirection.rtl : null,
+        value,
+        style: TextStyle(
+            fontStyle: FontStyle.normal,
+            fontSize: fontsize ?? 4.sp,
+            color: (isblack ? AppColor.black : AppColor.gray),
+            fontWeight: FontWeight.bold),
+      ));
+}
 List<pw.Column> catogProductItem(
     {required List<SaleOrderLine> saleOrderLinesList,
     required formatter,
@@ -164,7 +248,39 @@ List<pw.Column> catogProductItem(
     ]);
   });
 }
-
+List<Column> catogProductAndriodItem(
+    {required List<SaleOrderLine> saleOrderLinesList,
+    required formatter,
+    bool isShowNote = false,
+    required font}) {
+  return List.generate(saleOrderLinesList.length, (index) {
+    SaleOrderLine item = saleOrderLinesList[index];
+    return Column(children: [
+      SizedBox(height: 10.h),
+      Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        SizedBox(
+            // width: 15.w,
+            child: productAndriodText(
+                value: "${index + 1}.", isblack: true, isname: true)),
+        SizedBox(
+          // width: 145.w,
+          child: productAndriodText(
+            value: buildProductNameWithNotes(item),
+            isblack: true,
+            isname: true,
+          ),
+        ),
+        const Spacer(),
+        SizedBox(
+            // width: 25.w,
+            child: productAndriodText(
+                value: "${item.productUomQty}",
+                isblack: true,
+                isAlignmentCenter: true)),
+      ]),
+    ]);
+  });
+}
 String buildProductNameWithNotes(item) {
   final notes = <String>[];
 

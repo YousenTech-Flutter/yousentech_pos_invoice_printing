@@ -53,7 +53,8 @@ dependencies:
       url: https://github.com/YousenTech-Flutter/ysn_pos_android_printer.git
       ref: main
   path_provider: ^2.1.5
-
+  barcode_widget: ^2.0.4
+  screenshot: ^3.0.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
