@@ -481,50 +481,56 @@ class PrintingInvoiceController extends GetxController {
   //   //   );
   //   // }
   // }
-    Future<void> printingInvoiceDirectPrintPdf({
+  Future<void> printingInvoiceDirectPrintPdf({
     required PdfPageFormat pdfFormat,
     required String format,
     bool disablePrintFullInvoice = false,
     bool disablePrintOrderInvoice = false,
   }) async {
-    List<dynamic> printingSetting = await getPrintingSetting();
-    var ipPorts = await LanPrintingHelper.listSharedPrintersWithIP();
-    List<Printer> printers = await PrintHelper.getPrinters();
-
-    Printer? defaultPrinter = await PrintHelper.setDefaultPrinter();
+    var ipPorts;
+    List<Printer> printers = [];
     Printer? printer;
+    Printer? defaultPrinter;
+    List<dynamic> printingSetting = await getPrintingSetting();
 
-    // جلب الطابعة من الـ Controller إن وُجدت
-    ConnectedPrinterController printingController =
-        Get.isRegistered<ConnectedPrinterController>()
-            ? Get.find<ConnectedPrinterController>()
-            : Get.put(ConnectedPrinterController());
+    if ((!Platform.isAndroid || !Platform.isIOS)){
+        ipPorts = await LanPrintingHelper.listSharedPrintersWithIP();
+        printers = await PrintHelper.getPrinters();
 
-    if (printingController.connectedPrinterList
-        .any((elem) => elem.paperType == format)) {
-      String printerName = printingController.connectedPrinterList
-          .firstWhere((elem) => elem.paperType == format)
-          .printerName!;
-      printer = printingController.systemPrinterList
-          .firstWhere((elem) => elem.name == printerName);
+        defaultPrinter = await PrintHelper.setDefaultPrinter();
+
+
+        // جلب الطابعة من الـ Controller إن وُجدت
+        ConnectedPrinterController printingController =
+            Get.isRegistered<ConnectedPrinterController>()
+                ? Get.find<ConnectedPrinterController>()
+                : Get.put(ConnectedPrinterController());
+
+        if (printingController.connectedPrinterList
+            .any((elem) => elem.paperType == format)) {
+          String printerName = printingController.connectedPrinterList
+              .firstWhere((elem) => elem.paperType == format)
+              .printerName!;
+          printer = printingController.systemPrinterList
+              .firstWhere((elem) => elem.name == printerName);
+        }
     }
-
     // طباعة الأصناف حسب الإعدادات
     if (!disablePrintOrderInvoice) {
       if (printingSetting.isNotEmpty) {
         for (var setting in printingSetting) {
           if (setting.disablePrinting) continue;
-
-          var findPort = ipPorts.firstWhere(
-            (port) => port.portName == setting.ipAddress,
-            orElse: () => PowerShellSharedPrinter(name: '', portName: ''),
-          );
-
-          final targetPrinter = printers.firstWhere(
-            (p) => p.name.trim() == findPort.name.trim(),
-            orElse: () => printer ?? defaultPrinter,
-          );
-
+          Printer  ? targetPrinter;
+          if((!Platform.isAndroid || !Platform.isIOS)){
+              var findPort = ipPorts.firstWhere(
+                (port) => port.portName == setting.ipAddress,
+                orElse: () => PowerShellSharedPrinter(name: '', portName: ''),
+              );
+              targetPrinter = printers.firstWhere(
+                (p) => p.name.trim() == findPort.name.trim(),
+                orElse: () => printer ?? defaultPrinter!,
+              );
+          }
           for (var categoryId in setting.posCategoryIds) {
             final filteredLines = saleOrderLinesList!
                 .where((line) => line.productId?.soPosCategId == categoryId)
@@ -533,52 +539,38 @@ class PrintingInvoiceController extends GetxController {
             if (filteredLines.isEmpty) continue;
 
             await _printItems(filteredLines, targetPrinter,
-                silent: setting.printingMode ==
-                    PrintingType.is_silent_printing.name,
+                silent: setting.printingMode == PrintingType.is_silent_printing.name,
                 printerIp: setting.ipAddress,
                 format: pdfFormat);
           }
         }
       } else {
-        // بدون إعدادات مخصصة: اطبع حسب الفئات
-        var categoryToItems = <int?, List<SaleOrderLine>>{};
-        for (var line in saleOrderLinesList!) {
-          categoryToItems
-              .putIfAbsent(line.productId?.soPosCategId, () => [])
-              .add(line);
+        if((!Platform.isAndroid || !Platform.isIOS)){
+          // بدون إعدادات مخصصة: اطبع حسب الفئات
+          var categoryToItems = <int?, List<SaleOrderLine>>{};
+          for (var line in saleOrderLinesList!) {
+            categoryToItems
+                .putIfAbsent(line.productId?.soPosCategId, () => [])
+                .add(line);
+          }
+          for (var items in categoryToItems.values) {
+            await _printItems(items, printer ?? defaultPrinter,
+                format: pdfFormat, printerIp: '');
+          }
         }
-        for (var items in categoryToItems.values) {
-          await _printItems(items, printer ?? defaultPrinter,
-              format: pdfFormat, printerIp: '');
-        }
+
       }
     }
 
     // طباعة الفاتورة الكاملة
     if (!disablePrintFullInvoice) {
-      // final targetPrinter = printers.firstWhere(
-      //   (p) => ipPorts.any((port) =>
-      //       port.name.trim() == p.name.trim() &&
-      //       printingSetting.any((setting) =>
-      //           setting.isCustomerPrinter &&
-      //           port.portName == setting.ipAddress)),
-      //   orElse: () => printer ?? defaultPrinter,
-      // );
-      final ipAddress = printingSetting
-          .firstWhere(
-            (s) => s.isCustomerPrinter,
-            orElse: () =>
+      final ipAddress = printingSetting.firstWhere(
+        (s) => s.isCustomerPrinter,
+          orElse: () =>
                 PrintingSetting(ipAddress: '', isCustomerPrinter: false),
-          )
-          .ipAddress;
-
-      final targetPrinter = printers.firstWhere(
-        (p) => ipPorts.any((port) =>
-            port.name.trim() == p.name.trim() && port.portName == ipAddress),
-        orElse: () => printer ?? defaultPrinter,
-      );
-
+          ).ipAddress;
       if ((Platform.isAndroid || Platform.isIOS)) {
+
         if (ipAddress != '') {
           Screenshot pdfWidget = Screenshot(
             controller: screenshotController,
@@ -593,6 +585,11 @@ class PrintingInvoiceController extends GetxController {
           }).catchError((onError) {});
         }
       } else {
+        final targetPrinter = printers.firstWhere(
+        (p) => ipPorts.any((port) =>
+            port.name.trim() == p.name.trim() && port.portName == ipAddress),
+        orElse: () => printer ?? defaultPrinter!,
+      );
         await Printing.directPrintPdf(
           format: pdfFormat,
           printer: targetPrinter,
@@ -607,7 +604,7 @@ class PrintingInvoiceController extends GetxController {
   }
 
   // دالة لطباعة PDF مباشرة أو عرضها
-  Future<void> _printItems(List<SaleOrderLine> items, Printer targetPrinter,
+  Future<void> _printItems(List<SaleOrderLine> items, Printer ? targetPrinter,
       {bool silent = true,
       required PdfPageFormat format,
       required String? printerIp}) async {
@@ -633,10 +630,10 @@ class PrintingInvoiceController extends GetxController {
     } else if (silent) {
       await Printing.directPrintPdf(
         format: format,
-        printer: targetPrinter,
+        printer: targetPrinter!,
         onLayout: pdfLayout,
         name: items.isNotEmpty
-            ? items[0].productId?.soPosCategName ?? "Invoice"
+            ? items[0].productId!.soPosCategName!
             : saleOrderInvoice!.id.toString(),
       );
     } else {
@@ -644,7 +641,7 @@ class PrintingInvoiceController extends GetxController {
         format: format,
         onLayout: pdfLayout,
         name: items.isNotEmpty
-            ? items[0].productId?.soPosCategName ?? "Invoice"
+            ? items[0].productId!.soPosCategName!
             : saleOrderInvoice!.id.toString(),
       );
     }
