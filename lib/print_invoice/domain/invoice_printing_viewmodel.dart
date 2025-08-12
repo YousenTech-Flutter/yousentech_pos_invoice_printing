@@ -30,6 +30,7 @@ import 'package:yousentech_pos_invoice_printing/print_invoice/utils/printer_help
 import 'package:yousentech_pos_invoice_printing/print_invoice/utils/roll_print_android_helper.dart';
 import 'package:yousentech_pos_invoice_printing/print_invoice/utils/roll_print_helper2.dart';
 import 'package:yousentech_pos_invoice_printing/print_invoice/utils/show_pdf_invoic.dart';
+import 'package:yousentech_pos_invoice_printing/print_invoice/utils/test.dart';
 import 'package:yousentech_pos_local_db/yousentech_pos_local_db.dart';
 import 'package:yousentech_pos_messaging/messaging/domain/messaging_viewmodel.dart';
 import 'package:yousentech_pos_messaging/messaging/utils/file_convert_helper.dart';
@@ -623,15 +624,11 @@ class PrintingInvoiceController extends GetxController {
         //   testPrint(imageThatC: image!, printerIp: printerIp);
         // }).catchError((onError) {});
 
-        final repaintBoundary = await widgetToImage(rollAndroidPrint(isdownloadRoll: false, items: items));
-        print("repaintBoundary $repaintBoundary");
-        
-        // تحويل للصورة
-        final image = await repaintBoundary.toImage(pixelRatio: 3.0);
-        final byteData = await image.toByteData(format: ImageByteFormat.png);
-        print("byteData $byteData");
-        // الآن تقدر ترسله للطابعة
-        testPrint(imageThatC: byteData!.buffer.asUint8List(), printerIp: printerIp);
+        ScreenshotWidget(
+          printerIp:printerIp,
+          child: rollAndroidPrint(isdownloadRoll: false, items: items),
+        );
+
 
       }
     } else if (silent) {
@@ -940,51 +937,48 @@ class PrintingInvoiceController extends GetxController {
     return await generalLocalDBInstance!.index();
   }
 
-Future<RenderRepaintBoundary> widgetToImage(Widget widget, {double pixelRatio = 3.0}) async {
-  final repaintBoundary = RenderRepaintBoundary();
+// Future<RenderRepaintBoundary> widgetToImage(Widget widget, {double pixelRatio = 3.0}) async {
+//   final repaintBoundary = RenderRepaintBoundary();
 
-  final renderView = RenderView(
-    child: RenderPositionedBox(
-      alignment: Alignment.center,
-      child: repaintBoundary,
-    ),
-    configuration: ViewConfiguration(
-      logicalConstraints: const BoxConstraints.tightFor(width: 800, height: 600),
-      physicalConstraints: const BoxConstraints.tightFor(width: 800, height: 600),
-      devicePixelRatio: pixelRatio,
-    ),
-    view: PlatformDispatcher.instance.implicitView!,
-  );
+//   final renderView = RenderView(
+//     child: RenderPositionedBox(
+//       alignment: Alignment.center,
+//       child: repaintBoundary,
+//     ),
+//     configuration: ViewConfiguration(
+//       logicalConstraints: const BoxConstraints.tightFor(width: 800, height: 600),
+//       physicalConstraints: const BoxConstraints.tightFor(width: 800, height: 600),
+//       devicePixelRatio: pixelRatio,
+//     ),
+//     view: PlatformDispatcher.instance.implicitView!,
+//   );
 
-  final pipelineOwner = PipelineOwner();
-  final buildOwner = BuildOwner(focusManager: FocusManager());
+//   final pipelineOwner = PipelineOwner();
+//   final buildOwner = BuildOwner(focusManager: FocusManager());
 
-  renderView.attach(pipelineOwner);
+//   renderView.attach(pipelineOwner);
 
-  final rootElement = RenderObjectToWidgetAdapter<RenderBox>(
-    container: repaintBoundary,
-    child: Directionality(
-      textDirection: SharedPr.lang == "ar" ? TextDirection.rtl : TextDirection.ltr,
-      child: widget,
-    ),
-  ).attachToRenderTree(buildOwner);
+//   final rootElement = RenderObjectToWidgetAdapter<RenderBox>(
+//     container: repaintBoundary,
+//     child: Directionality(
+//       textDirection: SharedPr.lang == "ar" ? TextDirection.rtl : TextDirection.ltr,
+//       child: widget,
+//     ),
+//   ).attachToRenderTree(buildOwner);
 
-  // build & layout
-  buildOwner.buildScope(rootElement);
-  buildOwner.finalizeTree();
-  pipelineOwner.flushLayout();
-  pipelineOwner.flushCompositingBits();
-  pipelineOwner.flushPaint();
+//   // build & layout
+//   buildOwner.buildScope(rootElement);
+//   buildOwner.finalizeTree();
+//   pipelineOwner.flushLayout();
+//   pipelineOwner.flushCompositingBits();
+//   pipelineOwner.flushPaint();
 
-  // جدولة فريم يدوي وانتظار نهايته
-  SchedulerBinding.instance.scheduleFrame();
-  await SchedulerBinding.instance.endOfFrame;
 
-  // // تحويل للصورة
-  // final image = await repaintBoundary.toImage(pixelRatio: pixelRatio);
-  // final byteData = await image.toByteData(format: ImageByteFormat.png);
-  // return byteData!.buffer.asUint8List();
-  return repaintBoundary;
-}
+//   // // تحويل للصورة
+//   // final image = await repaintBoundary.toImage(pixelRatio: pixelRatio);
+//   // final byteData = await image.toByteData(format: ImageByteFormat.png);
+//   // return byteData!.buffer.asUint8List();
+//   return repaintBoundary;
+// }
 
 }
