@@ -629,7 +629,7 @@ class PrintingInvoiceController extends GetxController {
               printerIp: printerIp,
               child: rollAndroidPrint(isdownloadRoll: false, items: items),
             ));
-        await  Future.delayed(const Duration(milliseconds: 200));
+        await Future.delayed(Duration(seconds: 2));
         print("after ScreenshotWidget =================");
       }
     } else if (silent) {
