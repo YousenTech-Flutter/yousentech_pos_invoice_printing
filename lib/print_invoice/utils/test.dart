@@ -34,7 +34,7 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       print("WidgetsBinding.instance.addPostFrameCallback ===============");
       screenshotController.capture(
-        // delay: const Duration(milliseconds: 200),
+        delay: const Duration(milliseconds: 200),
       ).then((image) async {
         print("=========image ${image!.length}");
         testPrint(imageThatC: image ,printerIp:widget.printerIp );
@@ -52,13 +52,9 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
     print("===============Widget build");
     return Scaffold(
       backgroundColor: AppColor.white,
-      body: Opacity(
-        // offstage: true,
-        opacity: 0,
-        child: Screenshot(
-          controller:screenshotController,
-          child: SizedBox(width: 150.w, child: widget.child),
-        ),
+      body: Screenshot(
+        controller:screenshotController,
+        child: SizedBox(width: 150.w, child: widget.child),
       ),
     );
   }
