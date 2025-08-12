@@ -46,7 +46,8 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
       ? []
       : SharedPr.currentPosObject!.invoiceFooterLines!.trim().split('\n');
   if (isdownloadRoll) {
-    return Column(
+    return 
+    Column(
       children: [
         SizedBox(
             width: 150.w,
@@ -241,6 +242,8 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
         ),
       ],
     );
+  
+  
   }
   if (!isdownloadRoll && items != null) {
     return Column(

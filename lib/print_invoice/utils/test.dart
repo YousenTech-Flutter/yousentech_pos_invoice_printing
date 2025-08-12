@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:get/get.dart';
 import 'package:pos_shared_preferences/pos_shared_preferences.dart';
 import 'package:ysn_pos_android_printer/android_printer/printer.dart';
 
@@ -56,6 +57,7 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
       } else {
         print("Failed to capture image.");
       }
+      Get.back();
     });
   }
 
