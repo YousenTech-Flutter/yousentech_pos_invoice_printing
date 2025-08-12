@@ -45,7 +45,9 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
   @override
   void initState() {
     super.initState();
+    print("===============initState");
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+       print("===============WidgetsBinding.instance");
       Uint8List? imageBytes = await capturePng();
       if (imageBytes != null) {
         // هنا تستخدم الصورة حسب حاجتك
@@ -59,6 +61,7 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
 
   @override
   Widget build(BuildContext context) {
+    print("===============Widget build");
     return Offstage(
       offstage: true,
       child: RepaintBoundary(
