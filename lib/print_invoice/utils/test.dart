@@ -32,7 +32,8 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
       screenshotController.capture(
         delay: const Duration(milliseconds: 10),
       ).then((image) async {
-        testPrint(imageThatC: image!);
+        print("=========image ${image!.length}");
+        testPrint(imageThatC: image ,printerIp:widget.printerIp );
         Get.back();
       }).catchError((onError) {
       });
