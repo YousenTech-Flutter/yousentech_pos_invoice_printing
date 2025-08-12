@@ -34,7 +34,7 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       print("WidgetsBinding.instance.addPostFrameCallback ===============");
       screenshotController.capture(
-        delay: const Duration(milliseconds: 200),
+        // delay: const Duration(milliseconds: 200),
       ).then((image) async {
         print("=========image ${image!.length}");
         testPrint(imageThatC: image ,printerIp:widget.printerIp );
