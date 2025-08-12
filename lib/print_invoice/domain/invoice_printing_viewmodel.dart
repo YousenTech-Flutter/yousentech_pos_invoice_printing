@@ -578,6 +578,7 @@ class PrintingInvoiceController extends GetxController {
             delay: const Duration(milliseconds: 10),
           )
               .then((image) async {
+            print("disablePrintFullInvoice $image");
             testPrint(imageThatC: image!, printerIp: ipAddress);
           }).catchError((onError) {});
         }
@@ -616,11 +617,12 @@ class PrintingInvoiceController extends GetxController {
           controller: screenshotController,
           child: rollAndroidPrint(isdownloadRoll: false, items: items),
         );
-        screenshotController
-            .capture(
+       
+        screenshotController.capture(
           delay: const Duration(milliseconds: 10),
         )
-            .then((image) async {
+        .then((image) async {
+          print("_printItems $image");
           testPrint(imageThatC: image!, printerIp: printerIp);
         }).catchError((onError) {});
       }
