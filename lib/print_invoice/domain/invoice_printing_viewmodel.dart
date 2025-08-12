@@ -566,18 +566,22 @@ class PrintingInvoiceController extends GetxController {
           .ipAddress;
       if ((Platform.isAndroid || Platform.isIOS)) {
         if (ipAddress != '') {
-          Screenshot pdfWidget = Screenshot(
-            controller: screenshotController,
-            child: rollAndroidPrint(isdownloadRoll: true),
-          );
-          screenshotController
-              .capture(
-            delay: const Duration(milliseconds: 10),
-          )
-              .then((image) async {
-            print("disablePrintFullInvoice $image");
-            testPrint(imageThatC: image!, printerIp: ipAddress);
-          }).catchError((onError) {});
+          // Screenshot pdfWidget = Screenshot(
+          //   controller: screenshotController,
+          //   child: rollAndroidPrint(isdownloadRoll: true),
+          // );
+          // screenshotController
+          //     .capture(
+          //   delay: const Duration(milliseconds: 10),
+          // )
+          //     .then((image) async {
+          //   print("disablePrintFullInvoice $image");
+          //   testPrint(imageThatC: image!, printerIp: ipAddress);
+          // }).catchError((onError) {});
+          await   Get.to(() => ScreenshotWidget(
+              printerIp: ipAddress,
+              child: rollAndroidPrint(isdownloadRoll: true),
+            ));
         }
       } else {
         final targetPrinter = printers.firstWhere(
@@ -623,13 +627,11 @@ class PrintingInvoiceController extends GetxController {
         //   print("_printItems $image");
         //   testPrint(imageThatC: image!, printerIp: printerIp);
         // }).catchError((onError) {});
-        print("_printItems=================");
         
         await   Get.to(() => ScreenshotWidget(
               printerIp: printerIp,
               child: rollAndroidPrint(isdownloadRoll: false, items: items),
             ));
-        print("after ScreenshotWidget =================");
       }
     } else if (silent) {
       await Printing.directPrintPdf(
