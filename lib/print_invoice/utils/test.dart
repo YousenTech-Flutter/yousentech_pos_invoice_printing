@@ -1,3 +1,5 @@
+// ignore_for_file: use_super_parameters
+
 import 'dart:typed_data';
 import 'dart:ui';
 
@@ -12,7 +14,8 @@ import 'package:ysn_pos_android_printer/android_printer/printer.dart';
 class ScreenshotWidget extends StatefulWidget {
   final Widget child;
   final String? printerIp;
-  const ScreenshotWidget(
+  // ignore: prefer_const_constructors_in_immutables
+  ScreenshotWidget(
       {required this.child, required this.printerIp, Key? key})
       : super(key: key);
 
