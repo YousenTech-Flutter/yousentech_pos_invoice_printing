@@ -6,6 +6,7 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart' as intl;
@@ -934,56 +935,50 @@ class PrintingInvoiceController extends GetxController {
     return await generalLocalDBInstance!.index();
   }
 
-  Future<Uint8List> widgetToImage(Widget widget,
-      {double pixelRatio = 3.0}) async {
-    // إنشاء RenderRepaintBoundary
-    final repaintBoundary = RenderRepaintBoundary();
+Future<Uint8List> widgetToImage(Widget widget, {double pixelRatio = 3.0}) async {
+  final repaintBoundary = RenderRepaintBoundary();
 
-    // إنشاء RenderView في الذاكرة (مو معروض على الشاشة)
-    final renderView = RenderView(
-      child: RenderPositionedBox(
-        child: repaintBoundary,
-      ),
-      configuration: ViewConfiguration(
-        logicalConstraints: const BoxConstraints.tightFor(
-          width: 800,
-          height: 600,
-        ),
-        physicalConstraints: const BoxConstraints.tightFor(
-          width: 800,
-          height: 600,
-        ),
-        devicePixelRatio: pixelRatio,
-      ),
-      view: PlatformDispatcher.instance.implicitView!,
-    );
+  final renderView = RenderView(
+    child: RenderPositionedBox(
+      alignment: Alignment.center,
+      child: repaintBoundary,
+    ),
+    configuration: ViewConfiguration(
+      logicalConstraints: const BoxConstraints.tightFor(width: 800, height: 600),
+      physicalConstraints: const BoxConstraints.tightFor(width: 800, height: 600),
+      devicePixelRatio: pixelRatio,
+    ),
+    view: PlatformDispatcher.instance.implicitView!,
+  );
 
-    final pipelineOwner = PipelineOwner();
-    final buildOwner = BuildOwner(focusManager: FocusManager());
+  final pipelineOwner = PipelineOwner();
+  final buildOwner = BuildOwner(focusManager: FocusManager());
 
-    renderView.attach(pipelineOwner);
-    final rootElement = RenderObjectToWidgetAdapter<RenderBox>(
-      container: repaintBoundary,
-      child: Directionality(
-        textDirection:
-            SharedPr.lang == "ar" ? TextDirection.rtl : TextDirection.ltr,
-        child: widget,
-      ),
-    ).attachToRenderTree(buildOwner);
+  renderView.attach(pipelineOwner);
 
-    // تنفيذ الـ build/layout والرسم
-    buildOwner.buildScope(rootElement);
-    buildOwner.finalizeTree();
-    pipelineOwner.flushLayout();
-    pipelineOwner.flushCompositingBits();
-    pipelineOwner.flushPaint();
-    // انتظر نهاية الإطار (frame) الحالي
-    await Future.delayed(Duration.zero);
-    await WidgetsBinding.instance.endOfFrame;
-    await Future.delayed(const Duration(milliseconds: 50));
-    // تحويل إلى ui.Image
-    final image = await repaintBoundary.toImage(pixelRatio: pixelRatio);
-    final byteData = await image.toByteData(format: ImageByteFormat.png);
-    return byteData!.buffer.asUint8List();
-  }
+  final rootElement = RenderObjectToWidgetAdapter<RenderBox>(
+    container: repaintBoundary,
+    child: Directionality(
+      textDirection: SharedPr.lang == "ar" ? TextDirection.rtl : TextDirection.ltr,
+      child: widget,
+    ),
+  ).attachToRenderTree(buildOwner);
+
+  // build & layout
+  buildOwner.buildScope(rootElement);
+  buildOwner.finalizeTree();
+  pipelineOwner.flushLayout();
+  pipelineOwner.flushCompositingBits();
+  pipelineOwner.flushPaint();
+
+  // جدولة فريم يدوي وانتظار نهايته
+  SchedulerBinding.instance.scheduleFrame();
+  await SchedulerBinding.instance.endOfFrame;
+
+  // تحويل للصورة
+  final image = await repaintBoundary.toImage(pixelRatio: pixelRatio);
+  final byteData = await image.toByteData(format: ImageByteFormat.png);
+  return byteData!.buffer.asUint8List();
+}
+
 }
