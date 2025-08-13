@@ -489,6 +489,7 @@ class PrintingInvoiceController extends GetxController {
     print(
         "Platform.isAndroid ${Platform.isAndroid} Platform.isIOS ${Platform.isIOS}");
     print("printingSetting=========== $printingSetting");
+    print("printingSetting=========== ${printingSetting.map((e)=>e.toJson()).toList()}");
     if ((!Platform.isAndroid && !Platform.isIOS)) {
       ipPorts = await LanPrintingHelper.listSharedPrintersWithIP();
       printers = await PrintHelper.getPrinters();
