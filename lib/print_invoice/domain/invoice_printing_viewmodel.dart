@@ -30,7 +30,7 @@ import 'package:yousentech_pos_invoice_printing/print_invoice/utils/printer_help
 import 'package:yousentech_pos_invoice_printing/print_invoice/utils/roll_print_android_helper.dart';
 import 'package:yousentech_pos_invoice_printing/print_invoice/utils/roll_print_helper2.dart';
 import 'package:yousentech_pos_invoice_printing/print_invoice/utils/show_pdf_invoic.dart';
-import 'package:yousentech_pos_invoice_printing/print_invoice/utils/test.dart';
+import 'package:yousentech_pos_invoice_printing/print_invoice/utils/screenshot_widget.dart';
 import 'package:yousentech_pos_local_db/yousentech_pos_local_db.dart';
 import 'package:yousentech_pos_messaging/messaging/domain/messaging_viewmodel.dart';
 import 'package:yousentech_pos_messaging/messaging/utils/file_convert_helper.dart';
@@ -577,8 +577,9 @@ class PrintingInvoiceController extends GetxController {
           //   print("disablePrintFullInvoice $image");
           //   testPrint(imageThatC: image!, printerIp: ipAddress);
           // }).catchError((onError) {});
-          await   Get.to(() => ScreenshotWidget(
+          await  Get.to(() => ScreenshotWidget(
               printerIp: ipAddress,
+              isChasherInvoice: true,
               child: rollAndroidPrint(isdownloadRoll: true),
             ));
         }

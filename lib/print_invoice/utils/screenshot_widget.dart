@@ -16,8 +16,9 @@ import 'package:ysn_pos_android_printer/android_printer/printer.dart';
 class ScreenshotWidget extends StatefulWidget {
   final Widget child;
   final String? printerIp;
+  final bool isChasherInvoice;
   // ignore: prefer_const_constructors_in_immutables
-  ScreenshotWidget({required this.child, required this.printerIp, Key? key})
+  ScreenshotWidget({required this.child, required this.printerIp, this.isChasherInvoice =false ,Key? key})
       : super(key: key);
 
   @override
@@ -35,7 +36,7 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
       await Future.delayed(Duration.zero);
       await screenshotController.capture()
       .then((image) async {
-        await testPrint(imageThatC: image!, printerIp: widget.printerIp);
+        await testPrint(imageThatC: image!, printerIp: widget.printerIp ,isChasherInvoice: widget.isChasherInvoice );
       }).whenComplete(() {
         Get.back(result: true);
       });
