@@ -486,10 +486,7 @@ class PrintingInvoiceController extends GetxController {
     Printer? printer;
     Printer? defaultPrinter;
     List<dynamic> printingSetting = await getPrintingSetting();
-    print(
-        "Platform.isAndroid ${Platform.isAndroid} Platform.isIOS ${Platform.isIOS}");
-    print("printingSetting=========== $printingSetting");
-    print("printingSetting=========== ${printingSetting.map((e)=>e.toJson()).toList()}");
+
     if ((!Platform.isAndroid && !Platform.isIOS)) {
       ipPorts = await LanPrintingHelper.listSharedPrintersWithIP();
       printers = await PrintHelper.getPrinters();
@@ -513,7 +510,7 @@ class PrintingInvoiceController extends GetxController {
     if (!disablePrintOrderInvoice) {
       if (printingSetting.isNotEmpty) {
         for (var setting in printingSetting) {
-          if (setting.disablePrinting) continue;
+          if (setting.disablePrinting || setting.isCustomerPrinter) continue;
           Printer? targetPrinter;
           if ((!Platform.isAndroid && !Platform.isIOS)) {
             var findPort = ipPorts.firstWhere(
@@ -567,25 +564,11 @@ class PrintingInvoiceController extends GetxController {
           .ipAddress;
       if ((Platform.isAndroid || Platform.isIOS)) {
         print("ipAddress=========== $ipAddress");
-        // if (ipAddress != '') {
-          // Screenshot pdfWidget = Screenshot(
-          //   controller: screenshotController,
-          //   child: rollAndroidPrint(isdownloadRoll: true),
-          // );
-          // screenshotController
-          //     .capture(
-          //   delay: const Duration(milliseconds: 10),
-          // )
-          //     .then((image) async {
-          //   print("disablePrintFullInvoice $image");
-          //   testPrint(imageThatC: image!, printerIp: ipAddress);
-          // }).catchError((onError) {});
           await  Get.to(() => ScreenshotWidget(
               printerIp: ipAddress,
               isChasherInvoice: true,
               child: rollAndroidPrint(isdownloadRoll: true),
             ));
-        // }
       } else {
         final targetPrinter = printers.firstWhere(
           (p) => ipPorts.any((port) =>
@@ -617,20 +600,6 @@ class PrintingInvoiceController extends GetxController {
     );
     if ((Platform.isAndroid || Platform.isIOS)) {
       if (printerIp != '') {
-        // Screenshot pdfWidget = Screenshot(
-        //   controller: screenshotController,
-        //   child: rollAndroidPrint(isdownloadRoll: false, items: items),
-        // );
-
-        // screenshotController
-        //     .capture(
-        //   delay: const Duration(milliseconds: 10),
-        // )
-        //     .then((image) async {
-        //   print("_printItems $image");
-        //   testPrint(imageThatC: image!, printerIp: printerIp);
-        // }).catchError((onError) {});
-        
         await   Get.to(() => ScreenshotWidget(
               printerIp: printerIp,
               child: rollAndroidPrint(isdownloadRoll: false, items: items),
