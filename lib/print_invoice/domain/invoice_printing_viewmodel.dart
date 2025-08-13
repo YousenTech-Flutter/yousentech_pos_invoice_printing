@@ -95,24 +95,23 @@ class PrintingInvoiceController extends GetxController {
               format: format,
               pdfFormat: pdfFormat,
               disablePrintFullInvoice:
-                  (!SharedPr.printingPreferenceObj!.disablePrinting! ||
-                          skipDisablePrinting)
+                  (!SharedPr.printingPreferenceObj!.disablePrinting! ||skipDisablePrinting) && !skipDisablePrintOrderInvoice
                       ? false
                       : true,
               disablePrintOrderInvoice: skipDisablePrintOrderInvoice
                   ? false
-                  : SharedPr.currentPosObject!.disableNetworkPrinting!);
+                  : skipDisablePrinting ? true : SharedPr.currentPosObject!.disableNetworkPrinting!);
         } else {
           await printingInvoiceLayoutPdf(
               pdfFormat: pdfFormat,
               disablePrintFullInvoice:
                   (!SharedPr.printingPreferenceObj!.disablePrinting! ||
-                          skipDisablePrinting)
+                          skipDisablePrinting) && !skipDisablePrintOrderInvoice
                       ? false
                       : true,
               disablePrintOrderInvoice: skipDisablePrintOrderInvoice
                   ? false
-                  : SharedPr.currentPosObject!.disableNetworkPrinting!);
+                  : skipDisablePrinting ? true : SharedPr.currentPosObject!.disableNetworkPrinting!);
         }
       } else if (SharedPr.printingPreferenceObj!.isDownloadPDF!) {
         await downloadPDF(format: pdfFormat);
