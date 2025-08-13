@@ -204,15 +204,15 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
             value: formatter
                 .format(printingController.saleOrderInvoice!.totalTaxes)),
         SizedBox(height: 10.h),
-        // Container(
-        //     padding: EdgeInsets.all(10.r),
-        //     child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        //       BarcodeWidget(
-        //           data: printingController.saleOrderInvoice!.zatcaQr ?? "",
-        //           barcode: Barcode.qrCode(),
-        //           width: 100.w,
-        //           height: 100.h),
-        //     ])),
+        Container(
+            padding: EdgeInsets.all(10.r),
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              BarcodeWidget(
+                  data: printingController.saleOrderInvoice!.zatcaQr ?? "",
+                  barcode: Barcode.qrCode(),
+                  width: 100.w,
+                  height: 100.h),
+            ])),
         SizedBox(height: 10.h),
         ...footerLines.map(
           (line) => Padding(
