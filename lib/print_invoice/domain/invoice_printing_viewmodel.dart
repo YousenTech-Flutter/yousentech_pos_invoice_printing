@@ -564,7 +564,8 @@ class PrintingInvoiceController extends GetxController {
           )
           .ipAddress;
       if ((Platform.isAndroid || Platform.isIOS)) {
-        if (ipAddress != '') {
+        print("ipAddress=========== $ipAddress");
+        // if (ipAddress != '') {
           // Screenshot pdfWidget = Screenshot(
           //   controller: screenshotController,
           //   child: rollAndroidPrint(isdownloadRoll: true),
@@ -582,7 +583,7 @@ class PrintingInvoiceController extends GetxController {
               isChasherInvoice: true,
               child: rollAndroidPrint(isdownloadRoll: true),
             ));
-        }
+        // }
       } else {
         final targetPrinter = printers.firstWhere(
           (p) => ipPorts.any((port) =>
