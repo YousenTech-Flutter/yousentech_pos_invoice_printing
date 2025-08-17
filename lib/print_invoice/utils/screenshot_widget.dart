@@ -41,16 +41,16 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColor.amberDark,
-      body:Screenshot(
-        controller: screenshotController,
-        child: Receipt(
-          builder: (context) => widget.child,
-          onInitialized: (controller) {
-            controller.paperSize = PaperSize.mm80;
-            this.controller = controller;
-          },
+      backgroundColor: AppColor.white,
+      body: Receipt(
+        builder: (context) => Screenshot(
+          controller: screenshotController,
+          child: widget.child,
         ),
+        onInitialized: (controller) {
+          controller.paperSize = PaperSize.mm80;
+          this.controller = controller;
+        },
       ),
     );
   }
