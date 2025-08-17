@@ -1,14 +1,8 @@
 // ignore_for_file: use_super_parameters
-
-import 'dart:typed_data';
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bluetooth_printer/flutter_bluetooth_printer_library.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:pos_shared_preferences/pos_shared_preferences.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:shared_widgets/config/app_colors.dart';
 import 'package:ysn_pos_android_printer/android_printer/printer.dart';
@@ -51,7 +45,6 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
       body: Receipt(
         builder: (context) => Screenshot(
           controller: screenshotController,
-
           child: SizedBox(
             width:PaperSize.mm80.width.toDouble() ,
             child: widget.child),
