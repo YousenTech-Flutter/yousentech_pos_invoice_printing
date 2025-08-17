@@ -238,7 +238,7 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
                   color: AppColor.black,
                   fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 50.h),
+            SizedBox(height: 100.h),
           ],
         ),
       ],
