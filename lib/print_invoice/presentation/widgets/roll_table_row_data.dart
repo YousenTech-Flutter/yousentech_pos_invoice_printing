@@ -128,7 +128,7 @@ List<Column> productAndriodItem(
                 value: " ${item.note} ",
                 isblack: false,
                 isname: true,
-                fontsize: 4.sp,
+                fontsize: 5.sp,
                 color: AppColor.gray),
             if (item.categoryNotes != null &&
                 item.categoryNotes!.isNotEmpty) ...[
@@ -137,7 +137,7 @@ List<Column> productAndriodItem(
                     value: " ${item.categoryNotes![index].note} ",
                     isblack: false,
                     isname: true,
-                    fontsize:4.sp,
+                    fontsize:5.sp,
                     color: AppColor.gray);
               })
             ]
@@ -210,7 +210,7 @@ Align productAndriodText({
         value,
         style: TextStyle(
             fontStyle: FontStyle.normal,
-            fontSize: fontsize ?? 4.sp,
+            fontSize: fontsize ?? 5.sp,
             color: (isblack ? AppColor.black : AppColor.gray),
             fontWeight: FontWeight.bold),
       ));
