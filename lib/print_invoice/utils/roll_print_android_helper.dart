@@ -128,17 +128,17 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
             ),
           ],
         ),
-        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          infoText(
-            value: "total".tr,
-            isbold: true,
-          ),
-          infoText(
-            value:
-                "${formatter.format(printingController.saleOrderInvoice!.totalPrice)} ${"S.R".tr}",
-            isbold: true,
-          )
-        ]),
+        // Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        //   infoText(
+        //     value: "total".tr,
+        //     isbold: true,
+        //   ),
+        //   infoText(
+        //     value:
+        //         "${formatter.format(printingController.saleOrderInvoice!.totalPrice)} ${"S.R".tr}",
+        //     isbold: true,
+        //   )
+        // ]),
         SizedBox(height: 10.h),
         ...printingController.saleOrderInvoice!.invoiceChosenPayment
             .map((item) {
@@ -203,6 +203,10 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
             title: 'invoice_footer_total_tax'.tr,
             value: formatter
                 .format(printingController.saleOrderInvoice!.totalTaxes)),
+        SizedBox(height: 10.h),
+        rowFotter(
+            title: "${'total'.tr} ${'with_tax'.tr}",
+            value: "${formatter.format(printingController.saleOrderInvoice!.totalPrice)} ${"S.R".tr}"),
         SizedBox(height: 10.h),
         Container(
             padding: EdgeInsets.all(10.r),
