@@ -28,7 +28,7 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await Future.delayed(Duration.zero);
       await Future.delayed(Duration.zero);
-      await screenshotController.capture(pixelRatio: 20)
+      await screenshotController.capture()
       .then((image) async {
         await PrinterTypes.printer(imageThatC: image!, printerIp: widget.printerIp ,isChasherInvoice: widget.isChasherInvoice );
       }).whenComplete(() {
