@@ -45,9 +45,11 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
       body: Receipt(
         builder: (context) => Screenshot(
           controller: screenshotController,
-          child: SizedBox(
-            width: PaperSize.mm80.width.toDouble(),
-            child: widget.child),
+          child: Center(
+            child: SizedBox(
+              width: PaperSize.mm80.width.toDouble(),
+              child: widget.child),
+          ),
         ),
         onInitialized: (controller) {
           controller.paperSize = PaperSize.mm80;
