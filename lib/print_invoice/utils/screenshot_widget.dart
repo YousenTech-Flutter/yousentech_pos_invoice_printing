@@ -28,7 +28,7 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await Future.delayed(Duration.zero);
       await Future.delayed(Duration.zero);
-      await screenshotController.capture()
+      await screenshotController.capture(pixelRatio: 1.0)
       .then((image) async {
         await PrinterTypes.printer(imageThatC: image!, printerIp: widget.printerIp ,isChasherInvoice: widget.isChasherInvoice );
       }).whenComplete(() {
@@ -45,7 +45,9 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
       body: Receipt(
         builder: (context) => Screenshot(
           controller: screenshotController,
-          child: widget.child,
+          child: SizedBox(
+            width: PaperSize.mm80.width.toDouble(),
+            child: widget.child),
         ),
         onInitialized: (controller) {
           controller.paperSize = PaperSize.mm80;
