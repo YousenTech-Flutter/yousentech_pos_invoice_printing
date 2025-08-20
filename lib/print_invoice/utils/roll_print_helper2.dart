@@ -92,7 +92,7 @@ Future<pw.Document> rollPrint2({PdfPageFormat? format,isdownloadRoll = false,Lis
                                 '${'invoice_nmuber'.tr} : ${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}'),
                       ],
                     )),
-                                        pw.SizedBox(height: 3),
+                        pw.SizedBox(height: 3),
                         pw.BarcodeWidget(
                               data:'${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}',
                               barcode:pw. Barcode.code128(),
