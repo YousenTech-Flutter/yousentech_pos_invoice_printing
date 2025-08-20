@@ -46,8 +46,7 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
       ? []
       : SharedPr.currentPosObject!.invoiceFooterLines!.trim().split('\n');
   if (isdownloadRoll) {
-    return 
-    Column(
+    return Column(
       children: [
         SizedBox(
             width: 150.w,
@@ -83,7 +82,7 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
                       padding: const EdgeInsets.only(bottom: 5),
                       child: infoText(value: line)),
                 ),
-              const  SizedBox(
+                const SizedBox(
                   width: double.infinity,
                   child: Divider(
                     color: Colors.black, // لون الخط
@@ -111,10 +110,49 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
           drawText: false,
         ),
         SizedBox(height: 15.h),
-        ...productAndriodItem(
-            saleOrderLinesList: printingController.saleOrderLinesList!,
-            formatter: formatter,
-            font: AppInvoiceStyle.fontMedium),
+        // ...productAndriodItem(
+        //     saleOrderLinesList: printingController.saleOrderLinesList!,
+        //     formatter: formatter,
+        //     font: AppInvoiceStyle.fontMedium),
+        ...List.generate(printingController.saleOrderLinesList!.length,
+            (index) {
+          SaleOrderLine item = printingController.saleOrderLinesList![index];
+          return Container(
+            width: double.infinity, // عرض كامل
+            padding: EdgeInsets.symmetric(vertical: 5.h),
+            child: Column(children: [
+              productAndriodText(
+                  value: "${item.name}", isblack: true, isname: true),
+              if (item.note != null || item.categoryNotes != null) ...[],
+              SizedBox(height: 5.h),
+              SizedBox(
+                width: double.infinity,
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        padding: EdgeInsetsDirectional.only(start: 8.w),
+                        child: Row(children: [
+                          productAndriodText(
+                              value: "${item.productUomQty}", isblack: true),
+                          productAndriodText(
+                            value: " x ",
+                          ),
+                          productAndriodText(
+                            value:
+                                "${formatter.format(item.priceUnit)} ${"S.R".tr}",
+                          ),
+                        ]),
+                      ),
+                      productAndriodText(
+                          value:
+                              "${formatter.format(item.totalPrice)} ${"S.R".tr}",
+                          isblack: true),
+                    ]),
+              ),
+            ]),
+          );
+        }),
         SizedBox(height: 10.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -206,7 +244,8 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
         SizedBox(height: 10.h),
         rowFotter(
             title: "${'total'.tr} ${'with_tax'.tr}",
-            value: formatter.format(printingController.saleOrderInvoice!.totalPrice)),
+            value: formatter
+                .format(printingController.saleOrderInvoice!.totalPrice)),
         SizedBox(height: 10.h),
         Container(
             padding: EdgeInsets.all(10.r),
@@ -215,8 +254,7 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
                   data: printingController.saleOrderInvoice!.zatcaQr ?? "",
                   barcode: Barcode.qrCode(),
                   width: 100.w,
-                  height: 100.h
-                  ),
+                  height: 100.h),
             ])),
         SizedBox(height: 10.h),
         ...footerLines.map(
@@ -243,14 +281,11 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
                   color: AppColor.black,
                   fontWeight: FontWeight.bold),
             ),
-            
           ],
         ),
         // SizedBox(height: 20.h),
       ],
     );
-  
-  
   }
   if (!isdownloadRoll && items != null) {
     return Column(
@@ -288,19 +323,20 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
           Expanded(
             child: SizedBox(
               width: 50.w,
-              child:const Divider(
+              child: const Divider(
                 color: Colors.black, // لون الخط
                 thickness: 2, // سماكة الخط // المسافة من اليمين
               ),
             ),
           ),
           SizedBox(width: 5.w),
-          infoText(value: '${items[0].productId!.soPosCategName}', fontsize: 4.sp),
+          infoText(
+              value: '${items[0].productId!.soPosCategName}', fontsize: 4.sp),
           SizedBox(width: 5.w),
           Expanded(
             child: SizedBox(
               width: 50.w,
-              child:const Divider(
+              child: const Divider(
                 color: Colors.black, // لون الخط
                 thickness: 2, // سماكة الخط // المسافة من اليمين
               ),
@@ -318,7 +354,7 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
               // width: 145.w,
               child: productAndriodText(
                   value: 'item'.tr, isblack: true, isname: true)),
-         const  Spacer(),
+          const Spacer(),
           SizedBox(
               // width: 25.w,
               child: productAndriodText(
@@ -333,13 +369,13 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
             formatter: formatter,
             font: AppInvoiceStyle.fontMedium,
             isShowNote: true),
-         SizedBox(height: 5.h),
-          Row(
+        SizedBox(height: 5.h),
+        Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             SizedBox(
               width: 50.w,
-              child:const Divider(
+              child: const Divider(
                 color: Colors.black, // لون الخط
                 thickness: 2, // سماكة الخط // المسافة من اليمين
               ),
