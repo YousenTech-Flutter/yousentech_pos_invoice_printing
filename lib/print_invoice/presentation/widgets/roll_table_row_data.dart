@@ -211,7 +211,8 @@ Align productAndriodText({
         style: TextStyle(
             fontStyle: FontStyle.normal,
             fontSize: fontsize ?? 4.sp,
-            color: (isblack ? AppColor.black : AppColor.gray),
+            // color: (isblack ? AppColor.black : AppColor.gray),
+            color: AppColor.black,
             fontWeight: FontWeight.bold),
       ));
 }

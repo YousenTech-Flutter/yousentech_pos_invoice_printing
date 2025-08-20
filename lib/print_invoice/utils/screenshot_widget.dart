@@ -46,11 +46,12 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
       backgroundColor: AppColor.white,
       body: SingleChildScrollView(
         child: Center(
-          child: Container(
-            color: AppColor.gray,
-            width: PaperSize.mm80.width.toDouble(),
-            child: Screenshot(
-            controller: screenshotController,child: widget.child),
+          child: Screenshot(
+            controller: screenshotController,
+            child: SizedBox(
+              width: PaperSize.mm80.width.toDouble(),
+              child: widget.child,
+            ),
           ),
         ),
       ),
