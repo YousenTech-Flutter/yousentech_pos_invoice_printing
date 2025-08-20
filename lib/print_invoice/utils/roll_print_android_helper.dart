@@ -206,7 +206,7 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
         SizedBox(height: 10.h),
         rowFotter(
             title: "${'total'.tr} ${'with_tax'.tr}",
-            value: "${formatter.format(printingController.saleOrderInvoice!.totalPrice)} ${"S.R".tr}"),
+            value: formatter.format(printingController.saleOrderInvoice!.totalPrice)),
         SizedBox(height: 10.h),
         Container(
             padding: EdgeInsets.all(10.r),
