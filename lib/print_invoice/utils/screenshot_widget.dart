@@ -26,17 +26,17 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
   void initState() {
     super.initState();
 
-    // WidgetsBinding.instance.addPostFrameCallback((_) async {
-    //   print("=====================init");
-    //   await Future.delayed(Duration.zero);
-    //   await Future.delayed(Duration.zero);
-    //   await screenshotController.capture(pixelRatio: 1.0)
-    //   .then((image) async {
-    //     await PrinterTypes.printer(imageThatC: image!, printerIp: widget.printerIp ,isChasherInvoice: widget.isChasherInvoice );
-    //   }).whenComplete(() {
-    //     Get.back(result: true);
-    //   });
-    // });
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      print("=====================init");
+      await Future.delayed(Duration.zero);
+      await Future.delayed(Duration.zero);
+      await screenshotController.capture(pixelRatio: 1.0)
+      .then((image) async {
+        await PrinterTypes.printer(imageThatC: image!, printerIp: widget.printerIp ,isChasherInvoice: widget.isChasherInvoice );
+      }).whenComplete(() {
+        Get.back(result: true);
+      });
+    });
   }
 
 
@@ -44,16 +44,14 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.red,
-      body: Screenshot(
-          controller: screenshotController,
-        child: Receipt(
-          builder: (context) => widget.child,
+      body: Receipt(
+          builder: (context) => Screenshot(
+          controller: screenshotController,child: widget.child),
           onInitialized: (controller) {
             controller.paperSize = PaperSize.mm80;
             this.controller = controller;
           },
         ),
-      ),
     );
   }
 }
