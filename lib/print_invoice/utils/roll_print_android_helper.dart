@@ -118,11 +118,8 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
           return SizedBox(
             width: double.infinity,
             child: Column(children: [
-              SizedBox(
-                width: double.infinity,
-                child: productAndriodText(
-                    value: "${item.name}", isblack: true, isname: true),
-              ),
+              productAndriodText(
+                  value: "${item.name}", isblack: true, isname: true),
               SizedBox(height: 5.h),
               SizedBox(
                 width: double.infinity,
