@@ -106,8 +106,8 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
           data:
               '${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}',
           barcode: Barcode.code128(),
-          width: 100,
-          height: 20,
+          width: 200,
+          height: 40,
           drawText: false,
         ),
         SizedBox(height: 15.h),
