@@ -119,7 +119,7 @@ List<Container> productAndriodItem(
     SaleOrderLine item = saleOrderLinesList[index];
     return Container(
       width: double.infinity, // عرض كامل
-      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 4),
+      padding: EdgeInsets.symmetric(vertical: 5),
       child: Column(children: [
         productAndriodText(value: "${item.name}", isblack: true, isname: true),
         if (item.note != null || item.categoryNotes != null) ...[
@@ -174,7 +174,7 @@ List<Container> productAndriodItem(
             ]
           ]),
         ),
-        SizedBox(height: 10.h),
+        // SizedBox(height: 10.h),
       ]),
     );
   });
