@@ -119,12 +119,7 @@ List<Container> productAndriodItem(
     SaleOrderLine item = saleOrderLinesList[index];
     return Container(
       width: double.infinity, // عرض كامل
-      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-      // decoration: BoxDecoration(
-      //   border: Border(
-      //     bottom: BorderSide(color: Colors.black12, width: 1), // فاصل بسيط
-      //   ),
-      // ),
+      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 4),
       child: Column(children: [
         productAndriodText(value: "${item.name}", isblack: true, isname: true),
         if (item.note != null || item.categoryNotes != null) ...[
@@ -159,22 +154,18 @@ List<Container> productAndriodItem(
           child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Container(
               padding: EdgeInsetsDirectional.only(start: 8),
-              child: 
-              productAndriodText(
-                    value: "${item.productUomQty} x  ${!isShowNote ? "${formatter.format(item.priceUnit)} ${"S.R".tr} " : ''}", isblack: true),
-              
-              // Row(children: [
-              //   productAndriodText(
-              //       value: "${item.productUomQty}", isblack: true),
-              //   productAndriodText(
-              //     value: " x ",
-              //   ),
-              //   if (!isShowNote) ...[
-              //     productAndriodText(
-              //       value: "${formatter.format(item.priceUnit)} ${"S.R".tr}",
-              //     ),
-              //   ],
-              // ]),
+              child: Row(children: [
+                productAndriodText(
+                    value: "${item.productUomQty}", isblack: true),
+                productAndriodText(
+                  value: " x ",
+                ),
+                if (!isShowNote) ...[
+                  productAndriodText(
+                    value: "${formatter.format(item.priceUnit)} ${"S.R".tr}",
+                  ),
+                ],
+              ]),
             ),
             if (!isShowNote) ...[
               productAndriodText(
@@ -183,7 +174,7 @@ List<Container> productAndriodItem(
             ]
           ]),
         ),
-        SizedBox(height: 15.h),
+        SizedBox(height: 10.h),
       ]),
     );
   });
