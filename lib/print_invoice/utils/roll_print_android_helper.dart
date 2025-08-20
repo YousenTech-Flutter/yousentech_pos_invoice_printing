@@ -118,8 +118,11 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
           return Padding(
             padding:  EdgeInsets.symmetric(vertical: 10.h),
             child: Column(children: [
-              productAndriodText(
-                  value: "${item.name}", isblack: true, isname: true),
+              Container(
+                width: double.infinity,
+                child: productAndriodText(
+                    value: "${item.name}", isblack: true, isname: true),
+              ),
               SizedBox(height: 5.h),
               Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
