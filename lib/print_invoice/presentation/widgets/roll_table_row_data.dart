@@ -145,26 +145,28 @@ List<Column> productAndriodItem(
         ]
       ],
       SizedBox(height: 5.h),
-      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Padding(
-            padding: EdgeInsetsDirectional.only(start: 20.r),
-            child: Row(children: [
-              productAndriodText(value: "${item.productUomQty}", isblack: true),
-              productAndriodText(
-                value: " x ",
-              ),
-              if (!isShowNote) ...[
+      FittedBox(
+        child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Padding(
+              padding: EdgeInsetsDirectional.only(start: 20.r),
+              child: Row(children: [
+                productAndriodText(value: "${item.productUomQty}", isblack: true),
                 productAndriodText(
-                  value: "${formatter.format(item.priceUnit)} ${"S.R".tr}",
+                  value: " x ",
                 ),
-              ],
-            ])),
-        if (!isShowNote) ...[
-          productAndriodText(
-              value: "${formatter.format(item.totalPrice)} ${"S.R".tr}",
-              isblack: true),
-        ]
-      ]),
+                if (!isShowNote) ...[
+                  productAndriodText(
+                    value: "${formatter.format(item.priceUnit)} ${"S.R".tr}",
+                  ),
+                ],
+              ])),
+          if (!isShowNote) ...[
+            productAndriodText(
+                value: "${formatter.format(item.totalPrice)} ${"S.R".tr}",
+                isblack: true),
+          ]
+        ]),
+      ),
       SizedBox(height: 10.h),
     ]);
   });
