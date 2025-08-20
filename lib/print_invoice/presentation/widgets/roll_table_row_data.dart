@@ -161,7 +161,7 @@ List<Container> productAndriodItem(
               padding: EdgeInsetsDirectional.only(start: 8),
               child: Row(children: [
                 productAndriodText(
-                    value: "${item.productUomQty} x ", isblack: true),
+                    value: "${item.productUomQty}", isblack: true),
                 productAndriodText(
                   value: " x ",
                 ),
