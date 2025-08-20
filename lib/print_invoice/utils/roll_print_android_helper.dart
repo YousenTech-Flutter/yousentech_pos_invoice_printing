@@ -242,7 +242,7 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
               " ${!printingController.saleOrderInvoice!.orderDate.toString().contains('T') ? intl.DateFormat("HH:mm:ss").format(DateTime.now()) : printingController.saleOrderInvoice!.orderDate.toString().substring(printingController.saleOrderInvoice!.orderDate!.indexOf('T') + 1)}",
               style: TextStyle(
                   fontStyle: FontStyle.normal,
-                  fontSize: 5.sp,
+                  fontSize: 4.sp,
                   color: AppColor.black,
                   fontWeight: FontWeight.bold),
             ),
@@ -298,7 +298,7 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
             ),
           ),
           SizedBox(width: 5.w),
-          infoText(value: '${items[0].productId!.soPosCategName}', fontsize: 5.sp),
+          infoText(value: '${items[0].productId!.soPosCategName}', fontsize: 4.sp),
           SizedBox(width: 5.w),
           Expanded(
             child: SizedBox(
@@ -370,7 +370,7 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
                   value:
                       "${'note'.tr} :  ${printingController.saleOrderInvoice!.note}",
                   isblack: true,
-                  fontsize: 5.sp),
+                  fontsize: 4.sp),
             ],
           ),
         ]
@@ -393,7 +393,7 @@ Align infoText(
         value, // Arabic text
         style: TextStyle(
             fontStyle: FontStyle.normal,
-            fontSize: fontsize ?? 5.sp,
+            fontSize: fontsize ?? 4.sp,
             color: (isblack ? AppColor.black : AppColor.gray),
             fontWeight: FontWeight.bold),
       ));
