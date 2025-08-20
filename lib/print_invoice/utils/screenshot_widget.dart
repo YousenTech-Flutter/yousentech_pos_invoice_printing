@@ -25,7 +25,9 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      print("=====================init");
       await Future.delayed(Duration.zero);
       await Future.delayed(Duration.zero);
       await screenshotController.capture(pixelRatio: 1.0)
@@ -41,7 +43,7 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColor.white,
+      backgroundColor: AppColor.red,
       body: Screenshot(
           controller: screenshotController,
         child: Receipt(
