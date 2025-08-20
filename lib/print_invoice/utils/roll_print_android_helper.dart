@@ -249,7 +249,7 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
             
           ],
         ),
-        SizedBox(height: 100.h),
+        SizedBox(height: 150.h),
       ],
     );
   
