@@ -165,7 +165,7 @@ List<Column> productAndriodItem(
               isblack: true),
         ]
       ]),
-      SizedBox(height: 25.h),
+      SizedBox(height: 15.h),
     ]);
   });
 }
