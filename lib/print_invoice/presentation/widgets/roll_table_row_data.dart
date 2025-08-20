@@ -115,7 +115,9 @@ List<Container> productAndriodItem(
     required formatter,
     bool isShowNote = false,
     required font}) {
-  return List.generate(saleOrderLinesList.length, (index) {
+  return 
+  
+  List.generate(saleOrderLinesList.length, (index) {
     SaleOrderLine item = saleOrderLinesList[index];
     return Container(
       width: double.infinity, // عرض كامل
