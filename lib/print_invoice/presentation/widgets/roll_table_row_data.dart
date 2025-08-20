@@ -117,7 +117,12 @@ List<Column> productAndriodItem(
   return List.generate(saleOrderLinesList.length, (index) {
     SaleOrderLine item = saleOrderLinesList[index];
     return Column(children: [
+      if(index==1)...[
+        FittedBox(child: productAndriodText(value: "${item.name}", isblack: true, isname: true)),
+      ],
+      if(index!=1)...[
       productAndriodText(value: "${item.name}", isblack: true, isname: true),
+      ],
       if (item.note != null || item.categoryNotes != null) ...[
         if (isShowNote) ...[
           SizedBox(height: 2.h),
