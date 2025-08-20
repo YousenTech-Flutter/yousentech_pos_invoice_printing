@@ -109,71 +109,78 @@ List<pw.Column> productItem(
     ]);
   });
 }
-List<Column> productAndriodItem(
+
+List<Container> productAndriodItem(
     {required List<SaleOrderLine> saleOrderLinesList,
     required formatter,
     bool isShowNote = false,
     required font}) {
   return List.generate(saleOrderLinesList.length, (index) {
     SaleOrderLine item = saleOrderLinesList[index];
-    return Column(children: [
-      if(index==1)...[
-        FittedBox(child: productAndriodText(value: "${item.name}", isblack: true, isname: true)),
-      ],
-      if(index!=1)...[
-      productAndriodText(value: "${item.name}", isblack: true, isname: true),
-      ],
-      if (item.note != null || item.categoryNotes != null) ...[
-        if (isShowNote) ...[
-          SizedBox(height: 2.h),
-          Row(children: [
-            // pw.Image(noteImage, width: 6, height: 6, dpi: 500),
-            SizedBox(width: 3.h),
-            productAndriodText(
-                value: " ${item.note} ",
-                isblack: false,
-                isname: true,
-                fontsize: 4.sp,
-                color: AppColor.gray),
-            if (item.categoryNotes != null &&
-                item.categoryNotes!.isNotEmpty) ...[
-              ...List.generate(item.categoryNotes!.length, (index) {
-                return productAndriodText(
-                    value: " ${item.categoryNotes![index].note} ",
-                    isblack: false,
-                    isname: true,
-                    fontsize:4.sp,
-                    color: AppColor.gray);
-              })
-            ]
-          ])
-        ]
-      ],
-      SizedBox(height: 5.h),
-      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Padding(
-            padding: EdgeInsetsDirectional.only(start: 20.r),
-            child: Row(children: [
-              productAndriodText(value: "${item.productUomQty}", isblack: true),
+    return Container(
+      width: double.infinity, // عرض كامل
+      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: Colors.black12, width: 1), // فاصل بسيط
+        ),
+      ),
+      child: Column(children: [
+        productAndriodText(value: "${item.name}", isblack: true, isname: true),
+        if (item.note != null || item.categoryNotes != null) ...[
+          if (isShowNote) ...[
+            SizedBox(height: 2.h),
+            Row(children: [
+              // pw.Image(noteImage, width: 6, height: 6, dpi: 500),
+              SizedBox(width: 3.h),
               productAndriodText(
-                value: " x ",
-              ),
-              if (!isShowNote) ...[
+                  value: " ${item.note} ",
+                  isblack: false,
+                  isname: true,
+                  fontsize: 4.sp,
+                  color: AppColor.gray),
+              if (item.categoryNotes != null &&
+                  item.categoryNotes!.isNotEmpty) ...[
+                ...List.generate(item.categoryNotes!.length, (index) {
+                  return productAndriodText(
+                      value: " ${item.categoryNotes![index].note} ",
+                      isblack: false,
+                      isname: true,
+                      fontsize: 4.sp,
+                      color: AppColor.gray);
+                })
+              ]
+            ])
+          ]
+        ],
+        SizedBox(height: 5.h),
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Padding(
+              padding: EdgeInsetsDirectional.only(start: 20.r),
+              child: Row(children: [
                 productAndriodText(
-                  value: "${formatter.format(item.priceUnit)} ${"S.R".tr}",
+                    value: "${item.productUomQty}", isblack: true),
+                productAndriodText(
+                  value: " x ",
                 ),
-              ],
-            ])),
-        if (!isShowNote) ...[
-          productAndriodText(
-              value: "${formatter.format(item.totalPrice)} ${"S.R".tr}",
-              isblack: true),
-        ]
+                if (!isShowNote) ...[
+                  productAndriodText(
+                    value: "${formatter.format(item.priceUnit)} ${"S.R".tr}",
+                  ),
+                ],
+              ])),
+          if (!isShowNote) ...[
+            productAndriodText(
+                value: "${formatter.format(item.totalPrice)} ${"S.R".tr}",
+                isblack: true),
+          ]
+        ]),
+        SizedBox(height: 15.h),
       ]),
-      SizedBox(height: 15.h),
-    ]);
+    );
   });
 }
+
 pw.Align productText({
   required String value,
   bool isbold = true,
@@ -197,6 +204,7 @@ pw.Align productText({
             color: color),
       ));
 }
+
 Align productAndriodText({
   required String value,
   bool isbold = true,
@@ -221,6 +229,7 @@ Align productAndriodText({
             fontWeight: FontWeight.bold),
       ));
 }
+
 List<pw.Column> catogProductItem(
     {required List<SaleOrderLine> saleOrderLinesList,
     required formatter,
@@ -243,7 +252,6 @@ List<pw.Column> catogProductItem(
             isname: true,
           ),
         ),
-
         pw.Container(
             width: 25,
             child: productText(
@@ -254,6 +262,7 @@ List<pw.Column> catogProductItem(
     ]);
   });
 }
+
 List<Column> catogProductAndriodItem(
     {required List<SaleOrderLine> saleOrderLinesList,
     required formatter,
@@ -287,6 +296,7 @@ List<Column> catogProductAndriodItem(
     ]);
   });
 }
+
 String buildProductNameWithNotes(item) {
   final notes = <String>[];
 
