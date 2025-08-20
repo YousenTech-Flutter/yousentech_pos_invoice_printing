@@ -154,31 +154,67 @@ List<Container> productAndriodItem(
           ]
         ],
         SizedBox(height: 5.h),
-        SizedBox(
-          width: double.infinity,
-          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Container(
-              padding: EdgeInsetsDirectional.only(start: 8),
-              child: Row(children: [
-                productAndriodText(
-                    value: "${item.productUomQty}", isblack: true),
-                productAndriodText(
-                  value: " x ",
-                ),
-                if (!isShowNote) ...[
-                  productAndriodText(
-                    value: "${formatter.format(item.priceUnit)} ${"S.R".tr}",
-                  ),
-                ],
-              ]),
+        // SizedBox(
+        //   width: double.infinity,
+        //   child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        //     Container(
+        //       padding: EdgeInsetsDirectional.only(start: 8),
+        //       child: Row(children: [
+        //         productAndriodText(
+        //             value: "${item.productUomQty}", isblack: true),
+        //         productAndriodText(
+        //           value: " x ",
+        //         ),
+        //         if (!isShowNote) ...[
+        //           productAndriodText(
+        //             value: "${formatter.format(item.priceUnit)} ${"S.R".tr}",
+        //           ),
+        //         ],
+        //       ]),
+        //     ),
+        //     if (!isShowNote) ...[
+        //       productAndriodText(
+        //           value: "${formatter.format(item.totalPrice)} ${"S.R".tr}",
+        //           isblack: true),
+        //     ]
+        //   ]),
+        // ),
+        Row(
+  children: [
+    // الكمية × السعر للوحدة
+    Expanded(
+      flex: 2,
+      child: Row(
+        children: [
+          SizedBox(width: 8), // بدل PaddingDirectional
+          productAndriodText(
+            value: "${item.productUomQty}",
+            isblack: true,
+          ),
+          productAndriodText(value: " x "),
+          if (!isShowNote)
+            productAndriodText(
+              value: "${formatter.format(item.priceUnit)} ${"S.R".tr}",
             ),
-            if (!isShowNote) ...[
-              productAndriodText(
-                  value: "${formatter.format(item.totalPrice)} ${"S.R".tr}",
-                  isblack: true),
-            ]
-          ]),
+        ],
+      ),
+    ),
+
+    // السعر الإجمالي
+    if (!isShowNote)
+      Expanded(
+        flex: 1,
+        child: Align(
+          alignment: Alignment.centerRight,
+          child: productAndriodText(
+            value: "${formatter.format(item.totalPrice)} ${"S.R".tr}",
+            isblack: true,
+          ),
         ),
+      ),
+  ],
+),
+
         SizedBox(height: 15.h),
       ]),
     );
