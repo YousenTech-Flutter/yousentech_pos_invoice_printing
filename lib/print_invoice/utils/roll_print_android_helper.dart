@@ -141,6 +141,7 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
                           "${formatter.format(item.totalPrice)} ${"S.R".tr}",
                       isblack: true),
                 ]),
+            SizedBox(height: 10.h),
           ]);
         }),
         SizedBox(height: 10.h),
