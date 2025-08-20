@@ -106,8 +106,8 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
           data:
               '${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}',
           barcode: Barcode.code128(),
-          width: 200,
-          height: 40,
+          width: 70.w,
+          height: 20.h,
           drawText: false,
         ),
         SizedBox(height: 15.h),
@@ -210,16 +210,14 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
         SizedBox(height: 10.h),
         Container(
             padding: EdgeInsets.all(10.r),
-            child:  Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                BarcodeWidget(
-                    data: printingController.saleOrderInvoice!.zatcaQr ?? "",
-                    barcode: Barcode.qrCode(),
-                    width: 100,
-                    height: 100),
-              ]),
-            ),
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              BarcodeWidget(
+                  data: printingController.saleOrderInvoice!.zatcaQr ?? "",
+                  barcode: Barcode.qrCode(),
+                  width: 100.w,
+                  height: 100.h
+                  ),
+            ])),
         SizedBox(height: 10.h),
         ...footerLines.map(
           (line) => Padding(
