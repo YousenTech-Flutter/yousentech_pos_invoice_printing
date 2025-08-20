@@ -210,8 +210,7 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
         SizedBox(height: 10.h),
         Container(
             padding: EdgeInsets.all(10.r),
-            child: FittedBox(
-              child: Row(
+            child:  Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                 BarcodeWidget(
@@ -220,7 +219,7 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
                     width: 100.w,
                     height: 100.h),
               ]),
-            )),
+            ),
         SizedBox(height: 10.h),
         ...footerLines.map(
           (line) => Padding(
