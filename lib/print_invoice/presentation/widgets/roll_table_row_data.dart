@@ -159,18 +159,22 @@ List<Container> productAndriodItem(
           child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Container(
               padding: EdgeInsetsDirectional.only(start: 8),
-              child: Row(children: [
-                productAndriodText(
-                    value: "${item.productUomQty}", isblack: true),
-                productAndriodText(
-                  value: " x ",
-                ),
-                if (!isShowNote) ...[
-                  productAndriodText(
-                    value: "${formatter.format(item.priceUnit)} ${"S.R".tr}",
-                  ),
-                ],
-              ]),
+              child: 
+              productAndriodText(
+                    value: "${item.productUomQty} x  ${!isShowNote ? "${formatter.format(item.priceUnit)} ${"S.R".tr} " : ''}", isblack: true),
+              
+              // Row(children: [
+              //   productAndriodText(
+              //       value: "${item.productUomQty}", isblack: true),
+              //   productAndriodText(
+              //     value: " x ",
+              //   ),
+              //   if (!isShowNote) ...[
+              //     productAndriodText(
+              //       value: "${formatter.format(item.priceUnit)} ${"S.R".tr}",
+              //     ),
+              //   ],
+              // ]),
             ),
             if (!isShowNote) ...[
               productAndriodText(
