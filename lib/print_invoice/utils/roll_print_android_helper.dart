@@ -115,36 +115,33 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
         //     formatter: formatter,
         //     font: AppInvoiceStyle.fontMedium),
         ...printingController.saleOrderLinesList!.map((item) {
-          return Padding(
-            padding:  EdgeInsets.symmetric(vertical: 10.h),
-            child: Column(children: [
-              Container(
-                width: double.infinity,
-                child: productAndriodText(
-                    value: "${item.name}", isblack: true, isname: true),
-              ),
-              SizedBox(height: 5.h),
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(children: [
-                      productAndriodText(
-                          value: "${item.productUomQty}", isblack: true),
-                      productAndriodText(
-                        value: " x ",
-                      ),
-                      productAndriodText(
-                        value:
-                            "${formatter.format(item.priceUnit)} ${"S.R".tr}",
-                      ),
-                    ]),
+          return Column(children: [
+            Container(
+              width: double.infinity,
+              child: productAndriodText(
+                  value: "${item.name}", isblack: true, isname: true),
+            ),
+            SizedBox(height: 5.h),
+            Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(children: [
                     productAndriodText(
-                        value:
-                            "${formatter.format(item.totalPrice)} ${"S.R".tr}",
-                        isblack: true),
+                        value: "${item.productUomQty}", isblack: true),
+                    productAndriodText(
+                      value: " x ",
+                    ),
+                    productAndriodText(
+                      value:
+                          "${formatter.format(item.priceUnit)} ${"S.R".tr}",
+                    ),
                   ]),
-            ]),
-          );
+                  productAndriodText(
+                      value:
+                          "${formatter.format(item.totalPrice)} ${"S.R".tr}",
+                      isblack: true),
+                ]),
+          ]);
         }),
         SizedBox(height: 10.h),
         Row(
