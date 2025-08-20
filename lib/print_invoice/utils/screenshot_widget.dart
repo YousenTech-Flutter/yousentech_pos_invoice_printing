@@ -42,19 +42,11 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.white,
-      body: Receipt(
-        builder: (context) => Screenshot(
-          controller: screenshotController,
-          child: Center(
-            child: SizedBox(
-              width: PaperSize.mm80.width.toDouble(),
-              child: widget.child),
-          ),
-        ),
-        onInitialized: (controller) {
-          controller.paperSize = PaperSize.mm80;
-          this.controller = controller;
-        },
+      body: Screenshot(
+        controller: screenshotController,
+        child: SizedBox(
+          width: PaperSize.mm80.width.toDouble(),
+          child: widget.child),
       ),
     );
   }
