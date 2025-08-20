@@ -120,11 +120,11 @@ List<Container> productAndriodItem(
     return Container(
       width: double.infinity, // عرض كامل
       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Colors.black12, width: 1), // فاصل بسيط
-        ),
-      ),
+      // decoration: BoxDecoration(
+      //   border: Border(
+      //     bottom: BorderSide(color: Colors.black12, width: 1), // فاصل بسيط
+      //   ),
+      // ),
       child: Column(children: [
         productAndriodText(value: "${item.name}", isblack: true, isname: true),
         if (item.note != null || item.categoryNotes != null) ...[
@@ -157,20 +157,21 @@ List<Container> productAndriodItem(
         SizedBox(
           width: double.infinity,
           child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Padding(
-                padding: EdgeInsetsDirectional.only(start: 20.r),
-                child: Row(children: [
+            Container(
+              padding: EdgeInsetsDirectional.only(start: 8),
+              child: Row(children: [
+                productAndriodText(
+                    value: "${item.productUomQty} x ", isblack: true),
+                productAndriodText(
+                  value: " x ",
+                ),
+                if (!isShowNote) ...[
                   productAndriodText(
-                      value: "${item.productUomQty}", isblack: true),
-                  productAndriodText(
-                    value: " x ",
+                    value: "${formatter.format(item.priceUnit)} ${"S.R".tr}",
                   ),
-                  if (!isShowNote) ...[
-                    productAndriodText(
-                      value: "${formatter.format(item.priceUnit)} ${"S.R".tr}",
-                    ),
-                  ],
-                ])),
+                ],
+              ]),
+            ),
             if (!isShowNote) ...[
               productAndriodText(
                   value: "${formatter.format(item.totalPrice)} ${"S.R".tr}",
