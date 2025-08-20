@@ -216,8 +216,8 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
                 BarcodeWidget(
                     data: printingController.saleOrderInvoice!.zatcaQr ?? "",
                     barcode: Barcode.qrCode(),
-                    width: 100.w,
-                    height: 100.h),
+                    width: 100,
+                    height: 100),
               ]),
             ),
         SizedBox(height: 10.h),
