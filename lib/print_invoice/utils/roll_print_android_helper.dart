@@ -102,18 +102,13 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
               ],
             )),
         SizedBox(height: 10.h),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            BarcodeWidget(
-              data:
-                  '${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}',
-              barcode: Barcode.code128(),
-              width: 100,
-              height: 20,
-              drawText: false,
-            ),
-          ],
+        BarcodeWidget(
+          data:
+              '${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}',
+          barcode: Barcode.code128(),
+          width: 100,
+          height: 20,
+          drawText: false,
         ),
         SizedBox(height: 15.h),
         ...productAndriodItem(
