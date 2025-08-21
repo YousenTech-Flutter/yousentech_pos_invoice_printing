@@ -114,101 +114,148 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
         //     saleOrderLinesList: printingController.saleOrderLinesList!,
         //     formatter: formatter,
         //     font: AppInvoiceStyle.fontMedium),
-        ...printingController.saleOrderLinesList!.map((item) {
-          return SizedBox(
-            width: double.infinity,
-            child: Column(children: [
-              productAndriodText(
-                  value: "${item.name}", isblack: true, isname: true),
-              SizedBox(height: 5.h),
-              SizedBox(
+        // ...printingController.saleOrderLinesList!.map((item) {
+        //   return SizedBox(
+        //     width: double.infinity,
+        //     child: Column(children: [
+        //       productAndriodText(
+        //           value: "${item.name}", isblack: true, isname: true),
+        //       SizedBox(height: 5.h),
+        //       SizedBox(
+        //         width: double.infinity,
+        //         child: Row(
+        //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //             children: [
+        //               Row(children: [
+        //                 productAndriodText(
+        //                     value: "${item.productUomQty}", isblack: true),
+        //                 productAndriodText(
+        //                   value: " x ",
+        //                 ),
+        //                 productAndriodText(
+        //                   value:
+        //                       "${formatter.format(item.priceUnit)} ${"S.R".tr}",
+        //                 ),
+        //               ]),
+        //               productAndriodText(
+        //                   value:
+        //                       "${formatter.format(item.totalPrice)} ${"S.R".tr}",
+        //                   isblack: true),
+        //             ]),
+        //       ),
+        //       SizedBox(height: 10.h),
+        //     ]),
+        //   );
+        // }).toList(),
+        Column(
+          children: [
+            ...printingController.saleOrderLinesList!.map((item) {
+              return SizedBox(
                 width: double.infinity,
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(children: [
-                        productAndriodText(
-                            value: "${item.productUomQty}", isblack: true),
-                        productAndriodText(
-                          value: " x ",
-                        ),
-                        productAndriodText(
-                          value:
-                              "${formatter.format(item.priceUnit)} ${"S.R".tr}",
-                        ),
-                      ]),
-                      productAndriodText(
-                          value:
-                              "${formatter.format(item.totalPrice)} ${"S.R".tr}",
-                          isblack: true),
-                    ]),
-              ),
-              SizedBox(height: 10.h),
-            ]),
-          );
-        }).toList(),
+                child: Column(
+                  children: [
+                    productAndriodText(
+                        value: "${item.name}", isblack: true, isname: true),
+                    SizedBox(height: 5.h),
+                    SizedBox(
+                      width: double.infinity,
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(children: [
+                              productAndriodText(
+                                  value: "${item.productUomQty}",
+                                  isblack: true),
+                              productAndriodText(value: " x "),
+                              productAndriodText(
+                                value:
+                                    "${formatter.format(item.priceUnit)} ${"S.R".tr}",
+                              ),
+                            ]),
+                            productAndriodText(
+                                value:
+                                    "${formatter.format(item.totalPrice)} ${"S.R".tr}",
+                                isblack: true),
+                          ]),
+                    ),
+                    SizedBox(height: 10.h),
+                  ],
+                ),
+              );
+            }).toList(),
+          ],
+        ),
+
         SizedBox(
-            width: double.infinity,
-            child: Column(children: [
-              productAndriodText(
-                  value: "${printingController.saleOrderLinesList![0].name}", isblack: true, isname: true),
-              SizedBox(height: 5.h),
-              SizedBox(
-                width: double.infinity,
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(children: [
-                        productAndriodText(
-                            value: "${printingController.saleOrderLinesList![0].productUomQty}", isblack: true),
-                        productAndriodText(
-                          value: " x ",
-                        ),
-                        productAndriodText(
-                          value:
-                              "${formatter.format(printingController.saleOrderLinesList![0].priceUnit)} ${"S.R".tr}",
-                        ),
-                      ]),
+          width: double.infinity,
+          child: Column(children: [
+            productAndriodText(
+                value: "${printingController.saleOrderLinesList![0].name}",
+                isblack: true,
+                isname: true),
+            SizedBox(height: 5.h),
+            SizedBox(
+              width: double.infinity,
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(children: [
                       productAndriodText(
                           value:
-                              "${formatter.format(printingController.saleOrderLinesList![0].totalPrice)} ${"S.R".tr}",
+                              "${printingController.saleOrderLinesList![0].productUomQty}",
                           isblack: true),
+                      productAndriodText(
+                        value: " x ",
+                      ),
+                      productAndriodText(
+                        value:
+                            "${formatter.format(printingController.saleOrderLinesList![0].priceUnit)} ${"S.R".tr}",
+                      ),
                     ]),
-              ),
-              SizedBox(height: 10.h),
-            ]),
-          ),
-          SizedBox(
-            width: double.infinity,
-            child: Column(children: [
-              productAndriodText(
-                  value: "${printingController.saleOrderLinesList![1].name}", isblack: true, isname: true),
-              SizedBox(height: 5.h),
-              SizedBox(
-                width: double.infinity,
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(children: [
-                        productAndriodText(
-                            value: "${printingController.saleOrderLinesList![1].productUomQty}", isblack: true),
-                        productAndriodText(
-                          value: " x ",
-                        ),
-                        productAndriodText(
-                          value:
-                              "${formatter.format(printingController.saleOrderLinesList![1].priceUnit)} ${"S.R".tr}",
-                        ),
-                      ]),
+                    productAndriodText(
+                        value:
+                            "${formatter.format(printingController.saleOrderLinesList![0].totalPrice)} ${"S.R".tr}",
+                        isblack: true),
+                  ]),
+            ),
+            SizedBox(height: 10.h),
+          ]),
+        ),
+        SizedBox(
+          width: double.infinity,
+          child: Column(children: [
+            productAndriodText(
+                value: "${printingController.saleOrderLinesList![1].name}",
+                isblack: true,
+                isname: true),
+            SizedBox(height: 5.h),
+            SizedBox(
+              width: double.infinity,
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(children: [
                       productAndriodText(
                           value:
-                              "${formatter.format(printingController.saleOrderLinesList![1].totalPrice)} ${"S.R".tr}",
+                              "${printingController.saleOrderLinesList![1].productUomQty}",
                           isblack: true),
+                      productAndriodText(
+                        value: " x ",
+                      ),
+                      productAndriodText(
+                        value:
+                            "${formatter.format(printingController.saleOrderLinesList![1].priceUnit)} ${"S.R".tr}",
+                      ),
                     ]),
-              ),
-              SizedBox(height: 10.h),
-            ]),
-          ),
+                    productAndriodText(
+                        value:
+                            "${formatter.format(printingController.saleOrderLinesList![1].totalPrice)} ${"S.R".tr}",
+                        isblack: true),
+                  ]),
+            ),
+            SizedBox(height: 10.h),
+          ]),
+        ),
         SizedBox(height: 10.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
