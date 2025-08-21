@@ -57,14 +57,14 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
             width: 150.w,
             child: Column(
               children: [
-                if (company?.image != null && company?.image != '') ...[
-                  SizedBox(
-                    height: 25.h,
-                    width: 25.h,
-                    child: companyImage,
-                  ),
-                  SizedBox(height: 5.h),
-                ],
+                // if (company?.image != null && company?.image != '') ...[
+                //   SizedBox(
+                //     height: 25.h,
+                //     width: 25.h,
+                //     child: companyImage,
+                //   ),
+                //   SizedBox(height: 5.h),
+                // ],
                 infoText(
                     value: printingController.saleOrderInvoice!.refundNote !=
                                 null &&
