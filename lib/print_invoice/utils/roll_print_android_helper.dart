@@ -147,43 +147,44 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
         //     ]),
         //   );
         // }).toList(),
-        Column(
-          children: [
-            ...printingController.saleOrderLinesList!.map((item) {
-              return SizedBox(
-                width: double.infinity,
-                child: Column(
-                  children: [
-                    productAndriodText(
-                        value: "${item.name}", isblack: true, isname: true),
-                    SizedBox(height: 5.h),
-                    SizedBox(
-                      width: double.infinity,
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(children: [
-                              productAndriodText(
-                                  value: "${item.productUomQty}",
-                                  isblack: true),
-                              productAndriodText(value: " x "),
-                              productAndriodText(
-                                value:
-                                    "${formatter.format(item.priceUnit)} ${"S.R".tr}",
-                              ),
-                            ]),
-                            productAndriodText(
-                                value:
-                                    "${formatter.format(item.totalPrice)} ${"S.R".tr}",
-                                isblack: true),
-                          ]),
+        ListView(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          children: printingController.saleOrderLinesList!.map((item) {
+            return SizedBox(
+              width: double.infinity,
+              child: Column(
+                children: [
+                  productAndriodText(
+                      value: "${item.name}", isblack: true, isname: true),
+                  SizedBox(height: 5.h),
+                  SizedBox(
+                    width: double.infinity,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(children: [
+                          productAndriodText(
+                              value: "${item.productUomQty}", isblack: true),
+                          productAndriodText(value: " x "),
+                          productAndriodText(
+                            value:
+                                "${formatter.format(item.priceUnit)} ${"S.R".tr}",
+                          ),
+                        ]),
+                        productAndriodText(
+                          value:
+                              "${formatter.format(item.totalPrice)} ${"S.R".tr}",
+                          isblack: true,
+                        ),
+                      ],
                     ),
-                    SizedBox(height: 10.h),
-                  ],
-                ),
-              );
-            }).toList(),
-          ],
+                  ),
+                  SizedBox(height: 10.h),
+                ],
+              ),
+            );
+          }).toList(),
         ),
 
         SizedBox(
