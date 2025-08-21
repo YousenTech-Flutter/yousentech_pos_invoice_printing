@@ -146,7 +146,7 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
               SizedBox(height: 10.h),
             ]),
           );
-        }),
+        }).toList(),
         SizedBox(
             width: double.infinity,
             child: Column(children: [
