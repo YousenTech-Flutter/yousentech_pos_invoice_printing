@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bluetooth_printer/flutter_bluetooth_printer_library.dart';
 import 'package:get/get.dart';
+import 'package:pos_shared_preferences/pos_shared_preferences.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:shared_widgets/config/app_colors.dart';
 import 'package:ysn_pos_android_printer/android_printer/printer.dart';
@@ -30,12 +31,17 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
       print("=====================init");
       await Future.delayed(Duration.zero);
       await Future.delayed(Duration.zero);
-      await screenshotController.captureFromLongWidget(Container(
-        width: PaperSize.mm80.width.toDouble(),
-        child: widget.child,
+      await screenshotController.captureFromLongWidget(Material(
+        child: Directionality(
+      textDirection:SharedPr.lang=='ar'?TextDirection.rtl: TextDirection.ltr,
+          child: SizedBox(
+            width: PaperSize.mm80.width.toDouble(),
+            child: widget.child,
+          ),
+        ),
       ))
       .then((image) async {
-        await PrinterTypes.printer(imageThatC: image!, printerIp: widget.printerIp ,isChasherInvoice: widget.isChasherInvoice);
+        await PrinterTypes.printer(imageThatC: image, printerIp: widget.printerIp ,isChasherInvoice: widget.isChasherInvoice);
       }).whenComplete(() {
         Get.back(result: true);
       });

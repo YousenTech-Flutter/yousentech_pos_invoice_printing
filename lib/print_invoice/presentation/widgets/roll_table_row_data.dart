@@ -118,7 +118,9 @@ List<Container> productAndriodItem(
   return List.generate(saleOrderLinesList.length, (index) {
     SaleOrderLine item = saleOrderLinesList[index];
     return Container(
-      child: Column(children: [
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
         productAndriodText(value: "${item.name}", isblack: true, isname: true),
         if (item.note != null || item.categoryNotes != null) ...[
           if (isShowNote) ...[
