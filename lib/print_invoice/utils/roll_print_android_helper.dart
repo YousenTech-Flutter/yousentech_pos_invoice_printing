@@ -106,14 +106,14 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
               ],
             )),
         SizedBox(height: 10.h),
-        BarcodeWidget(
-          data:
-              '${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}',
-          barcode: Barcode.code128(),
-          width: 70.w,
-          height: 20.h,
-          drawText: false,
-        ),
+        // BarcodeWidget(
+        //   data:
+        //       '${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}',
+        //   barcode: Barcode.code128(),
+        //   width: 70.w,
+        //   height: 20.h,
+        //   drawText: false,
+        // ),
         SizedBox(height: 15.h),
         ...children,
         // SizedBox(
@@ -220,15 +220,15 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
             value: formatter
                 .format(printingController.saleOrderInvoice!.totalPrice)),
         SizedBox(height: 10.h),
-        Container(
-            padding: EdgeInsets.all(10.r),
-            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              BarcodeWidget(
-                  data: printingController.saleOrderInvoice!.zatcaQr ?? "",
-                  barcode: Barcode.qrCode(),
-                  width: 100.w,
-                  height: 100.h),
-            ])),
+        // Container(
+        //     padding: EdgeInsets.all(10.r),
+        //     child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        //       BarcodeWidget(
+        //           data: printingController.saleOrderInvoice!.zatcaQr ?? "",
+        //           barcode: Barcode.qrCode(),
+        //           width: 100.w,
+        //           height: 100.h),
+        //     ])),
         SizedBox(height: 10.h),
         ...footerLines.map(
           (line) => Padding(
