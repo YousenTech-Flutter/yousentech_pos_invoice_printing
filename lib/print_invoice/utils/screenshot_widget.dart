@@ -36,7 +36,7 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
       textDirection:SharedPr.lang=='ar'?TextDirection.rtl: TextDirection.ltr,
           child: SizedBox(
             width: PaperSize.mm80.width.toDouble(),
-            child: widget.child,
+            child: SingleChildScrollView(child: widget.child),
           ),
         ),
       ))
