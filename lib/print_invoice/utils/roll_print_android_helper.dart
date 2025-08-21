@@ -46,212 +46,214 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
       ? []
       : SharedPr.currentPosObject!.invoiceFooterLines!.trim().split('\n');
   if (isdownloadRoll) {
-    return Column(
-      children: [
-        SizedBox(
-            width: 150.w,
-            child: Column(
-              children: [
-                if (company?.image != null && company?.image != '') ...[
-                  SizedBox(
-                    height: 25.h,
-                    width: 25.h,
-                    child: companyImage,
-                  ),
-                  SizedBox(height: 5.h),
-                ],
-                infoText(
-                    value: printingController.saleOrderInvoice!.refundNote !=
-                                null &&
-                            printingController.saleOrderInvoice!.refundNote !=
-                                ''
-                        ? "${"invoice".tr} ${'credit_note'.tr}"
-                        : printingController.title.tr),
-                if (company != null) ...[
-                  SizedBox(height: 5.h),
-                  infoText(value: company.name ?? ""),
-                  if (company.phone != null && company.phone != '') ...[
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          SizedBox(
+              width: 150.w,
+              child: Column(
+                children: [
+                  if (company?.image != null && company?.image != '') ...[
+                    SizedBox(
+                      height: 25.h,
+                      width: 25.h,
+                      child: companyImage,
+                    ),
                     SizedBox(height: 5.h),
-                    infoText(value: "${'tell'.tr}: ${company.phone ?? ""}"),
                   ],
-                  SizedBox(height: 5.h),
-                  infoText(value: company.email ?? ""),
-                ],
-                ...headerLines.map(
-                  (line) => Padding(
-                      padding: const EdgeInsets.only(bottom: 5),
-                      child: infoText(value: line)),
-                ),
-                const SizedBox(
-                  width: double.infinity,
-                  child: Divider(
-                    color: Colors.black, // لون الخط
-                    thickness: 2, // سماكة الخط // المسافة من اليمين
+                  infoText(
+                      value: printingController.saleOrderInvoice!.refundNote !=
+                                  null &&
+                              printingController.saleOrderInvoice!.refundNote !=
+                                  ''
+                          ? "${"invoice".tr} ${'credit_note'.tr}"
+                          : printingController.title.tr),
+                  if (company != null) ...[
+                    SizedBox(height: 5.h),
+                    infoText(value: company.name ?? ""),
+                    if (company.phone != null && company.phone != '') ...[
+                      SizedBox(height: 5.h),
+                      infoText(value: "${'tell'.tr}: ${company.phone ?? ""}"),
+                    ],
+                    SizedBox(height: 5.h),
+                    infoText(value: company.email ?? ""),
+                  ],
+                  ...headerLines.map(
+                    (line) => Padding(
+                        padding: const EdgeInsets.only(bottom: 5),
+                        child: infoText(value: line)),
                   ),
-                ),
-                if (user != null) ...[
-                  infoText(value: "${'served_by'.tr} ${user.name!}"),
-                  SizedBox(height: 5.h),
+                  const SizedBox(
+                    width: double.infinity,
+                    child: Divider(
+                      color: Colors.black, // لون الخط
+                      thickness: 2, // سماكة الخط // المسافة من اليمين
+                    ),
+                  ),
+                  if (user != null) ...[
+                    infoText(value: "${'served_by'.tr} ${user.name!}"),
+                    SizedBox(height: 5.h),
+                  ],
+                  infoText(
+                      isbold: true,
+                      isblack: true,
+                      value:
+                          '${'invoice_nmuber'.tr} : ${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}'),
                 ],
-                infoText(
-                    isbold: true,
-                    isblack: true,
-                    value:
-                        '${'invoice_nmuber'.tr} : ${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}'),
-              ],
-            )),
-        SizedBox(height: 10.h),
-        BarcodeWidget(
-          data:
-              '${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}',
-          barcode: Barcode.code128(),
-          width: 70.w,
-          height: 20.h,
-          drawText: false,
-        ),
-        SizedBox(height: 15.h),
-        SizedBox(width:double.infinity,
-        child: Column(
-          children: productAndriodItem(
-                saleOrderLinesList: printingController.saleOrderLinesList!,
-                formatter: formatter,
-                font: AppInvoiceStyle.fontMedium),
-        ),
-        ),
-
-
-        SizedBox(height: 10.h),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            SizedBox(
-              width: 50.w,
-              child: const Divider(
-                color: Colors.black, // لون الخط
-                thickness: 2, // سماكة الخط // المسافة من اليمين
-              ),
-            ),
-          ],
-        ),
-        // Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        //   infoText(
-        //     value: "total".tr,
-        //     isbold: true,
-        //   ),
-        //   infoText(
-        //     value:
-        //         "${formatter.format(printingController.saleOrderInvoice!.totalPrice)} ${"S.R".tr}",
-        //     isbold: true,
-        //   )
-        // ]),
-        SizedBox(height: 10.h),
-        ...printingController.saleOrderInvoice!.invoiceChosenPayment
-            .map((item) {
-          AccountJournal accountJournal = printingController.accountJournalList
-              .firstWhere((e) => e.id == item.id);
-          return Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                infoText(
-                  value:
-                      '${SharedPr.lang == 'en' ? accountJournal.name!.enUS : accountJournal.name!.ar001 ?? accountJournal.name!.enUS}',
-                  isbold: true,
+              )),
+          SizedBox(height: 10.h),
+          BarcodeWidget(
+            data:
+                '${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}',
+            barcode: Barcode.code128(),
+            width: 70.w,
+            height: 20.h,
+            drawText: false,
+          ),
+          SizedBox(height: 15.h),
+          SizedBox(width:double.infinity,
+          child: Column(
+            children: productAndriodItem(
+                  saleOrderLinesList: printingController.saleOrderLinesList!,
+                  formatter: formatter,
+                  font: AppInvoiceStyle.fontMedium),
+          ),
+          ),
+      
+      
+          SizedBox(height: 10.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              SizedBox(
+                width: 50.w,
+                child: const Divider(
+                  color: Colors.black, // لون الخط
+                  thickness: 2, // سماكة الخط // المسافة من اليمين
                 ),
-                infoText(
-                  value: '${formatter.format(item.amount)} ${"S.R".tr}',
-                  isbold: true,
-                )
-              ]);
-        }),
-        SizedBox(height: 10.h),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            SizedBox(
-              width: 50.w,
-              child: const Divider(
-                color: Colors.black, // لون الخط
-                thickness: 2, // سماكة الخط // المسافة من اليمين
               ),
-            ),
-          ],
-        ),
-        SizedBox(height: 10.h),
-        rowFotter(
-            title: "change".tr,
-            value:
-                formatter.format(printingController.saleOrderInvoice!.change)),
-        SizedBox(height: 10.h),
-        rowFotter(
-            title: "remaining".tr,
-            value: formatter
-                .format(printingController.saleOrderInvoice!.remaining)),
-        if (SharedPr.invoiceSetting!.showSubtotal!) ...[
+            ],
+          ),
+          // Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          //   infoText(
+          //     value: "total".tr,
+          //     isbold: true,
+          //   ),
+          //   infoText(
+          //     value:
+          //         "${formatter.format(printingController.saleOrderInvoice!.totalPrice)} ${"S.R".tr}",
+          //     isbold: true,
+          //   )
+          // ]),
+          SizedBox(height: 10.h),
+          ...printingController.saleOrderInvoice!.invoiceChosenPayment
+              .map((item) {
+            AccountJournal accountJournal = printingController.accountJournalList
+                .firstWhere((e) => e.id == item.id);
+            return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  infoText(
+                    value:
+                        '${SharedPr.lang == 'en' ? accountJournal.name!.enUS : accountJournal.name!.ar001 ?? accountJournal.name!.enUS}',
+                    isbold: true,
+                  ),
+                  infoText(
+                    value: '${formatter.format(item.amount)} ${"S.R".tr}',
+                    isbold: true,
+                  )
+                ]);
+          }),
+          SizedBox(height: 10.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              SizedBox(
+                width: 50.w,
+                child: const Divider(
+                  color: Colors.black, // لون الخط
+                  thickness: 2, // سماكة الخط // المسافة من اليمين
+                ),
+              ),
+            ],
+          ),
           SizedBox(height: 10.h),
           rowFotter(
-              title: 'invoice_footer_total_before_tax'.tr,
-              value: formatter.format(printingController
-                  .saleOrderInvoice!.totalPriceWitoutTaxAndDiscount)),
-        ],
-        SizedBox(height: 10.h),
-        rowFotter(
-            title: 'invoice_footer_total_discount'.tr,
-            value: formatter
-                .format(printingController.saleOrderInvoice!.totalDiscount)),
-        SizedBox(height: 10.h),
-        rowFotter(
-            title: 'invoice_footer_total_exclude_tax'.tr,
-            value: formatter.format(
-                printingController.saleOrderInvoice!.totalPriceSubtotal)),
-        SizedBox(height: 10.h),
-        rowFotter(
-            title: 'invoice_footer_total_tax'.tr,
-            value: formatter
-                .format(printingController.saleOrderInvoice!.totalTaxes)),
-        SizedBox(height: 10.h),
-        rowFotter(
-            title: "${'total'.tr} ${'with_tax'.tr}",
-            value: formatter
-                .format(printingController.saleOrderInvoice!.totalPrice)),
-        SizedBox(height: 10.h),
-        Container(
-            padding: EdgeInsets.all(10.r),
-            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              BarcodeWidget(
-                  data: printingController.saleOrderInvoice!.zatcaQr ?? "",
-                  barcode: Barcode.qrCode(),
-                  width: 100.w,
-                  height: 100.h),
-            ])),
-        SizedBox(height: 10.h),
-        ...footerLines.map(
-          (line) => Padding(
-              padding: EdgeInsets.only(bottom: 5.r),
-              child: infoText(value: line)),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              " ${!printingController.saleOrderInvoice!.orderDate.toString().contains('T') ? printingController.saleOrderInvoice!.orderDate.toString() : printingController.saleOrderInvoice!.orderDate.toString().substring(0, printingController.saleOrderInvoice!.orderDate!.indexOf('T'))}",
-              style: TextStyle(
-                  fontStyle: FontStyle.normal,
-                  fontSize: 4.sp,
-                  color: AppColor.black,
-                  fontWeight: FontWeight.bold),
-            ),
-            Text(
-              " ${!printingController.saleOrderInvoice!.orderDate.toString().contains('T') ? intl.DateFormat("HH:mm:ss").format(DateTime.now()) : printingController.saleOrderInvoice!.orderDate.toString().substring(printingController.saleOrderInvoice!.orderDate!.indexOf('T') + 1)}",
-              style: TextStyle(
-                  fontStyle: FontStyle.normal,
-                  fontSize: 4.sp,
-                  color: AppColor.black,
-                  fontWeight: FontWeight.bold),
-            ),
+              title: "change".tr,
+              value:
+                  formatter.format(printingController.saleOrderInvoice!.change)),
+          SizedBox(height: 10.h),
+          rowFotter(
+              title: "remaining".tr,
+              value: formatter
+                  .format(printingController.saleOrderInvoice!.remaining)),
+          if (SharedPr.invoiceSetting!.showSubtotal!) ...[
+            SizedBox(height: 10.h),
+            rowFotter(
+                title: 'invoice_footer_total_before_tax'.tr,
+                value: formatter.format(printingController
+                    .saleOrderInvoice!.totalPriceWitoutTaxAndDiscount)),
           ],
-        ),
-        // SizedBox(height: 20.h),
-      ],
+          SizedBox(height: 10.h),
+          rowFotter(
+              title: 'invoice_footer_total_discount'.tr,
+              value: formatter
+                  .format(printingController.saleOrderInvoice!.totalDiscount)),
+          SizedBox(height: 10.h),
+          rowFotter(
+              title: 'invoice_footer_total_exclude_tax'.tr,
+              value: formatter.format(
+                  printingController.saleOrderInvoice!.totalPriceSubtotal)),
+          SizedBox(height: 10.h),
+          rowFotter(
+              title: 'invoice_footer_total_tax'.tr,
+              value: formatter
+                  .format(printingController.saleOrderInvoice!.totalTaxes)),
+          SizedBox(height: 10.h),
+          rowFotter(
+              title: "${'total'.tr} ${'with_tax'.tr}",
+              value: formatter
+                  .format(printingController.saleOrderInvoice!.totalPrice)),
+          SizedBox(height: 10.h),
+          Container(
+              padding: EdgeInsets.all(10.r),
+              child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                BarcodeWidget(
+                    data: printingController.saleOrderInvoice!.zatcaQr ?? "",
+                    barcode: Barcode.qrCode(),
+                    width: 100.w,
+                    height: 100.h),
+              ])),
+          SizedBox(height: 10.h),
+          ...footerLines.map(
+            (line) => Padding(
+                padding: EdgeInsets.only(bottom: 5.r),
+                child: infoText(value: line)),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                " ${!printingController.saleOrderInvoice!.orderDate.toString().contains('T') ? printingController.saleOrderInvoice!.orderDate.toString() : printingController.saleOrderInvoice!.orderDate.toString().substring(0, printingController.saleOrderInvoice!.orderDate!.indexOf('T'))}",
+                style: TextStyle(
+                    fontStyle: FontStyle.normal,
+                    fontSize: 4.sp,
+                    color: AppColor.black,
+                    fontWeight: FontWeight.bold),
+              ),
+              Text(
+                " ${!printingController.saleOrderInvoice!.orderDate.toString().contains('T') ? intl.DateFormat("HH:mm:ss").format(DateTime.now()) : printingController.saleOrderInvoice!.orderDate.toString().substring(printingController.saleOrderInvoice!.orderDate!.indexOf('T') + 1)}",
+                style: TextStyle(
+                    fontStyle: FontStyle.normal,
+                    fontSize: 4.sp,
+                    color: AppColor.black,
+                    fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          // SizedBox(height: 20.h),
+        ],
+      ),
     );
   }
   if (!isdownloadRoll && items != null) {
