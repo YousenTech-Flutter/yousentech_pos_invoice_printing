@@ -110,10 +110,13 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
           drawText: false,
         ),
         SizedBox(height: 15.h),
-        ...productAndriodItem(
+        SizedBox(width:double.infinity,
+        child:  productAndriodItem(
             saleOrderLinesList: printingController.saleOrderLinesList!,
             formatter: formatter,
             font: AppInvoiceStyle.fontMedium),
+         ),
+
 
         SizedBox(height: 10.h),
         Row(
