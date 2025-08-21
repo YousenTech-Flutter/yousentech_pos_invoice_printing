@@ -30,9 +30,12 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
       print("=====================init");
       await Future.delayed(Duration.zero);
       await Future.delayed(Duration.zero);
-      await screenshotController.capture(pixelRatio: 1.0)
+      await screenshotController.captureFromLongWidget(Container(
+        width: PaperSize.mm80.width.toDouble(),
+        child: widget.child,
+      ))
       .then((image) async {
-        await PrinterTypes.printer(imageThatC: image!, printerIp: widget.printerIp ,isChasherInvoice: widget.isChasherInvoice );
+        await PrinterTypes.printer(imageThatC: image!, printerIp: widget.printerIp ,isChasherInvoice: widget.isChasherInvoice);
       }).whenComplete(() {
         Get.back(result: true);
       });
