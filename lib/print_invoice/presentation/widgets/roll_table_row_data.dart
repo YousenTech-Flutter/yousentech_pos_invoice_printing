@@ -110,17 +110,11 @@ List<pw.Column> productItem(
   });
 }
 
-List<Container> productAndriodItem(
-    {required List<SaleOrderLine> saleOrderLinesList,
+Container productAndriodItem({required SaleOrderLine item,
     required formatter,
     bool isShowNote = false,
     required font}) {
-  return 
-  
-  List.generate(saleOrderLinesList.length, (index) {
-    SaleOrderLine item = saleOrderLinesList[index];
-    return Container(
-      width: double.infinity, // عرض كامل
+  return Container(
       padding: EdgeInsets.symmetric(vertical: 5),
       child: Column(children: [
         productAndriodText(value: "${item.name}", isblack: true, isname: true),
@@ -151,35 +145,32 @@ List<Container> productAndriodItem(
           ]
         ],
         SizedBox(height: 5.h),
-        SizedBox(
-          width: double.infinity,
-          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Container(
-              padding: EdgeInsetsDirectional.only(start: 8),
-              child: Row(children: [
-                productAndriodText(
-                    value: "${item.productUomQty}", isblack: true),
-                productAndriodText(
-                  value: " x ",
-                ),
-                if (!isShowNote) ...[
-                  productAndriodText(
-                    value: "${formatter.format(item.priceUnit)} ${"S.R".tr}",
-                  ),
-                ],
-              ]),
-            ),
-            if (!isShowNote) ...[
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Container(
+            padding: EdgeInsetsDirectional.only(start: 8),
+            child: Row(children: [
               productAndriodText(
-                  value: "${formatter.format(item.totalPrice)} ${"S.R".tr}",
-                  isblack: true),
-            ]
-          ]),
-        ),
+                  value: "${item.productUomQty}", isblack: true),
+              productAndriodText(
+                value: " x ",
+              ),
+              if (!isShowNote) ...[
+                productAndriodText(
+                  value: "${formatter.format(item.priceUnit)} ${"S.R".tr}",
+                ),
+              ],
+            ]),
+          ),
+          if (!isShowNote) ...[
+            productAndriodText(
+                value: "${formatter.format(item.totalPrice)} ${"S.R".tr}",
+                isblack: true),
+          ]
+        ]),
         // SizedBox(height: 10.h),
       ]),
     );
-  });
+
 }
 
 pw.Align productText({
