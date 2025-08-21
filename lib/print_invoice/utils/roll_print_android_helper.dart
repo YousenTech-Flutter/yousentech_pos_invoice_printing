@@ -46,6 +46,11 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
       ? []
       : SharedPr.currentPosObject!.invoiceFooterLines!.trim().split('\n');
   if (isdownloadRoll) {
+    List<Widget> children = [];
+    for (var item in printingController.saleOrderLinesList!) {
+      children.add(productAndriodItem(item: item,formatter: formatter,font: AppInvoiceStyle.fontMedium),);
+    }
+
     return Column(
       children: [
         SizedBox(
@@ -110,16 +115,17 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
           drawText: false,
         ),
         SizedBox(height: 15.h),
-        SizedBox(width:double.infinity,
-        child: Column(
-          children: productAndriodItem(
-                saleOrderLinesList: printingController.saleOrderLinesList!,
-                formatter: formatter,
-                font: AppInvoiceStyle.fontMedium),
-        ),
-        ),
-    
-    
+        ...children,
+        // SizedBox(
+        //   width: double.infinity,
+        //   child: Column(
+        //     children: productAndriodItem(
+        //         saleOrderLinesList: printingController.saleOrderLinesList!,
+        //         formatter: formatter,
+        //         font: AppInvoiceStyle.fontMedium),
+        //   ),
+        // ),
+
         SizedBox(height: 10.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
