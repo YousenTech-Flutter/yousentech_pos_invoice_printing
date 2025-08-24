@@ -31,17 +31,19 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
       print("=====================init");
       await Future.delayed(Duration.zero);
       await Future.delayed(Duration.zero);
-      await screenshotController.captureFromLongWidget(Material(
-        child: Directionality(
-      textDirection:SharedPr.lang=='ar'?TextDirection.rtl: TextDirection.ltr,
-          child: SizedBox(
-            width: PaperSize.mm80.width.toDouble(),
-            child: widget.child,
-          ),
-        ),
-      ))
+      await screenshotController.capture(
+      //   Material(
+      //   child: Directionality(
+      // textDirection:SharedPr.lang=='ar'?TextDirection.rtl: TextDirection.ltr,
+      //     child: SizedBox(
+      //       width: PaperSize.mm80.width.toDouble(),
+      //       child: widget.child,
+      //     ),
+      //   ),
+      // )
+      )
       .then((image) async {
-        await PrinterTypes.printer(imageThatC: image, printerIp: widget.printerIp ,isChasherInvoice: widget.isChasherInvoice);
+        await PrinterTypes.printer(imageThatC: image!, printerIp: widget.printerIp ,isChasherInvoice: widget.isChasherInvoice);
       }).whenComplete(() {
         Get.back(result: true);
       });
