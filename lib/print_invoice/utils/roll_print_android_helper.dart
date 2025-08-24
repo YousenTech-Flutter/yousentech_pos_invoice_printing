@@ -18,8 +18,7 @@ import '../domain/invoice_printing_viewmodel.dart';
 import '../presentation/widgets/roll_table_row_data.dart';
 
 Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
-  PrintingInvoiceController printingController =
-      Get.put(PrintingInvoiceController());
+  PrintingInvoiceController printingController = Get.put(PrintingInvoiceController());
   Customer? company = SharedPr.currentCompanyObject;
   User? user = SharedPr.chosenUserObj;
   final intl.NumberFormat formatter = intl.NumberFormat('#,##0.00', 'en_US');

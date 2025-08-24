@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:pos_shared_preferences/pos_shared_preferences.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:shared_widgets/config/app_colors.dart';
+import 'package:yousentech_pos_invoice_printing/print_invoice/domain/invoice_printing_viewmodel.dart';
 import 'package:ysn_pos_android_printer/android_printer/printer.dart';
 
 class ScreenshotWidget extends StatefulWidget {
@@ -22,6 +23,7 @@ class ScreenshotWidget extends StatefulWidget {
 
 class _ScreenshotWidgetState extends State<ScreenshotWidget> {
   ScreenshotController screenshotController = ScreenshotController();
+  PrintingInvoiceController printingController = Get.put(PrintingInvoiceController());
   ReceiptController? controller;
   @override
   void initState() {
@@ -43,7 +45,7 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
       // )
       )
       .then((image) async {
-        await PrinterTypes.printer(imageThatC: image!, printerIp: widget.printerIp ,isChasherInvoice: widget.isChasherInvoice);
+        await PrinterTypes.printer(imageThatC: image!, printerIp: widget.printerIp ,isChasherInvoice: widget.isChasherInvoice ,printingController: printingController );
       }).whenComplete(() {
         Get.back(result: true);
       });
