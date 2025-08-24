@@ -45,7 +45,7 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
       // )
       )
       .then((image) async {
-        await PrinterTypes.printer(imageThatC: image!, printerIp: widget.printerIp ,isChasherInvoice: widget.isChasherInvoice ,printingController: printingController );
+        await PrinterTypes.printer(imageThatC: image!, printerIp: widget.printerIp ,isChasherInvoice: widget.isChasherInvoice);
       }).whenComplete(() {
         Get.back(result: true);
       });
