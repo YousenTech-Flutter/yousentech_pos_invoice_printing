@@ -39,6 +39,7 @@ import 'package:yousentech_pos_payment_summary/payment_summary/presentation/paym
 import 'package:yousentech_pos_printing/printing/domain/app_connected_printers/connected_printer_viewmodel.dart';
 import 'package:yousentech_pos_printing/printing/utils/subnet_determination.dart';
 import 'package:ysn_pos_android_printer/android_printer/printer.dart';
+import 'package:ysn_pos_android_printer/test.dart';
 
 import '../utils/a4_print_helper.dart';
 // import 'package:pdf/widgets.dart' as pw;
@@ -564,11 +565,12 @@ class PrintingInvoiceController extends GetxController {
           .ipAddress;
       if ((Platform.isAndroid || Platform.isIOS)) {
         print("ipAddress=========== $ipAddress");
-          await  Get.to(() => ScreenshotWidget(
-              printerIp: ipAddress,
-              isChasherInvoice: true,
-              child: rollAndroidPrint(isdownloadRoll: true),
-            ));
+          // await  Get.to(() => ScreenshotWidget(
+          //     printerIp: ipAddress,
+          //     isChasherInvoice: true,
+          //     child: rollAndroidPrint(isdownloadRoll: true),
+          //   ));
+          Get.to(()=> TestUSBPrinter());
       } else {
         final targetPrinter = printers.firstWhere(
           (p) => ipPorts.any((port) =>
