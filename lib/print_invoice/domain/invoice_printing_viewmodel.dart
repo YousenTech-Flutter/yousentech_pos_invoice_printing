@@ -566,12 +566,12 @@ class PrintingInvoiceController extends GetxController {
       if ((Platform.isAndroid || Platform.isIOS)) {
         print("ipAddress=========== $ipAddress");
         print("TestUSBPrinter=========== $ipAddress");
-          // await  Get.to(() => ScreenshotWidget(
-          //     printerIp: ipAddress,
-          //     isChasherInvoice: true,
-          //     child: rollAndroidPrint(isdownloadRoll: true),
-          //   ));
-          await  Get.to(()=> TestUSBPrinter());
+        await  Get.to(() => ScreenshotWidget(
+              printerIp: ipAddress,
+              isChasherInvoice: true,
+              child: rollAndroidPrint(isdownloadRoll: true),
+            ));
+          // await  Get.to(()=> TestUSBPrinter());
       } else {
         final targetPrinter = printers.firstWhere(
           (p) => ipPorts.any((port) =>
