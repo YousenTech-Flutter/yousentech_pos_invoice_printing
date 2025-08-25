@@ -571,7 +571,7 @@ class PrintingInvoiceController extends GetxController {
           //     isChasherInvoice: true,
           //     child: rollAndroidPrint(isdownloadRoll: true),
           //   ));
-          Get.to(()=> TestUSBPrinter());
+          await  Get.to(()=> TestUSBPrinter());
       } else {
         final targetPrinter = printers.firstWhere(
           (p) => ipPorts.any((port) =>
