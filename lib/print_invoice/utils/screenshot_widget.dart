@@ -34,6 +34,7 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
       await Future.delayed(Duration.zero);
       await Future.delayed(Duration.zero);
       await screenshotController.capture(
+        pixelRatio: 2,
       //   Material(
       //   child: Directionality(
       // textDirection:SharedPr.lang=='ar'?TextDirection.rtl: TextDirection.ltr,
