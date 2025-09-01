@@ -306,7 +306,7 @@ class PrintingInvoiceController extends GetxController {
                             printingTypeSkip ==
                                 PrintingTypeSkip.skip_disable_customer_printing)
                         ? false
-                        : ip.autoNetworkPrinter,
+                        : ip.autoNetworkPrinter ==true ? false : true,
                 disablePrintOrderInvoice:
                     posSettingInfo.orderPrinter! == true &&
                             (posSettingInfo.posCategoryIds!.length !=
