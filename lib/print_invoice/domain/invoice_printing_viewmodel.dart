@@ -673,7 +673,7 @@ class PrintingInvoiceController extends GetxController {
               .where((line) => line.productId?.soPosCategId == categoryId)
               .toList();
           if (filteredLines.isEmpty) continue;
-          await _printItems(filteredLines, printerIPorDefault,
+          await _printItems(filteredLines, printerIPorDefault.runtimeType==String ?null :printerIPorDefault,
               silent: isSilent,
               isWindows: isWindows,
               printerIp: printerIPorDefault,
