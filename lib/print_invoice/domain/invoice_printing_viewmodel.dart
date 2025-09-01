@@ -264,7 +264,7 @@ class PrintingInvoiceController extends GetxController {
                 printingNetworksIp: printingNetworksIp,
                 ipPorts: ipPorts,
                 printers: printers,
-                printerIPorDefault: targetPrinter,
+                printerIPorDefault: (Platform.isAndroid || Platform.isIOS) ? ip.ipAddress: targetPrinter,
                 isWindows:
                     ((Platform.isAndroid || Platform.isIOS)) ? false : true,
                 printingTypeSkip: printingTypeSkip,
@@ -292,7 +292,7 @@ class PrintingInvoiceController extends GetxController {
                 categoryids: [],
                 ipPorts: ipPorts,
                 printers: printers,
-                printerIPorDefault: targetPrinter,
+                printerIPorDefault:(Platform.isAndroid || Platform.isIOS) ? ip.ipAddress: targetPrinter,
                 printingNetworksIp: printingNetworksIp,
                 isWindows:
                     ((Platform.isAndroid || Platform.isIOS)) ? false : true,
