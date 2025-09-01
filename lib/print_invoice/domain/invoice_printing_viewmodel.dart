@@ -135,7 +135,7 @@ class PrintingInvoiceController extends GetxController {
         if (posSettingInfo?.enableDirectPrinter != null &&
             posSettingInfo!.enableDirectPrinter!) {
           print("posSettingInfo?.enableDirectPrinter=======================");
-          Printer? defaultPrinter = await PrintHelper.setDefaultPrinter();
+          Printer? defaultPrinter = (Platform.isAndroid || Platform.isIOS) ? null : await PrintHelper.setDefaultPrinter();
           Printer? printer;
           // جلب الطابعة من الـ Controller إن وُجدت
           ConnectedPrinterController printingController =
