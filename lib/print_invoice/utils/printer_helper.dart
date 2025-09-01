@@ -8,6 +8,6 @@ class PrintHelper {
   }
 
   static Future<List<Printer>> getPrinters() async {
-    return await Printing.listPrinters();
+    return  await Printing.listPrinters();
   }
 }

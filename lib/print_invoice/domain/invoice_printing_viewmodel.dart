@@ -241,8 +241,8 @@ class PrintingInvoiceController extends GetxController {
               "enableDirectPrinter======================= ${posSettingInfo.enableDirectPrinter}");
           print("printingTypeSkip======================= ${printingTypeSkip}");
           List<dynamic> printingNetworksIp = await getPrintingSetting();
-          var ipPorts = await LanPrintingHelper.listSharedPrintersWithIP();
-          List<Printer> printers = await PrintHelper.getPrinters();
+          var ipPorts = (Platform.isAndroid || Platform.isIOS) ? [] : await LanPrintingHelper.listSharedPrintersWithIP();
+          List<Printer> printers = (Platform.isAndroid || Platform.isIOS) ? []: await PrintHelper.getPrinters();
           final ip = printingNetworksIp.firstWhere(
             (s) => s.isCustomerPrinter,
             orElse: () => PrintingSetting(
