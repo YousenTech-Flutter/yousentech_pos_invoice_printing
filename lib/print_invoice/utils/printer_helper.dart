@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:printing/printing.dart';
 
 class PrintHelper {
@@ -8,6 +10,10 @@ class PrintHelper {
   }
 
   static Future<List<Printer>> getPrinters() async {
-    return  await Printing.listPrinters();
+    if (Platform.isWindows){
+          return  await Printing.listPrinters();
+    }
+    return [];
+
   }
 }
