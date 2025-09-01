@@ -699,12 +699,12 @@ class PrintingInvoiceController extends GetxController {
           );
         }
       } else {
-        print("طباعة الفاتورة كاملة اندرويد");
-        await  Get.to(() => ScreenshotWidget(
-        printerIp: printerIPorDefault,
-        isChasherInvoice: true,
-        child: rollAndroidPrint(isdownloadRoll: true),
-            ));
+        print("$printerIPorDefault طباعة الفاتورة كاملة اندرويد");
+        // await  Get.to(() => ScreenshotWidget(
+        // printerIp: printerIPorDefault,
+        // isChasherInvoice: true,
+        // child: rollAndroidPrint(isdownloadRoll: true),
+        //     ));
       }
     }
   }
