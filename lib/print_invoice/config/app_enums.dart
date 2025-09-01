@@ -9,3 +9,13 @@ enum PrintingType {
   @override
   String toString() => 'PrintingType($text)';
 }
+enum PrintingTypeSkip {
+  skip_disable_customer_printing('skip Disable Customer Printing'),
+  skip_disable_order_printing('skip Disable Order Printing');
+
+  const PrintingTypeSkip(this.text);
+  final String text;
+
+  @override
+  String toString() => 'PrintingType($text)';
+}

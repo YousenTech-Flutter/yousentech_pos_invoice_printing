@@ -15,6 +15,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:pos_shared_preferences/models/account_journal/data/account_journal.dart';
 import 'package:pos_shared_preferences/models/customer_model.dart';
+import 'package:pos_shared_preferences/models/pos_setting_info_model.dart';
 import 'package:pos_shared_preferences/models/printing/data/powershell_shared_printer.dart';
 import 'package:pos_shared_preferences/models/printing_setting.dart';
 import 'package:pos_shared_preferences/models/sale_order.dart';
@@ -82,46 +83,254 @@ class PrintingInvoiceController extends GetxController {
   }
 
   // ================================================================ [ GET ACCOUNT JOURNAL ] ===============================================================
-  nextPressed(
-      {required String format,
-      bool isFromPayment = false,
-      bool skipDisablePrinting = false,
-      bool skipDisablePrintOrderInvoice = false}) async {
+  // nextPressed(
+  //     {required String format,
+  //     bool isFromPayment = false,
+  //     bool skipDisablePrinting = false,
+  //     bool skipDisablePrintOrderInvoice = false}) async {
+  //   PdfPageFormat pdfFormat = getFormatByName(formatName: format);
+  //   if (isFromPayment) {
+  //     if (pdfFormat == PdfPageFormat.roll80) {
+  //       if (SharedPr.printingPreferenceObj!.isSilentPrinting! ||
+  //           ((Platform.isAndroid || Platform.isIOS))) {
+  //         await printingInvoiceDirectPrintPdf(
+  //             format: format,
+  //             pdfFormat: pdfFormat,
+  //             disablePrintFullInvoice:
+  //                 (!SharedPr.printingPreferenceObj!.disablePrinting! ||skipDisablePrinting) && !skipDisablePrintOrderInvoice
+  //                     ? false
+  //                     : true,
+  //             disablePrintOrderInvoice: skipDisablePrintOrderInvoice
+  //                 ? false
+  //                 : skipDisablePrinting ? true : SharedPr.currentPosObject!.disableNetworkPrinting!);
+  //       } else {
+  //         await printingInvoiceLayoutPdf(
+  //             pdfFormat: pdfFormat,
+  //             disablePrintFullInvoice:
+  //                 (!SharedPr.printingPreferenceObj!.disablePrinting! ||
+  //                         skipDisablePrinting) && !skipDisablePrintOrderInvoice
+  //                     ? false
+  //                     : true,
+  //             disablePrintOrderInvoice: skipDisablePrintOrderInvoice
+  //                 ? false
+  //                 : skipDisablePrinting ? true : SharedPr.currentPosObject!.disableNetworkPrinting!);
+  //       }
+  //     } else if (SharedPr.printingPreferenceObj!.isDownloadPDF!) {
+  //       await downloadPDF(format: pdfFormat);
+  //     }
+  //   } else {
+  //     await printingInvoiceDirectPrintPdf(pdfFormat: pdfFormat, format: format);
+  //   }
+  // }
+
+  nextPressed({
+    required String format,
+    bool isFromPayment = false,
+    PrintingTypeSkip? printingTypeSkip,
+  }) async {
     PdfPageFormat pdfFormat = getFormatByName(formatName: format);
     if (isFromPayment) {
       if (pdfFormat == PdfPageFormat.roll80) {
-        if (SharedPr.printingPreferenceObj!.isSilentPrinting! ||
-            ((Platform.isAndroid || Platform.isIOS))) {
-          await printingInvoiceDirectPrintPdf(
-              format: format,
-              pdfFormat: pdfFormat,
-              disablePrintFullInvoice:
-                  (!SharedPr.printingPreferenceObj!.disablePrinting! ||skipDisablePrinting) && !skipDisablePrintOrderInvoice
-                      ? false
-                      : true,
-              disablePrintOrderInvoice: skipDisablePrintOrderInvoice
-                  ? false
-                  : skipDisablePrinting ? true : SharedPr.currentPosObject!.disableNetworkPrinting!);
-        } else {
-          await printingInvoiceLayoutPdf(
-              pdfFormat: pdfFormat,
-              disablePrintFullInvoice:
-                  (!SharedPr.printingPreferenceObj!.disablePrinting! ||
-                          skipDisablePrinting) && !skipDisablePrintOrderInvoice
-                      ? false
-                      : true,
-              disablePrintOrderInvoice: skipDisablePrintOrderInvoice
-                  ? false
-                  : skipDisablePrinting ? true : SharedPr.currentPosObject!.disableNetworkPrinting!);
+        PosSettingInfo? posSettingInfo = SharedPr.currentPosObject;
+        if (posSettingInfo?.enableDirectPrinter != null &&
+            posSettingInfo!.enableDirectPrinter!) {
+          print("posSettingInfo?.enableDirectPrinter=======================");
+          Printer? defaultPrinter = await PrintHelper.setDefaultPrinter();
+          Printer? printer;
+          // جلب الطابعة من الـ Controller إن وُجدت
+          ConnectedPrinterController printingController =
+              Get.isRegistered<ConnectedPrinterController>()
+                  ? Get.find<ConnectedPrinterController>()
+                  : Get.put(ConnectedPrinterController());
+          if (printingController.connectedPrinterList
+              .any((elem) => elem.paperType == format)) {
+            String printerName = printingController.connectedPrinterList
+                .firstWhere((elem) => elem.paperType == format)
+                .printerName!;
+            printer = printingController.systemPrinterList
+                .firstWhere((elem) => elem.name == printerName);
+          }
+          if (posSettingInfo.customerPrinter! &&
+              printingTypeSkip !=
+                  PrintingTypeSkip.skip_disable_order_printing) {
+            print("customerPrinter=======================");
+            print(
+                "posSettingInfo.customerPrintingMode======================= ${posSettingInfo.customerPrintingMode}");
+            print("printingTypeSkip=======================$printingTypeSkip");
+            print(
+                "posSettingInfo.autoCustomerPrinter!=======================${posSettingInfo.autoCustomerPrinter!}");
+            //  فاتورة العميل بلوثوث او usb
+            if (posSettingInfo.autoCustomerPrinter! ||
+                (printingTypeSkip != null &&
+                    printingTypeSkip ==
+                        PrintingTypeSkip.skip_disable_customer_printing)) {
+              if (posSettingInfo.customerPrintingMode ==
+                      PrintingType.is_silent_printing.name ||
+                  ((Platform.isAndroid || Platform.isIOS))) {
+                // var categoryids = saleOrderLinesList!.map((e) => e.productId!.soPosCategId!,).toList();
+                await printingInvoiceDirectPrintPdf(
+                  format: format,
+                  pdfFormat: pdfFormat,
+                  disablePrintFullInvoice: false,
+                  disablePrintOrderInvoice: true,
+                  printingNetworksIp: [],
+                  categoryids: [],
+                  isSilent: true,
+                  isWindows: ((Platform.isAndroid || Platform.isIOS)) ? false : true,
+                  printerIPorDefault: ((Platform.isAndroid || Platform.isIOS))
+                      ? ''
+                      : defaultPrinter ?? printer,
+                  ipPorts: null,
+                  printers: [],
+                );
+              } else {
+                await printingInvoiceLayoutPdf(
+                    pdfFormat: pdfFormat,
+                    disablePrintFullInvoice: false,
+                    disablePrintOrderInvoice: true,
+                    categoryids: posSettingInfo.orderPrinterCategoryIds ?? []
+                    
+                    );
+              }
+            }
+          }
+          // حق طلبات المطبخ بلوثوت او usb
+          if (posSettingInfo.orderPrinter! &&
+              printingTypeSkip !=
+                  PrintingTypeSkip.skip_disable_customer_printing) {
+            print("orderPrinter=======================");
+            print(
+                "posSettingInfo.orderPrintingMode======================= ${posSettingInfo.orderPrintingMode}");
+            print("printingTypeSkip=======================$printingTypeSkip");
+            print(
+                "posSettingInfo.autoOrderPrinter!=======================${posSettingInfo.autoOrderPrinter!}");
+            if (posSettingInfo.autoOrderPrinter! ||
+                (printingTypeSkip != null &&printingTypeSkip ==PrintingTypeSkip.skip_disable_order_printing)) {
+              if (posSettingInfo.orderPrintingMode ==PrintingType.is_silent_printing.name ||
+                  (Platform.isAndroid || Platform.isIOS)) {
+                await printingInvoiceDirectPrintPdf(
+                    format: format,
+                    pdfFormat: pdfFormat,
+                    disablePrintFullInvoice: true,
+                    disablePrintOrderInvoice: false,
+                    printingNetworksIp: [],
+                    categoryids: posSettingInfo.orderPrinterCategoryIds ?? [],
+                    isSilent: true,
+                    isWindows:
+                        ((Platform.isAndroid || Platform.isIOS)) ? false : true,
+                    printerIPorDefault: ((Platform.isAndroid || Platform.isIOS))
+                        ? ''
+                        : defaultPrinter ?? printer,
+                    ipPorts: null,
+                    printers: []);
+              } else {
+                await printingInvoiceLayoutPdf(
+                    pdfFormat: pdfFormat,
+                    disablePrintFullInvoice: true,
+                    disablePrintOrderInvoice: false,
+                    categoryids: posSettingInfo.orderPrinterCategoryIds ?? []
+                    );
+              }
+            }
+          }
         }
-      } else if (SharedPr.printingPreferenceObj!.isDownloadPDF!) {
+        if (posSettingInfo?.enableNetworkPrint != null &&
+            posSettingInfo!.enableNetworkPrint!) {
+          print("enableNetworkPrint=======================");
+          print(
+              "enableDirectPrinter======================= ${posSettingInfo.enableDirectPrinter}");
+          print("printingTypeSkip======================= ${printingTypeSkip}");
+          List<dynamic> printingNetworksIp = await getPrintingSetting();
+          var ipPorts = await LanPrintingHelper.listSharedPrintersWithIP();
+          List<Printer> printers = await PrintHelper.getPrinters();
+          final ip = printingNetworksIp.firstWhere(
+            (s) => s.isCustomerPrinter,
+            orElse: () => PrintingSetting(
+                ipAddress: '',
+                isCustomerPrinter: false,
+                autoNetworkPrinter: false),
+          );
+          Printer? targetPrinter = printers.firstWhereOrNull(
+            (p) => ipPorts.any((port) =>
+                port.name.trim() == p.name.trim() &&
+                port.portName == ip.ipAddress),
+          );
+          if (!posSettingInfo.enableDirectPrinter!) {
+            await printingInvoiceDirectPrintPdf(
+                format: format,
+                pdfFormat: pdfFormat,
+                categoryids: [],
+                printingNetworksIp: printingNetworksIp,
+                ipPorts: ipPorts,
+                printers: printers,
+                printerIPorDefault: targetPrinter,
+                isWindows:
+                    ((Platform.isAndroid || Platform.isIOS)) ? false : true,
+                printingTypeSkip: printingTypeSkip,
+                disablePrintOrderInvoice: (printingTypeSkip != null &&
+                        printingTypeSkip ==
+                            PrintingTypeSkip.skip_disable_customer_printing)
+                    ? true
+                    : false,
+                disablePrintFullInvoice: (printingTypeSkip != null &&
+                        printingTypeSkip ==
+                            PrintingTypeSkip.skip_disable_order_printing)
+                    ? true
+                    : (printingTypeSkip != null &&
+                            printingTypeSkip ==
+                                PrintingTypeSkip.skip_disable_customer_printing)
+                        ? false
+                        : ip.autoNetworkPrinter == true
+                            ? false
+                            : true);
+          }
+          if (posSettingInfo.enableDirectPrinter!) {
+            await printingInvoiceDirectPrintPdf(
+                format: format,
+                pdfFormat: pdfFormat,
+                categoryids: [],
+                ipPorts: ipPorts,
+                printers: printers,
+                printerIPorDefault: targetPrinter,
+                printingNetworksIp: printingNetworksIp,
+                isWindows:
+                    ((Platform.isAndroid || Platform.isIOS)) ? false : true,
+                disablePrintFullInvoice: posSettingInfo.customerPrinter ==
+                            true ||
+                        (printingTypeSkip != null &&
+                            printingTypeSkip ==
+                                PrintingTypeSkip.skip_disable_order_printing)
+                    ? true
+                    : (printingTypeSkip != null &&
+                            printingTypeSkip ==
+                                PrintingTypeSkip.skip_disable_customer_printing)
+                        ? false
+                        : ip.autoNetworkPrinter,
+                disablePrintOrderInvoice:
+                    posSettingInfo.orderPrinter! == true &&
+                            (posSettingInfo.posCategoryIds!.length !=
+                                posSettingInfo.orderPrinterCategoryIds!.length)
+                        ? false
+                        : posSettingInfo.orderPrinter! == true ||
+                                (printingTypeSkip != null &&
+                                    printingTypeSkip ==
+                                        PrintingTypeSkip
+                                            .skip_disable_customer_printing)
+                            ? true
+                            : false,
+                printingTypeSkip: printingTypeSkip);
+          }
+        }
+      }
+      else if (SharedPr.printingPreferenceObj!.isDownloadPDF!) {
         await downloadPDF(format: pdfFormat);
       }
     } else {
-      await printingInvoiceDirectPrintPdf(pdfFormat: pdfFormat, format: format);
+      PaymentController paymentController = Get.put(PaymentController());
+      showPDFInvoice(paymentController: paymentController, isFromPayment: isFromPayment);
+      // await printingInvoiceDirectPrintPdf(pdfFormat: pdfFormat, format: format);
     }
   }
-
   downloadPDF({required format, bool isdownloadRoll = false}) async {
     PdfPageFormat pdfFormat =
         format is String ? getFormatByName(formatName: format) : format;
@@ -133,118 +342,443 @@ class PrintingInvoiceController extends GetxController {
         pdfDirectory: pdfDirectory, filename: saleOrderInvoice!.id.toString());
   }
 
-  Future<void> printingInvoiceLayoutPdf({
+  // Future<void> printingInvoiceLayoutPdf({
+  //   required PdfPageFormat pdfFormat,
+  //   bool disablePrintFullInvoice = false,
+  //   bool disablePrintOrderInvoice = false,
+  // }) async {
+  //   // ignore: unused_element
+  //   Future<void> printItems({
+  //     required List<SaleOrderLine> items,
+  //     required bool silentPrint,
+  //     required String ip,
+  //   }) async {
+  //     List<Printer> printers = await PrintHelper.getPrinters();
+  //     var ipPorts = await LanPrintingHelper.listSharedPrintersWithIP();
+  //     var defaultPrinter = await PrintHelper.setDefaultPrinter();
+
+  //     Printer targetPrinter = printers.firstWhere(
+  //       (p) {
+  //         var port = ipPorts.firstWhere(
+  //           (port) => port.portName == ip,
+  //           orElse: () => PowerShellSharedPrinter(name: '', portName: ''),
+  //         );
+  //         return p.name.trim() == port.name.trim();
+  //       },
+  //       orElse: () => defaultPrinter,
+  //     );
+
+  //     final pdfLayout = await buildPDFLayout(
+  //       format: pdfFormat,
+  //       isdownloadRoll: false,
+  //       items: items,
+  //     );
+
+  //     if (silentPrint) {
+  //       await Printing.directPrintPdf(
+  //         format: pdfFormat,
+  //         printer: targetPrinter,
+  //         onLayout: pdfLayout,
+  //         name: items.isNotEmpty
+  //             ? items[0].productId!.soPosCategName!
+  //             : saleOrderInvoice!.id.toString(),
+  //       );
+  //     } else {
+  //       await Printing.layoutPdf(
+  //         format: pdfFormat,
+  //         onLayout: pdfLayout,
+  //         name: items.isNotEmpty
+  //             ? items[0].productId!.soPosCategName!
+  //             : saleOrderInvoice!.id.toString(),
+  //       );
+  //     }
+  //   }
+
+  //   if (!disablePrintOrderInvoice) {
+  //     var printingSetting = await getPrintingSetting();
+  //     Map<String, List<SaleOrderLine>> printerToItems = {};
+
+  //     for (var printer in printingSetting) {
+  //       if (printer.disablePrinting) continue;
+  //       for (var categoryId in printer.posCategoryIds) {
+  //         final filteredLines = saleOrderLinesList!
+  //             .where((line) => line.productId?.soPosCategId == categoryId)
+  //             .toList();
+  //         if (filteredLines.isEmpty) continue;
+
+  //         final key =
+  //             '${printer.ipAddress}:$categoryId:${printer.printingMode}';
+  //         printerToItems[key] = filteredLines;
+  //       }
+  //     }
+
+  //     if (printerToItems.isNotEmpty) {
+  //       for (var entry in printerToItems.entries) {
+  //         final parts = entry.key.split(':');
+  //         final ip = parts[0];
+  //         final printingMode = parts[2];
+  //         final items = entry.value;
+
+  //         await printItems(
+  //           items: items,
+  //           silentPrint: printingMode == PrintingType.is_silent_printing.name,
+  //           ip: ip,
+  //         );
+  //       }
+  //     } else if (SharedPr.currentPosObject!.disableNetworkPrinting!) {
+  //       if ((Platform.isAndroid || Platform.isIOS)) {
+  //       } else {
+  //         // طباعة حسب الفئات في حالة عدم وجود إعدادات طباعة معطلة الشبكة
+  //         Map<int?, List<SaleOrderLine>> categoryToItems = {};
+  //         for (var line in saleOrderLinesList!) {
+  //           final category = line.productId?.soPosCategId;
+  //           categoryToItems.putIfAbsent(category, () => []).add(line);
+  //         }
+  //         var defaultPrinter = await PrintHelper.setDefaultPrinter();
+  //         for (var items in categoryToItems.values) {
+  //           final pdfLayout = await buildPDFLayout(
+  //             format: pdfFormat,
+  //             isdownloadRoll: false,
+  //             items: items,
+  //           );
+  //           await Printing.directPrintPdf(
+  //             format: pdfFormat,
+  //             printer: defaultPrinter,
+  //             onLayout: pdfLayout,
+  //             name: items.isNotEmpty
+  //                 ? items[0].productId!.soPosCategName!
+  //                 : saleOrderInvoice!.id.toString(),
+  //           );
+  //         }
+  //       }
+  //     }
+  //   }
+
+  //   if (!disablePrintFullInvoice) {
+  //     await Printing.layoutPdf(
+  //       format: pdfFormat,
+  //       onLayout: await buildPDFLayout(
+  //         format: pdfFormat,
+  //         isdownloadRoll: true,
+  //       ),
+  //       name: saleOrderInvoice!.id.toString(),
+  //     );
+  //   }
+  // }
+
+  // Future<void> printingInvoiceDirectPrintPdf({
+  //   required PdfPageFormat pdfFormat,
+  //   required String format,
+  //   bool disablePrintFullInvoice = false,
+  //   bool disablePrintOrderInvoice = false,
+  // }) async {
+  //   var ipPorts;
+  //   List<Printer> printers = [];
+  //   Printer? printer;
+  //   Printer? defaultPrinter;
+  //   List<dynamic> printingSetting = await getPrintingSetting();
+
+  //   if ((!Platform.isAndroid && !Platform.isIOS)) {
+  //     ipPorts = await LanPrintingHelper.listSharedPrintersWithIP();
+  //     printers = await PrintHelper.getPrinters();
+  //     defaultPrinter = await PrintHelper.setDefaultPrinter();
+  //     // جلب الطابعة من الـ Controller إن وُجدت
+  //     ConnectedPrinterController printingController =
+  //         Get.isRegistered<ConnectedPrinterController>()
+  //             ? Get.find<ConnectedPrinterController>()
+  //             : Get.put(ConnectedPrinterController());
+
+  //     if (printingController.connectedPrinterList
+  //         .any((elem) => elem.paperType == format)) {
+  //       String printerName = printingController.connectedPrinterList
+  //           .firstWhere((elem) => elem.paperType == format)
+  //           .printerName!;
+  //       printer = printingController.systemPrinterList
+  //           .firstWhere((elem) => elem.name == printerName);
+  //     }
+  //   }
+  //   // طباعة الأصناف حسب الإعدادات
+  //   if (!disablePrintOrderInvoice) {
+  //     if (printingSetting.isNotEmpty) {
+  //       for (var setting in printingSetting) {
+  //         if (setting.disablePrinting || setting.isCustomerPrinter) continue;
+  //         Printer? targetPrinter;
+  //         if ((!Platform.isAndroid && !Platform.isIOS)) {
+  //           var findPort = ipPorts.firstWhere(
+  //             (port) => port.portName == setting.ipAddress,
+  //             orElse: () => PowerShellSharedPrinter(name: '', portName: ''),
+  //           );
+  //           targetPrinter = printers.firstWhere(
+  //             (p) => p.name.trim() == findPort.name.trim(),
+  //             orElse: () => printer ?? defaultPrinter!,
+  //           );
+  //         }
+  //         for (var categoryId in setting.posCategoryIds) {
+  //           final filteredLines = saleOrderLinesList!
+  //               .where((line) => line.productId?.soPosCategId == categoryId)
+  //               .toList();
+
+  //           if (filteredLines.isEmpty) continue;
+
+  //           await _printItems(filteredLines, targetPrinter,
+  //               silent: setting.printingMode ==
+  //                   PrintingType.is_silent_printing.name,
+  //               printerIp: setting.ipAddress,
+  //               format: pdfFormat);
+  //         }
+  //       }
+  //     } else {
+  //       if ((!Platform.isAndroid && !Platform.isIOS)) {
+  //         // بدون إعدادات مخصصة: اطبع حسب الفئات
+  //         var categoryToItems = <int?, List<SaleOrderLine>>{};
+  //         for (var line in saleOrderLinesList!) {
+  //           categoryToItems
+  //               .putIfAbsent(line.productId?.soPosCategId, () => [])
+  //               .add(line);
+  //         }
+  //         for (var items in categoryToItems.values) {
+  //           await _printItems(items, printer ?? defaultPrinter,
+  //               format: pdfFormat, printerIp: '');
+  //         }
+  //       }
+  //     }
+  //   }
+
+  //   // طباعة الفاتورة الكاملة
+  //   if (!disablePrintFullInvoice) {
+  //     final ipAddress = printingSetting
+  //         .firstWhere(
+  //           (s) => s.isCustomerPrinter,
+  //           orElse: () =>
+  //               PrintingSetting(ipAddress: '', isCustomerPrinter: false),
+  //         )
+  //         .ipAddress;
+  //     if ((Platform.isAndroid || Platform.isIOS)) {
+  //       await  Get.to(() => ScreenshotWidget(
+  //             printerIp: ipAddress,
+  //             isChasherInvoice: true,
+  //             child: rollAndroidPrint(isdownloadRoll: true),
+  //           ));
+  //         // await  Get.to(()=> TestUSBPrinter());
+  //     } else {
+  //       final targetPrinter = printers.firstWhere(
+  //         (p) => ipPorts.any((port) =>
+  //             port.name.trim() == p.name.trim() && port.portName == ipAddress),
+  //         orElse: () => printer ?? defaultPrinter!,
+  //       );
+  //       await Printing.directPrintPdf(
+  //         format: pdfFormat,
+  //         printer: targetPrinter,
+  //         onLayout: await buildPDFLayout(
+  //           format: pdfFormat,
+  //           isdownloadRoll: true,
+  //         ),
+  //         name: saleOrderInvoice!.id.toString(),
+  //       );
+  //     }
+  //   }
+  // }
+
+  // // دالة لطباعة PDF مباشرة أو عرضها
+  // Future<void> _printItems(List<SaleOrderLine> items, Printer? targetPrinter,
+  //     {bool silent = true,
+  //     required PdfPageFormat format,
+  //     required String? printerIp}) async {
+  //   final pdfLayout = await buildPDFLayout(
+  //     format: format,
+  //     isdownloadRoll: !silent,
+  //     items: items,
+  //   );
+  //   if ((Platform.isAndroid || Platform.isIOS)) {
+  //     if (printerIp != '') {
+  //       await   Get.to(() => ScreenshotWidget(
+  //             printerIp: printerIp,
+  //             child: rollAndroidPrint(isdownloadRoll: false, items: items),
+  //           ));
+  //     }
+  //   } else if (silent) {
+  //     await Printing.directPrintPdf(
+  //       format: format,
+  //       printer: targetPrinter!,
+  //       onLayout: pdfLayout,
+  //       name: items.isNotEmpty
+  //           ? items[0].productId!.soPosCategName!
+  //           : saleOrderInvoice!.id.toString(),
+  //     );
+  //   } else {
+  //     await Printing.layoutPdf(
+  //       format: format,
+  //       onLayout: pdfLayout,
+  //       name: items.isNotEmpty
+  //           ? items[0].productId!.soPosCategName!
+  //           : saleOrderInvoice!.id.toString(),
+  //     );
+  //   }
+  // }
+
+
+
+  Future<void> printingInvoiceDirectPrintPdf({
     required PdfPageFormat pdfFormat,
+    required String format,
+    required dynamic printerIPorDefault,
+    bool isWindows = false,
     bool disablePrintFullInvoice = false,
     bool disablePrintOrderInvoice = false,
+    bool isSilent = false,
+    required List<dynamic> printingNetworksIp,
+    required List<int> categoryids,
+    required dynamic ipPorts,
+    required List<Printer> printers,
+    PrintingTypeSkip? printingTypeSkip,
   }) async {
-    // ignore: unused_element
-    Future<void> printItems({
-      required List<SaleOrderLine> items,
-      required bool silentPrint,
-      required String ip,
-    }) async {
-      List<Printer> printers = await PrintHelper.getPrinters();
-      var ipPorts = await LanPrintingHelper.listSharedPrintersWithIP();
-      var defaultPrinter = await PrintHelper.setDefaultPrinter();
-
-      Printer targetPrinter = printers.firstWhere(
-        (p) {
-          var port = ipPorts.firstWhere(
-            (port) => port.portName == ip,
+    // طباعة الأصناف حسب الإعدادات
+    if (!disablePrintOrderInvoice) {
+      // تبع الشبكات الاي بي
+      if (printingNetworksIp.isNotEmpty) {
+        print(" // تبع الشبكات الاي بي");
+        for (var setting in printingNetworksIp) {
+          if (setting.disablePrinting ||
+              setting.isCustomerPrinter ||
+              ((printingTypeSkip != null &&
+                      printingTypeSkip ==
+                          PrintingTypeSkip.skip_disable_order_printing)
+                  ? false
+                  : (setting.autoNetworkPrinter == true ? false : true)))
+            continue;
+          var findPort = ipPorts.firstWhere(
+            (port) => port.portName == setting.ipAddress,
             orElse: () => PowerShellSharedPrinter(name: '', portName: ''),
           );
-          return p.name.trim() == port.name.trim();
-        },
-        orElse: () => defaultPrinter,
-      );
-
-      final pdfLayout = await buildPDFLayout(
-        format: pdfFormat,
-        isdownloadRoll: false,
-        items: items,
-      );
-
-      if (silentPrint) {
-        await Printing.directPrintPdf(
-          format: pdfFormat,
-          printer: targetPrinter,
-          onLayout: pdfLayout,
-          name: items.isNotEmpty
-              ? items[0].productId!.soPosCategName!
-              : saleOrderInvoice!.id.toString(),
-        );
+          Printer? targetPrinter = printers
+              .firstWhereOrNull((p) => p.name.trim() == findPort.name.trim());
+          for (var categoryId in setting.posCategoryIds) {
+            final filteredLines = saleOrderLinesList!
+                .where((line) => line.productId?.soPosCategId == categoryId)
+                .toList();
+            if (filteredLines.isEmpty) continue;
+            await _printItems(filteredLines, targetPrinter,
+                silent: setting.printingMode ==
+                    PrintingType.is_silent_printing.name,
+                printerIp: setting.ipAddress,
+                isWindows: isWindows,
+                format: pdfFormat);
+          }
+        }
       } else {
-        await Printing.layoutPdf(
-          format: pdfFormat,
-          onLayout: pdfLayout,
-          name: items.isNotEmpty
-              ? items[0].productId!.soPosCategName!
-              : saleOrderInvoice!.id.toString(),
-        );
-      }
-    }
-
-    if (!disablePrintOrderInvoice) {
-      var printingSetting = await getPrintingSetting();
-      Map<String, List<SaleOrderLine>> printerToItems = {};
-
-      for (var printer in printingSetting) {
-        if (printer.disablePrinting) continue;
-        for (var categoryId in printer.posCategoryIds) {
+        print("طباعة فاتورة المطبخ لليواس بس والبلوثوث");
+        print("categoryids $categoryids");
+        for (var categoryId in categoryids) {
           final filteredLines = saleOrderLinesList!
               .where((line) => line.productId?.soPosCategId == categoryId)
               .toList();
           if (filteredLines.isEmpty) continue;
-
-          final key =
-              '${printer.ipAddress}:$categoryId:${printer.printingMode}';
-          printerToItems[key] = filteredLines;
-        }
-      }
-
-      if (printerToItems.isNotEmpty) {
-        for (var entry in printerToItems.entries) {
-          final parts = entry.key.split(':');
-          final ip = parts[0];
-          final printingMode = parts[2];
-          final items = entry.value;
-
-          await printItems(
-            items: items,
-            silentPrint: printingMode == PrintingType.is_silent_printing.name,
-            ip: ip,
-          );
-        }
-      } else if (SharedPr.currentPosObject!.disableNetworkPrinting!) {
-        if ((Platform.isAndroid || Platform.isIOS)) {
-        } else {
-          // طباعة حسب الفئات في حالة عدم وجود إعدادات طباعة معطلة الشبكة
-          Map<int?, List<SaleOrderLine>> categoryToItems = {};
-          for (var line in saleOrderLinesList!) {
-            final category = line.productId?.soPosCategId;
-            categoryToItems.putIfAbsent(category, () => []).add(line);
-          }
-          var defaultPrinter = await PrintHelper.setDefaultPrinter();
-          for (var items in categoryToItems.values) {
-            final pdfLayout = await buildPDFLayout(
-              format: pdfFormat,
-              isdownloadRoll: false,
-              items: items,
-            );
-            await Printing.directPrintPdf(
-              format: pdfFormat,
-              printer: defaultPrinter,
-              onLayout: pdfLayout,
-              name: items.isNotEmpty
-                  ? items[0].productId!.soPosCategName!
-                  : saleOrderInvoice!.id.toString(),
-            );
-          }
+          await _printItems(filteredLines, printerIPorDefault,
+              silent: isSilent,
+              isWindows: isWindows,
+              printerIp: printerIPorDefault,
+              format: pdfFormat);
         }
       }
     }
 
+    // طباعة الفاتورة الكاملة
+    if (!disablePrintFullInvoice) {
+      print(
+          "// طباعة الفاتورة الكاملة===========isWindows $isWindows printerIPorDefault $printerIPorDefault");
+      if (isWindows) {
+        if (printerIPorDefault != null) {
+          await Printing.directPrintPdf(
+            format: pdfFormat,
+            printer: printerIPorDefault,
+            onLayout: await buildPDFLayout(
+              format: pdfFormat,
+              isdownloadRoll: true,
+            ),
+            name: saleOrderInvoice!.id.toString(),
+          );
+        }
+      } else {
+        print("طباعة الفاتورة كاملة اندرويد");
+        await  Get.to(() => ScreenshotWidget(
+        printerIp: printerIPorDefault,
+        isChasherInvoice: true,
+        child: rollAndroidPrint(isdownloadRoll: true),
+            ));
+      }
+    }
+  }
+
+  // دالة لطباعة PDF مباشرة أو عرضها
+  Future<void> _printItems(List<SaleOrderLine> items, Printer? targetPrinter,
+      {bool silent = true,
+      bool isWindows = false,
+      required PdfPageFormat format,
+      required String? printerIp}) async {
+    print(
+        "items $items  targetPrinter $targetPrinter isWindows $isWindows printerIp $printerIp");
+    if (isWindows) {
+      print("طباعة فاتورة المطبخ للوندوز ");
+      final pdfLayout = await buildPDFLayout(
+        format: format,
+        isdownloadRoll: !silent,
+        items: items,
+      );
+      if (silent) {
+        print(" اذا كانت سالينت طباعة فاتورة المطبخ للوندوز ");
+        if (targetPrinter != null) {
+          await Printing.directPrintPdf(
+            format: format,
+            printer: targetPrinter,
+            onLayout: pdfLayout,
+            name: items.isNotEmpty
+                ? items[0].productId?.soPosCategName ?? "Invoice"
+                : saleOrderInvoice!.id.toString(),
+          );
+        }
+      } else {
+        print(" اذا كانت ديلوق طباعة فاتورة المطبخ للوندوز ");
+        await Printing.layoutPdf(
+          format: format,
+          onLayout: pdfLayout,
+          name: items.isNotEmpty
+              ? items[0].productId?.soPosCategName ?? "Invoice"
+              : saleOrderInvoice!.id.toString(),
+        );
+      }
+    } else {
+      print(" طباعة فاتورة المطبخ اندرويد");
+      await   Get.to(() => ScreenshotWidget(
+      printerIp: printerIp,
+      child: rollAndroidPrint(isdownloadRoll: false, items: items),
+      ));
+    }
+  }
+
+  Future<void> printingInvoiceLayoutPdf({
+    required PdfPageFormat pdfFormat,
+    bool disablePrintFullInvoice = false,
+    bool disablePrintOrderInvoice = false,
+    required List<int> categoryids
+  }) async {
+
+    if (!disablePrintOrderInvoice) {
+          for (var categoryId in categoryids) {
+            final filteredLines = saleOrderLinesList!
+                .where((line) => line.productId?.soPosCategId == categoryId)
+                .toList();
+            final pdfLayout = await buildPDFLayout(
+              format: pdfFormat,
+              isdownloadRoll: false,
+              items: filteredLines,
+            );
+            await Printing.layoutPdf(
+              format: pdfFormat,
+              onLayout: pdfLayout,
+              name: saleOrderInvoice!.id.toString(),
+            );
+          }
+    }
     if (!disablePrintFullInvoice) {
       await Printing.layoutPdf(
         format: pdfFormat,
@@ -256,378 +790,6 @@ class PrintingInvoiceController extends GetxController {
       );
     }
   }
-  // printingInvoiceLayoutPdf(
-  //     {required PdfPageFormat pdfFormat,
-  //     bool disablePrintFullInvoice = false,
-  //     bool disablePrintOrderInvoice = false}) async {
-  //   if (!disablePrintOrderInvoice) {
-  //     var printingSetting = await getPrintingSetting();
-  //     Map<String, List<SaleOrderLine>> printerToItems = {};
-  //     for (var printer in printingSetting) {
-  //       final printerIp = printer.ipAddress;
-  //       final categoryIds = printer.posCategoryIds;
-  //       final disablePrinting = printer.disablePrinting;
-  //       final printingMode = printer.printingMode;
-  //       // تخطي إذا كانت الطباعة غير مفعّلة
-  //       if (disablePrinting) continue;
-
-  //       for (var categoryId in categoryIds) {
-  //         // نفلتر السطور التي تنتمي لهذا التصنيف
-  //         final filteredLines = saleOrderLinesList!
-  //             .where((line) => line.productId?.soPosCategId == categoryId)
-  //             .toList();
-  //         // نربط كل IP + category بمفتاح فريد
-  //         final key = '$printerIp:$categoryId:$printingMode';
-  //         printerToItems[key] = filteredLines;
-  //       }
-  //     }
-  //     for (var entry in printerToItems.entries) {
-  //       final ip = entry.key.split(':').first;
-  //       final items = entry.value;
-  //       if (entry.key.split(':').last == PrintingType.is_silent_printing.name) {
-  //         List<Printer> printers = await PrintHelper.getPrinters();
-  //         var ipPorts = await LanPrintingHelper.listSharedPrintersWithIP();
-  //         var findPort = ipPorts.firstWhere((port) => port.portName == ip,
-  //             orElse: () => PowerShellSharedPrinter(name: '', portName: ''));
-  //         var defaultPrinter = await PrintHelper.setDefaultPrinter();
-  //         await Printing.directPrintPdf(
-  //           format: pdfFormat,
-  //           printer: printers.firstWhere(
-  //               (p) => p.name.trim() == findPort.name.trim(),
-  //               orElse: () => defaultPrinter),
-  //           onLayout: await buildPDFLayout(
-  //             format: pdfFormat,
-  //             isdownloadRoll: false,
-  //             items: items,
-  //           ),
-  //           name: '${items[0].productId?.soPosCategName}',
-  //         );
-  //       } else {
-  //         await Printing.layoutPdf(
-  //           format: pdfFormat,
-  //           onLayout: await buildPDFLayout(
-  //             format: pdfFormat,
-  //             isdownloadRoll: false,
-  //             items: items,
-  //           ),
-  //           name: '${items[0].productId?.soPosCategName}',
-  //         );
-  //       }
-  //     }
-  //     if (printerToItems.entries.isEmpty &&
-  //         SharedPr.currentPosObject!.disableNetworkPrinting!) {
-  //       Map<int?, List<SaleOrderLine>> categoryToItems = {};
-  //       for (var line in saleOrderLinesList!) {
-  //         final category = line.productId?.soPosCategId;
-  //         categoryToItems.putIfAbsent(category, () => []).add(line);
-  //       }
-  //       for (var entry in categoryToItems.entries) {
-  //         var defaultPrinter = await PrintHelper.setDefaultPrinter();
-  //         final items = entry.value;
-  //         await Printing.directPrintPdf(
-  //           format: pdfFormat,
-  //           printer: defaultPrinter,
-  //           onLayout: await buildPDFLayout(
-  //             format: pdfFormat,
-  //             isdownloadRoll: false,
-  //             items: items,
-  //           ),
-  //           name: '${items[0].productId?.soPosCategName}',
-  //         );
-  //       }
-  //     }
-  //   }
-  //   if (!disablePrintFullInvoice) {
-  //     buildPDFLayout(format: pdfFormat);
-  //     await Printing.layoutPdf(
-  //       format: pdfFormat,
-  //       onLayout: buildPDFLayout(
-  //         format: pdfFormat,
-  //         isdownloadRoll: true,
-  //       ),
-  //       name: saleOrderInvoice!.id.toString(),
-  //     );
-  //   }
-  // }
-
-  // printingInvoiceDirectPrintPdf(
-  //     {required PdfPageFormat pdfFormat,
-  //     required String format,
-  //     bool disablePrintFullInvoice = false,
-  //     bool disablePrintOrderInvoice = false}) async {
-  //   bool result;
-  //   Printer? printer;
-  //   late Printer defaultPrinter;
-  //   ConnectedPrinterController printingController =
-  //       Get.isRegistered<ConnectedPrinterController>()
-  //           ? Get.find<ConnectedPrinterController>()
-  //           : Get.put(ConnectedPrinterController());
-  //   Printer ? defaultPrinterinIP;
-  //   var printingSetting = await getPrintingSetting();
-  //   var ipPorts = await LanPrintingHelper.listSharedPrintersWithIP();
-  //   List<Printer> printers = await PrintHelper.getPrinters();
-  //   for (var setting in printingSetting) {
-  //     var findPort = ipPorts.firstWhere((port) => port.portName == setting.ipAddress && setting.isCustomerPrinter,
-  //           orElse: () => PowerShellSharedPrinter(name: '', portName: ''));
-  //     defaultPrinterinIP = printers.firstWhere((p) => p.name.trim() == findPort.name.trim());
-  //   }
-  //   if (printingController.connectedPrinterList.isNotEmpty &&
-  //       printingController.connectedPrinterList.any(
-  //         (elem) => elem.paperType == format,
-  //       )) {
-  //     String? printerName = printingController.connectedPrinterList
-  //         .firstWhere(
-  //           (elem) => elem.paperType == format,
-  //         )
-  //         .printerName;
-
-  //     printer = printingController.systemPrinterList
-  //         .firstWhere((elem) => elem.name == printerName);
-  //   } else {
-  //     defaultPrinter = await PrintHelper.setDefaultPrinter();
-  //   }
-  //   if (!disablePrintOrderInvoice) {
-  //     // var printingSetting = await getPrintingSetting();
-  //     // var ipPorts = await LanPrintingHelper.listSharedPrintersWithIP();
-  //     // List<Printer> printers = await PrintHelper.getPrinters();
-  //     Map<String, List<SaleOrderLine>> printerToItems = {};
-  //     // IP + تصنيف → سطور الأصناف
-  //     for (var printer in printingSetting) {
-  //       final printerIp = printer.ipAddress;
-  //       final categoryIds = printer.posCategoryIds;
-  //       final disablePrinting = printer.disablePrinting;
-  //       final printingMode = printer.printingMode;
-  //       // تخطي إذا كانت الطباعة غير مفعّلة
-  //       if (disablePrinting) continue;
-  //       for (var categoryId in categoryIds) {
-  //         // نفلتر السطور التي تنتمي لهذا التصنيف
-  //         final filteredLines = saleOrderLinesList!
-  //             .where((line) => line.productId?.soPosCategId == categoryId)
-  //             .toList();
-
-  //         // نربط كل IP + category بمفتاح فريد
-  //         final key = '$printerIp:$categoryId:$printingMode';
-  //         printerToItems[key] = filteredLines;
-  //       }
-  //     }
-  //     // طباعة حسب التصنيفات/IP
-  //     for (var entry in printerToItems.entries) {
-  //       final ip = entry.key.split(':').first;
-  //       var findPort = ipPorts.firstWhere((port) => port.portName == ip,
-  //           orElse: () => PowerShellSharedPrinter(name: '', portName: ''));
-  //       final items = entry.value;
-  //       if (entry.key.split(':').last == PrintingType.is_silent_printing.name) {
-  //         result = await Printing.directPrintPdf(
-  //           format: pdfFormat,
-  //           printer: printers.firstWhere(
-  //               (p) => p.name.trim() == findPort.name.trim(),
-  //               orElse: () => printer ?? defaultPrinter),
-  //           onLayout: await buildPDFLayout(
-  //             format: pdfFormat,
-  //             isdownloadRoll: false,
-  //             items: items,
-  //           ),
-  //           name: '${items[0].productId?.soPosCategName}',
-  //         );
-  //       } else {
-  //         await Printing.layoutPdf(
-  //           format: pdfFormat,
-  //           onLayout: await buildPDFLayout(
-  //             format: pdfFormat,
-  //             isdownloadRoll: false,
-  //             items: items,
-  //           ),
-  //           name: '${items[0].productId?.soPosCategName}',
-  //         );
-  //       }
-  //     }
-  //     // if (printerToItems.entries.isEmpty && SharedPr.currentPosObject!.disableNetworkPrinting!) {
-  //     //   // نجمع المنتجات حسب الفئة
-  //     //   Map<int?, List<SaleOrderLine>> categoryToItems = {};
-  //     //   for (var line in saleOrderLinesList!) {
-  //     //     final category = line.productId?.soPosCategId;
-  //     //     categoryToItems.putIfAbsent(category, () => []).add(line);
-  //     //   }
-  //     //   for (var entry in categoryToItems.entries) {
-  //     //     final items = entry.value;
-  //     //     result = await Printing.directPrintPdf(
-  //     //       format: pdfFormat,
-  //     //       printer: printer ?? defaultPrinter,
-  //     //       onLayout: await buildPDFLayout(
-  //     //         format: pdfFormat,
-  //     //         isdownloadRoll: false,
-  //     //         items: items,
-  //     //       ),
-  //     //       name: '${items[0].productId?.soPosCategName}',
-  //     //     );
-  //     //   }
-  //     // }
-  //   }
-  //   // if (!disablePrintFullInvoice) {
-  //   //   // ✅ اطبع كل الفاتورة كاملة (الكل)
-  //   //   result = await Printing.directPrintPdf(
-  //   //     format: pdfFormat,
-  //   //     printer: printer ?? defaultPrinter,
-  //   //     onLayout: await buildPDFLayout(
-  //   //       format: pdfFormat,
-  //   //       isdownloadRoll: true,
-  //   //     ),
-  //   //     name: saleOrderInvoice!.id.toString(),
-  //   //   );
-  //   // }
-  // }
-  Future<void> printingInvoiceDirectPrintPdf({
-    required PdfPageFormat pdfFormat,
-    required String format,
-    bool disablePrintFullInvoice = false,
-    bool disablePrintOrderInvoice = false,
-  }) async {
-    var ipPorts;
-    List<Printer> printers = [];
-    Printer? printer;
-    Printer? defaultPrinter;
-    List<dynamic> printingSetting = await getPrintingSetting();
-
-    if ((!Platform.isAndroid && !Platform.isIOS)) {
-      ipPorts = await LanPrintingHelper.listSharedPrintersWithIP();
-      printers = await PrintHelper.getPrinters();
-      defaultPrinter = await PrintHelper.setDefaultPrinter();
-      // جلب الطابعة من الـ Controller إن وُجدت
-      ConnectedPrinterController printingController =
-          Get.isRegistered<ConnectedPrinterController>()
-              ? Get.find<ConnectedPrinterController>()
-              : Get.put(ConnectedPrinterController());
-
-      if (printingController.connectedPrinterList
-          .any((elem) => elem.paperType == format)) {
-        String printerName = printingController.connectedPrinterList
-            .firstWhere((elem) => elem.paperType == format)
-            .printerName!;
-        printer = printingController.systemPrinterList
-            .firstWhere((elem) => elem.name == printerName);
-      }
-    }
-    // طباعة الأصناف حسب الإعدادات
-    if (!disablePrintOrderInvoice) {
-      if (printingSetting.isNotEmpty) {
-        for (var setting in printingSetting) {
-          if (setting.disablePrinting || setting.isCustomerPrinter) continue;
-          Printer? targetPrinter;
-          if ((!Platform.isAndroid && !Platform.isIOS)) {
-            var findPort = ipPorts.firstWhere(
-              (port) => port.portName == setting.ipAddress,
-              orElse: () => PowerShellSharedPrinter(name: '', portName: ''),
-            );
-            targetPrinter = printers.firstWhere(
-              (p) => p.name.trim() == findPort.name.trim(),
-              orElse: () => printer ?? defaultPrinter!,
-            );
-          }
-          for (var categoryId in setting.posCategoryIds) {
-            final filteredLines = saleOrderLinesList!
-                .where((line) => line.productId?.soPosCategId == categoryId)
-                .toList();
-
-            if (filteredLines.isEmpty) continue;
-
-            await _printItems(filteredLines, targetPrinter,
-                silent: setting.printingMode ==
-                    PrintingType.is_silent_printing.name,
-                printerIp: setting.ipAddress,
-                format: pdfFormat);
-          }
-        }
-      } else {
-        if ((!Platform.isAndroid && !Platform.isIOS)) {
-          // بدون إعدادات مخصصة: اطبع حسب الفئات
-          var categoryToItems = <int?, List<SaleOrderLine>>{};
-          for (var line in saleOrderLinesList!) {
-            categoryToItems
-                .putIfAbsent(line.productId?.soPosCategId, () => [])
-                .add(line);
-          }
-          for (var items in categoryToItems.values) {
-            await _printItems(items, printer ?? defaultPrinter,
-                format: pdfFormat, printerIp: '');
-          }
-        }
-      }
-    }
-
-    // طباعة الفاتورة الكاملة
-    if (!disablePrintFullInvoice) {
-      final ipAddress = printingSetting
-          .firstWhere(
-            (s) => s.isCustomerPrinter,
-            orElse: () =>
-                PrintingSetting(ipAddress: '', isCustomerPrinter: false),
-          )
-          .ipAddress;
-      if ((Platform.isAndroid || Platform.isIOS)) {
-        print("ipAddress=========== $ipAddress");
-        print("TestUSBPrinter=========== $ipAddress");
-        await  Get.to(() => ScreenshotWidget(
-              printerIp: ipAddress,
-              isChasherInvoice: true,
-              child: rollAndroidPrint(isdownloadRoll: true),
-            ));
-          // await  Get.to(()=> TestUSBPrinter());
-      } else {
-        final targetPrinter = printers.firstWhere(
-          (p) => ipPorts.any((port) =>
-              port.name.trim() == p.name.trim() && port.portName == ipAddress),
-          orElse: () => printer ?? defaultPrinter!,
-        );
-        await Printing.directPrintPdf(
-          format: pdfFormat,
-          printer: targetPrinter,
-          onLayout: await buildPDFLayout(
-            format: pdfFormat,
-            isdownloadRoll: true,
-          ),
-          name: saleOrderInvoice!.id.toString(),
-        );
-      }
-    }
-  }
-
-  // دالة لطباعة PDF مباشرة أو عرضها
-  Future<void> _printItems(List<SaleOrderLine> items, Printer? targetPrinter,
-      {bool silent = true,
-      required PdfPageFormat format,
-      required String? printerIp}) async {
-    final pdfLayout = await buildPDFLayout(
-      format: format,
-      isdownloadRoll: !silent,
-      items: items,
-    );
-    if ((Platform.isAndroid || Platform.isIOS)) {
-      if (printerIp != '') {
-        await   Get.to(() => ScreenshotWidget(
-              printerIp: printerIp,
-              child: rollAndroidPrint(isdownloadRoll: false, items: items),
-            ));
-      }
-    } else if (silent) {
-      await Printing.directPrintPdf(
-        format: format,
-        printer: targetPrinter!,
-        onLayout: pdfLayout,
-        name: items.isNotEmpty
-            ? items[0].productId!.soPosCategName!
-            : saleOrderInvoice!.id.toString(),
-      );
-    } else {
-      await Printing.layoutPdf(
-        format: format,
-        onLayout: pdfLayout,
-        name: items.isNotEmpty
-            ? items[0].productId!.soPosCategName!
-            : saleOrderInvoice!.id.toString(),
-      );
-    }
-  }
-
   Future<Directory> pdfCreatDirectory(String directoryName) async {
     Directory baseDir;
 
