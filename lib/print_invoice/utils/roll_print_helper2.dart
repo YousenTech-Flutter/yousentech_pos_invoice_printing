@@ -40,6 +40,7 @@ Future<pw.Document> rollPrint2({PdfPageFormat? format,isdownloadRoll = false,Lis
   List listHeder = ["item".tr, "quantity".tr, "price".tr, "total".tr];
   List<String> headerLines = SharedPr.currentPosObject!.invoiceHeaderLines == '' ?[]: SharedPr.currentPosObject!.invoiceHeaderLines!.trim().split('\n');
   List<String> footerLines =SharedPr.currentPosObject!.invoiceFooterLines == '' ?[]: SharedPr.currentPosObject!.invoiceFooterLines!.trim().split('\n');
+  print("printingController.saleOrderInvoice!.id===============${printingController.saleOrderInvoice!.id}");
   if (isdownloadRoll) {
     pdf.addPage(pw.Page(
         pageFormat: const PdfPageFormat(
@@ -366,5 +367,6 @@ pw.Row rowFotter({
 
 bool containsArabic(String text) {
   final arabic = RegExp(r'[\u0600-\u06FF]');
+  print("containsArabic ===============${arabic.hasMatch(text)}");
   return arabic.hasMatch(text);
 }
