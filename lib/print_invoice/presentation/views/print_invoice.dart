@@ -21,14 +21,16 @@ class PrinterInvoice extends StatefulWidget {
   bool showActions;
   double? maxPageWidth;
   double? padding;
-
+  Color ? backgroundColor;
   PrinterInvoice(
       {super.key,
       required this.paymentController,
       this.isFromPayment = false,
       this.showActions = true,
       this.maxPageWidth,
-      this.padding});
+      this.padding ,
+      this.backgroundColor,
+      });
 
   @override
   State<PrinterInvoice> createState() => _PrinterInvoiceState();
@@ -48,6 +50,9 @@ class _PrinterInvoiceState extends State<PrinterInvoice> {
       body: GetBuilder<PrintingInvoiceController>(builder: (controller) {
         return PdfPreview(
             dpi: 150,
+            scrollViewDecoration: BoxDecoration(
+              color:widget.backgroundColor, // لون خلفية منطقة العرض
+            ),
             useActions: false,
             canDebug: false,
             maxPageWidth: widget.maxPageWidth,

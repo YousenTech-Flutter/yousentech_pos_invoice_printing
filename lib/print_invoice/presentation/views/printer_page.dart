@@ -11,8 +11,7 @@ import 'package:yousentech_pos_invoice_printing/print_invoice/domain/invoice_pri
 
 class PrinterPage extends StatefulWidget {
   void Function()? onPressedCheckbox;
-  void Function(BuildContext, FutureOr<Uint8List> Function(PdfPageFormat),
-      PdfPageFormat)? onPressedNext;
+  void Function(BuildContext, FutureOr<Uint8List> Function(PdfPageFormat),PdfPageFormat)? onPressedNext;
   PrinterPage({super.key, this.onPressedCheckbox, required this.onPressedNext});
 
   @override
