@@ -40,7 +40,6 @@ Future<pw.Document> rollPrint2({PdfPageFormat? format,isdownloadRoll = false,Lis
   List listHeder = ["item".tr, "quantity".tr, "price".tr, "total".tr];
   List<String> headerLines = SharedPr.currentPosObject!.invoiceHeaderLines == '' ?[]: SharedPr.currentPosObject!.invoiceHeaderLines!.trim().split('\n');
   List<String> footerLines =SharedPr.currentPosObject!.invoiceFooterLines == '' ?[]: SharedPr.currentPosObject!.invoiceFooterLines!.trim().split('\n');
-  print("=====================pppr${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}");
   if (isdownloadRoll) {
     pdf.addPage(pw.Page(
         pageFormat: const PdfPageFormat(
@@ -95,7 +94,7 @@ Future<pw.Document> rollPrint2({PdfPageFormat? format,isdownloadRoll = false,Lis
                     )),
                         pw.SizedBox(height: 3),
                         pw.BarcodeWidget(
-                              data:'${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}',
+                              data: containsArabic(printingController.saleOrderInvoice!.invoiceName.toString())? '${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}' : '${printingController.saleOrderInvoice!.id}',
                               barcode:pw. Barcode.code128(),
                               width: 100,
                               height: 20,
@@ -362,4 +361,10 @@ pw.Row rowFotter({
           isbold: true,
         )
       ]);
+}
+
+
+bool containsArabic(String text) {
+  final arabic = RegExp(r'[\u0600-\u06FF]');
+  return arabic.hasMatch(text);
 }
