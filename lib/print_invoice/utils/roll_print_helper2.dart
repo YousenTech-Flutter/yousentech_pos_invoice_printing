@@ -94,7 +94,7 @@ Future<pw.Document> rollPrint2({PdfPageFormat? format,isdownloadRoll = false,Lis
                     )),
                         pw.SizedBox(height: 3),
                         pw.BarcodeWidget(
-                              data: containsArabic(printingController.saleOrderInvoice!.invoiceName.toString())? '${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}' : '${printingController.saleOrderInvoice!.id}',
+                              data: containsArabic(printingController.saleOrderInvoice!.invoiceName.toString())? '${printingController.saleOrderInvoice!.id}'  :  '${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}',
                               barcode:pw. Barcode.code128(),
                               width: 100,
                               height: 20,
