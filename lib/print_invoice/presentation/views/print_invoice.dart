@@ -13,7 +13,6 @@ import 'package:yousentech_pos_invoice_printing/print_invoice/domain/invoice_pri
 import 'package:yousentech_pos_invoice_printing/print_invoice/presentation/views/printer_page.dart';
 import 'package:yousentech_pos_payment/payment/domain/payment_viewmodel.dart';
 
-
 class PrinterInvoice extends StatefulWidget {
   PaymentController paymentController;
 
@@ -21,16 +20,16 @@ class PrinterInvoice extends StatefulWidget {
   bool showActions;
   double? maxPageWidth;
   double? padding;
-  Color ? backgroundColor;
-  PrinterInvoice(
-      {super.key,
-      required this.paymentController,
-      this.isFromPayment = false,
-      this.showActions = true,
-      this.maxPageWidth,
-      this.padding ,
-      this.backgroundColor,
-      });
+  Color? backgroundColor;
+  PrinterInvoice({
+    super.key,
+    required this.paymentController,
+    this.isFromPayment = false,
+    this.showActions = true,
+    this.maxPageWidth,
+    this.padding,
+    this.backgroundColor,
+  });
 
   @override
   State<PrinterInvoice> createState() => _PrinterInvoiceState();
@@ -48,52 +47,54 @@ class _PrinterInvoiceState extends State<PrinterInvoice> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: GetBuilder<PrintingInvoiceController>(builder: (controller) {
-        return PdfPreview(
-            dpi: 150,
-            scrollViewDecoration: BoxDecoration(
-              color:widget.backgroundColor, // لون خلفية منطقة العرض
-            ),
-            useActions: false,
-            canDebug: false,
-            maxPageWidth: widget.maxPageWidth,
-            padding: EdgeInsets.all(widget.padding ?? 0.0),
-            actionBarTheme:
-                PdfActionBarTheme(backgroundColor: AppColor.cyanTeal),
-            actions: widget.showActions
-                ? [
-                    PrinterPage(
-                      onPressedCheckbox: () {
-                        printingController.isDefault =
-                            !printingController.isDefault;
-                        printingController.checkbox =
-                            !printingController.checkbox;
-                        printingController.update();
-                      },
-                      onPressedNext: (
-                        BuildContext context,
-                        LayoutCallback build,
-                        PdfPageFormat pageFormat,
-                      ) async {
-                        await printingController.nextPressed(
-                            format:
-                                printingController.checkbox ? "A4" : "Roll80",
-                            isFromPayment: widget.isFromPayment);
-                        widget.paymentController
-                            .escapeFocus(frompayment: widget.isFromPayment);
-                      },
-                    ),
-                  ]
-                : null,
-            build: (format) {
-              return printingController.isCash
-                  ? printingController.generateCachPdf(
-                      format: format,
-                      isdownloadRoll:true 
-                    )
-                  : printingController.generateTermPdf(
-                      format: format,
-                    );
-            });
+        return InteractiveViewer(
+          minScale: 0.5,
+          maxScale: 5,
+          child: PdfPreview(
+              dpi: 150,
+              scrollViewDecoration: BoxDecoration(
+                color: widget.backgroundColor, // لون خلفية منطقة العرض
+              ),
+              useActions: false,
+              canDebug: false,
+              maxPageWidth: widget.maxPageWidth,
+              padding: EdgeInsets.all(widget.padding ?? 0.0),
+              actionBarTheme:
+                  PdfActionBarTheme(backgroundColor: AppColor.cyanTeal),
+              actions: widget.showActions
+                  ? [
+                      PrinterPage(
+                        onPressedCheckbox: () {
+                          printingController.isDefault =
+                              !printingController.isDefault;
+                          printingController.checkbox =
+                              !printingController.checkbox;
+                          printingController.update();
+                        },
+                        onPressedNext: (
+                          BuildContext context,
+                          LayoutCallback build,
+                          PdfPageFormat pageFormat,
+                        ) async {
+                          await printingController.nextPressed(
+                              format:
+                                  printingController.checkbox ? "A4" : "Roll80",
+                              isFromPayment: widget.isFromPayment);
+                          widget.paymentController
+                              .escapeFocus(frompayment: widget.isFromPayment);
+                        },
+                      ),
+                    ]
+                  : null,
+              build: (format) {
+                return printingController.isCash
+                    ? printingController.generateCachPdf(
+                        format: format, isdownloadRoll: true)
+                    : printingController.generateTermPdf(
+                        format: format,
+                      );
+              }),
+        );
       }),
     );
   }
