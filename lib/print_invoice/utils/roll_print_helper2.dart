@@ -59,7 +59,7 @@ Future<pw.Document> rollPrint2({PdfPageFormat? format,isdownloadRoll = false,Lis
                     child: pw.Column(
                       children: [
                         if(company?.image != null && company?.image != '')...[
-                            pw.Container(height: 25,width: 25,child: pw.Image(companyImage),),
+                            pw.Container(height: 30,width: 30,child: pw.Image(companyImage),),
                             pw.SizedBox(height: 5),
                         ],
                         infoText(value:printingController.saleOrderInvoice!.refundNote != null && printingController.saleOrderInvoice!.refundNote != ''? "${"invoice".tr} ${'credit_note'.tr}" :  printingController.title.tr),
