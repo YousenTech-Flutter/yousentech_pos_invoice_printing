@@ -195,8 +195,8 @@ Future<pw.Document> rollPrint2({PdfPageFormat? format,isdownloadRoll = false,Lis
                                       .saleOrderInvoice!.zatcaQr ??
                                   "",
                               barcode: pw.Barcode.qrCode(),
-                              width: 80,
-                              height: 80),
+                              width: 60,
+                              height: 60),
                         ])),
                 pw.SizedBox(height:10),
                 ... footerLines.map((line) =>     pw.Padding(padding:const   pw.EdgeInsets.only(bottom: 5), child:  infoText(value: line)),),
