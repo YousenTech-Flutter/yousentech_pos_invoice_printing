@@ -48,6 +48,7 @@ class _PrinterInvoiceState extends State<PrinterInvoice> {
     return Scaffold(
       body: GetBuilder<PrintingInvoiceController>(builder: (controller) {
         return InteractiveViewer(
+          clipBehavior: Clip.none,
           minScale: 0.5,
           maxScale: 5,
           child: PdfPreview(
