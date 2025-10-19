@@ -30,7 +30,6 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      print("=====================init");
       await Future.delayed(Duration.zero);
       await Future.delayed(Duration.zero);
       await screenshotController.capture(
@@ -56,15 +55,17 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColor.white,
-      body: SingleChildScrollView(
-        child: Center(
-          child: Screenshot(
-            controller: screenshotController,
-            child: SizedBox(
-              width: PaperSize.mm80.width.toDouble(),
-              child: widget.child,
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: AppColor.white,
+        body: SingleChildScrollView(
+          child: Center(
+            child: Screenshot(
+              controller: screenshotController,
+              child: SizedBox(
+                width: PaperSize.mm80.width.toDouble(),
+                child: widget.child,
+              ),
             ),
           ),
         ),
