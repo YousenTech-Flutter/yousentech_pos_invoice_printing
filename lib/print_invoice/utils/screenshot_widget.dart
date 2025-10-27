@@ -125,6 +125,7 @@ Future<Uint8List?> captureWidgetToImage(Widget widget,
   pipelineOwner.flushLayout();
   pipelineOwner.flushCompositingBits();
   pipelineOwner.flushPaint();
+  await Future.microtask(() {});
   await Future.delayed(Duration(milliseconds: 50));
   final ui.Image image = await boundary.toImage(pixelRatio: pixelRatio);
   final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
