@@ -136,13 +136,17 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
 
 
 
-Future<Uint8List?> captureWidgetToImage(BuildContext context, Widget widget,
-    {double pixelRatio = 2.0}) async {
+
+
+Future<Uint8List?> captureWidgetToImage(
+  BuildContext context,
+  Widget widget, {
+  double pixelRatio = 2.0,
+}) async {
   final repaintKey = GlobalKey();
   final overlay = Overlay.of(context);
   final completer = Completer<ui.Image>();
 
-  // نضيف الودجت بشكل غير مرئي في Overlay
   final overlayEntry = OverlayEntry(
     builder: (_) => Offstage(
       offstage: true,
@@ -159,14 +163,27 @@ Future<Uint8List?> captureWidgetToImage(BuildContext context, Widget widget,
     // 🧠 انتظر حتى Flutter يخلص من رسم الفريم الحالي بالكامل
     await WidgetsBinding.instance.endOfFrame;
 
-    // نجيب الباوندري
-    final boundary = repaintKey.currentContext!.findRenderObject()
-        as RenderRepaintBoundary;
+    // 🔄 ننتظر فريم إضافي علشان نضمن اكتمال الرسم فعليًا
+    await Future.delayed(const Duration(milliseconds: 60));
+
+    final boundary = repaintKey.currentContext?.findRenderObject()
+        as RenderRepaintBoundary?;
+
+    if (boundary == null) {
+      throw Exception('Boundary not found');
+    }
 
     // 🔄 تأكد أنه جاهز فعلاً (بعض الأجهزة تحتاج وقت إضافي بسيط)
-    if (boundary.debugNeedsPaint) {
-      await Future.delayed(const Duration(milliseconds: 20));
+    int attempts = 0;
+    while (boundary.debugNeedsPaint && attempts < 5) {
+      await Future.delayed(const Duration(milliseconds: 30));
+      attempts++;
     }
+
+    // if (boundary.debugNeedsPaint) {
+    //   throw Exception('Widget not painted yet after waiting');
+    // }
+    print("🎨 ready to capture: ${!boundary.debugNeedsPaint}");
 
     // 🖼️ نلتقط الصورة
     final image = await boundary.toImage(pixelRatio: pixelRatio);
@@ -177,10 +194,10 @@ Future<Uint8List?> captureWidgetToImage(BuildContext context, Widget widget,
     overlayEntry.remove();
   }
 
-  // 🧩 نحول الصورة إلى Uint8List
   final uiImage = await completer.future;
   final byteData = await uiImage.toByteData(format: ui.ImageByteFormat.png);
   return byteData?.buffer.asUint8List();
 }
+
 
 
