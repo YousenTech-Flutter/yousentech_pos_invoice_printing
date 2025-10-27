@@ -127,6 +127,6 @@ Future<Uint8List?> captureWidgetToImage(Widget widget,
   pipelineOwner.flushPaint();
 
   final ui.Image image = await boundary.toImage(pixelRatio: pixelRatio);
-  final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+  final byteData = await image.toByteData(format: ui.ImageByteFormat.rawExtendedRgba128);
   return byteData?.buffer.asUint8List();
 }
