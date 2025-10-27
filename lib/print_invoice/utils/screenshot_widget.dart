@@ -1,4 +1,5 @@
 // ignore_for_file: use_super_parameters
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -62,7 +63,7 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await Future.delayed(Duration.zero);
       await Future.delayed(Duration.zero);
-      var image = await captureWidgetToImage(widget.child);
+      var image = await captureWidgetToImage(context, widget.child);
       await PrinterTypes.printer(
           imageThatC: image!,
           printerIp: widget.printerIp,
@@ -90,44 +91,86 @@ class _ScreenshotWidgetState extends State<ScreenshotWidget> {
   }
 }
 
-Future<Uint8List?> captureWidgetToImage(Widget widget,
-    {double pixelRatio = 2}) async {
-  final RenderRepaintBoundary boundary = RenderRepaintBoundary();
+// Future<Uint8List?> captureWidgetToImage(Widget widget,
+//     {double pixelRatio = 2}) async {
+//   final RenderRepaintBoundary boundary = RenderRepaintBoundary();
 
-  final RenderView renderView = RenderView(
-    view: WidgetsBinding.instance.platformDispatcher.views.first,
-    child: RenderPositionedBox(
-      alignment: Alignment.center,
-      child: boundary,
-    ),
-    configuration: ViewConfiguration(
-      physicalConstraints:
-          BoxConstraints(maxWidth: PaperSize.mm80.width.toDouble()),
-      logicalConstraints:
-          BoxConstraints(maxWidth: PaperSize.mm80.width.toDouble()),
-      // size: const Size(800, 1200), // 👈 حجم الـ widget اللي تبغى تصوره
-      devicePixelRatio: pixelRatio,
+//   final RenderView renderView = RenderView(
+//     view: WidgetsBinding.instance.platformDispatcher.views.first,
+//     child: RenderPositionedBox(
+//       alignment: Alignment.center,
+//       child: boundary,
+//     ),
+//     configuration: ViewConfiguration(
+//       physicalConstraints:
+//           BoxConstraints(maxWidth: PaperSize.mm80.width.toDouble()),
+//       logicalConstraints:
+//           BoxConstraints(maxWidth: PaperSize.mm80.width.toDouble()),
+//       // size: const Size(800, 1200), // 👈 حجم الـ widget اللي تبغى تصوره
+//       devicePixelRatio: pixelRatio,
+//     ),
+//   );
+
+//   final PipelineOwner pipelineOwner = PipelineOwner();
+//   final BuildOwner buildOwner = BuildOwner(focusManager: FocusManager());
+
+//   final renderElement = RenderObjectToWidgetAdapter<RenderBox>(
+//     container: boundary,
+//     child: Directionality(
+//       textDirection: TextDirection.ltr,
+//       child: widget,
+//     ),
+//   ).attachToRenderTree(buildOwner);
+
+//   buildOwner.buildScope(renderElement);
+//   pipelineOwner.flushLayout();
+//   pipelineOwner.flushCompositingBits();
+//   pipelineOwner.flushPaint();
+//   await Future.microtask(() {});
+//   await Future.delayed(Duration(milliseconds: 50));
+//   final ui.Image image = await boundary.toImage(pixelRatio: pixelRatio);
+//   final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+//   return byteData?.buffer.asUint8List();
+// }
+
+
+
+Future<Uint8List?> captureWidgetToImage(BuildContext context, Widget widget,
+    {double pixelRatio = 2}) async {
+  final repaintKey = GlobalKey();
+
+  // نضيف الودجت في شجرة غير ظاهرة
+  final completer = Completer<ui.Image>();
+  final overlay = Overlay.of(context);
+
+  final overlayEntry = OverlayEntry(
+    builder: (_) => Offstage(
+      offstage: true,
+      child: RepaintBoundary(
+        key: repaintKey,
+        child: Material(child: widget),
+      ),
     ),
   );
 
-  final PipelineOwner pipelineOwner = PipelineOwner();
-  final BuildOwner buildOwner = BuildOwner(focusManager: FocusManager());
+  overlay.insert(overlayEntry);
 
-  final renderElement = RenderObjectToWidgetAdapter<RenderBox>(
-    container: boundary,
-    child: Directionality(
-      textDirection: TextDirection.ltr,
-      child: widget,
-    ),
-  ).attachToRenderTree(buildOwner);
-
-  buildOwner.buildScope(renderElement);
-  pipelineOwner.flushLayout();
-  pipelineOwner.flushCompositingBits();
-  pipelineOwner.flushPaint();
-  await Future.microtask(() {});
-  await Future.delayed(Duration(milliseconds: 50));
-  final ui.Image image = await boundary.toImage(pixelRatio: pixelRatio);
+  await Future.delayed(const Duration(milliseconds: 50)); // انتظر فريم
+  await Future.microtask(() async {
+    try {
+      final boundary = repaintKey.currentContext!.findRenderObject()
+          as RenderRepaintBoundary;
+      final image = await boundary.toImage(pixelRatio: pixelRatio);
+      completer.complete(image);
+    } catch (e) {
+      completer.completeError(e);
+    } finally {
+      overlayEntry.remove();
+    }
+  });
+  var image = await completer.future;
   final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-  return byteData?.buffer.asUint8List();
+  return byteData!.buffer.asUint8List();
+   
 }
+
