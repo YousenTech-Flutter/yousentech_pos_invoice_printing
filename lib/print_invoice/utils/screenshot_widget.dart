@@ -115,7 +115,8 @@ Future<Uint8List?> captureWidgetToImage(Widget widget,
 
   final renderElement = RenderObjectToWidgetAdapter<RenderBox>(
     container: boundary,
-    child: SingleChildScrollView(
+    child: Directionality(
+      textDirection: TextDirection.ltr,
       child: widget,
     ),
   ).attachToRenderTree(buildOwner);
