@@ -1,10 +1,7 @@
 // ignore_for_file: unused_local_variable
 
 import 'dart:convert';
-import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:pos_shared_preferences/models/account_journal/data/account_journal.dart';
@@ -14,10 +11,11 @@ import 'package:pos_shared_preferences/models/sale_order_line.dart';
 import 'package:pos_shared_preferences/pos_shared_preferences.dart';
 import 'package:shared_widgets/config/app_colors.dart';
 import 'package:shared_widgets/config/app_invoice_styles.dart';
-import '../domain/invoice_printing_viewmodel.dart';
-import '../presentation/widgets/roll_table_row_data.dart';
-
-Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
+import 'package:shared_widgets/utils/responsive_helpers/size_helper_extenstions.dart';
+import 'package:yousentech_pos_invoice_printing/print_invoice/domain/invoice_printing_viewmodel.dart';
+import 'package:yousentech_pos_invoice_printing/print_invoice/utils/roll_print_helper2.dart';
+import 'package:barcode_widget/barcode_widget.dart';
+Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items ,required  BuildContext context}) {
   PrintingInvoiceController printingController = Get.put(PrintingInvoiceController());
   Customer? company = SharedPr.currentCompanyObject;
   User? user = SharedPr.chosenUserObj;
@@ -47,24 +45,26 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
   if (isdownloadRoll) {
     List<Widget> children = [];
     for (var item in printingController.saleOrderLinesList!) {
-      children.add(productAndriodItem(item: item,formatter: formatter,font: AppInvoiceStyle.fontMedium),);
+      children.add(productAndriodItem(context: context, item: item,formatter: formatter,font: AppInvoiceStyle.fontMedium),);
     }
 
     return Column(
+      spacing: context.setHeight(10),
       children: [
         SizedBox(
-            width: 150.w,
+            // width: context.setWidth(150),
             child: Column(
+              spacing: context.setHeight(5),
               children: [
                 if (company?.image != null && company?.image != '') ...[
                   SizedBox(
-                    height: 25.h,
-                    width: 25.h,
+                    height:context.setMinSize(130),
+                    width:context.setMinSize(130),
                     child: companyImage,
                   ),
-                  SizedBox(height: 5.h),
                 ],
                 infoText(
+                  context: context,
                     value: printingController.saleOrderInvoice!.refundNote !=
                                 null &&
                             printingController.saleOrderInvoice!.refundNote !=
@@ -72,84 +72,66 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
                         ? "${"invoice".tr} ${'credit_note'.tr}"
                         : printingController.title.tr),
                 if (company != null) ...[
-                  SizedBox(height: 5.h),
-                  infoText(value: company.name ?? ""),
+                  infoText(
+                    context: context,
+                    value: company.name ?? ""),
                   if (company.phone != null && company.phone != '') ...[
-                    SizedBox(height: 5.h),
-                    infoText(value: "${'tell'.tr}: ${company.phone ?? ""}"),
+                    infoText(
+                      context: context,
+                      value: "${'tell'.tr}: ${company.phone ?? ""}"),
                   ],
-                  SizedBox(height: 5.h),
-                  infoText(value: company.email ?? ""),
+                  infoText(
+                    context: context,
+                    value: company.email ?? ""),
                 ],
                 ...headerLines.map(
                   (line) => Padding(
                       padding: const EdgeInsets.only(bottom: 5),
-                      child: infoText(value: line)),
+                      child: infoText(
+                        context: context,
+                        value: line)),
                 ),
                 const SizedBox(
                   width: double.infinity,
                   child: Divider(
                     color: Colors.black, // لون الخط
-                    thickness: 2, // سماكة الخط // المسافة من اليمين
+                    thickness: 1, // سماكة الخط // المسافة من اليمين
                   ),
                 ),
                 if (user != null) ...[
-                  infoText(value: "${'served_by'.tr} ${user.name!}"),
-                  SizedBox(height: 5.h),
+                  infoText(
+                    context: context,
+                    value: "${'served_by'.tr} ${user.name!}"),
                 ],
                 infoText(
+                  context: context,
                     isbold: true,
                     isblack: true,
                     value:
                         '${'invoice_nmuber'.tr} : ${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}'),
               ],
             )),
-        SizedBox(height: 10.h),
         BarcodeWidget(
-          data:
-              '${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}',
+          data: containsArabic(printingController.saleOrderInvoice!.invoiceName.toString())? '${printingController.saleOrderInvoice!.id}'  :  '${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}',
           barcode: Barcode.code128(),
-          width: 70.w,
-          height: 20.h,
+          width:context.setWidth(200),
+          height:context.setHeight(20),
           drawText: false,
         ),
-        SizedBox(height: 15.h),
+        SizedBox(height:context.setHeight(15)),
         ...children,
-        // SizedBox(
-        //   width: double.infinity,
-        //   child: Column(
-        //     children: productAndriodItem(
-        //         saleOrderLinesList: printingController.saleOrderLinesList!,
-        //         formatter: formatter,
-        //         font: AppInvoiceStyle.fontMedium),
-        //   ),
-        // ),
-
-        SizedBox(height: 10.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             SizedBox(
-              width: 50.w,
+              width:context.setWidth(50),
               child: const Divider(
                 color: Colors.black, // لون الخط
-                thickness: 2, // سماكة الخط // المسافة من اليمين
+                thickness: 1, // سماكة الخط // المسافة من اليمين
               ),
             ),
           ],
         ),
-        // Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        //   infoText(
-        //     value: "total".tr,
-        //     isbold: true,
-        //   ),
-        //   infoText(
-        //     value:
-        //         "${formatter.format(printingController.saleOrderInvoice!.totalPrice)} ${"S.R".tr}",
-        //     isbold: true,
-        //   )
-        // ]),
-        SizedBox(height: 10.h),
         ...printingController.saleOrderInvoice!.invoiceChosenPayment
             .map((item) {
           AccountJournal accountJournal = printingController.accountJournalList
@@ -158,81 +140,82 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 infoText(
+                  context: context,
                   value:
                       '${SharedPr.lang == 'en' ? accountJournal.name!.enUS : accountJournal.name!.ar001 ?? accountJournal.name!.enUS}',
                   isbold: true,
                 ),
                 infoText(
+                  context: context,
                   value: '${formatter.format(item.amount)} ${"S.R".tr}',
                   isbold: true,
                 )
               ]);
         }),
-        SizedBox(height: 10.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             SizedBox(
-              width: 50.w,
+              width:context.setWidth(50),
               child: const Divider(
                 color: Colors.black, // لون الخط
-                thickness: 2, // سماكة الخط // المسافة من اليمين
+                thickness: 1, // سماكة الخط // المسافة من اليمين
               ),
             ),
           ],
         ),
-        SizedBox(height: 10.h),
         rowFotter(
+          context: context,
             title: "change".tr,
             value:
                 formatter.format(printingController.saleOrderInvoice!.change)),
-        SizedBox(height: 10.h),
         rowFotter(
+          context: context,
             title: "remaining".tr,
             value: formatter
                 .format(printingController.saleOrderInvoice!.remaining)),
         if (SharedPr.invoiceSetting!.showSubtotal!) ...[
-          SizedBox(height: 10.h),
           rowFotter(
+            context: context,
               title: 'invoice_footer_total_before_tax'.tr,
               value: formatter.format(printingController
                   .saleOrderInvoice!.totalPriceWitoutTaxAndDiscount)),
         ],
-        SizedBox(height: 10.h),
         rowFotter(
+          context: context,
             title: 'invoice_footer_total_discount'.tr,
             value: formatter
                 .format(printingController.saleOrderInvoice!.totalDiscount)),
-        SizedBox(height: 10.h),
         rowFotter(
+          context: context,
             title: 'invoice_footer_total_exclude_tax'.tr,
             value: formatter.format(
                 printingController.saleOrderInvoice!.totalPriceSubtotal)),
-        SizedBox(height: 10.h),
         rowFotter(
+          context: context,
             title: 'invoice_footer_total_tax'.tr,
             value: formatter
                 .format(printingController.saleOrderInvoice!.totalTaxes)),
-        SizedBox(height: 10.h),
         rowFotter(
+          context: context,
             title: "${'total'.tr} ${'with_tax'.tr}",
             value: formatter
                 .format(printingController.saleOrderInvoice!.totalPrice)),
-        SizedBox(height: 10.h),
         Container(
-            padding: EdgeInsets.all(10.r),
+            padding: EdgeInsets.all(context.setMinSize(10)),
             child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               BarcodeWidget(
                   data: printingController.saleOrderInvoice!.zatcaQr ?? "",
                   barcode: Barcode.qrCode(),
-                  width: 100.w,
-                  height: 100.h),
+                  width:context.setMinSize(100),
+                  height:context.setMinSize(100)),
             ])),
-        SizedBox(height: 10.h),
         ...footerLines.map(
           (line) => Padding(
-              padding: EdgeInsets.only(bottom: 5.r),
-              child: infoText(value: line)),
+              padding: EdgeInsets.only(bottom:context.setMinSize(5)),
+              child: infoText(
+                context: context,
+                value: line)),
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -241,7 +224,7 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
               " ${!printingController.saleOrderInvoice!.orderDate.toString().contains('T') ? printingController.saleOrderInvoice!.orderDate.toString() : printingController.saleOrderInvoice!.orderDate.toString().substring(0, printingController.saleOrderInvoice!.orderDate!.indexOf('T'))}",
               style: TextStyle(
                   fontStyle: FontStyle.normal,
-                  fontSize: 4.sp,
+                  fontSize:context.setSp(20),
                   color: AppColor.black,
                   fontWeight: FontWeight.bold),
             ),
@@ -249,7 +232,7 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
               " ${!printingController.saleOrderInvoice!.orderDate.toString().contains('T') ? intl.DateFormat("HH:mm:ss").format(DateTime.now()) : printingController.saleOrderInvoice!.orderDate.toString().substring(printingController.saleOrderInvoice!.orderDate!.indexOf('T') + 1)}",
               style: TextStyle(
                   fontStyle: FontStyle.normal,
-                  fontSize: 4.sp,
+                  fontSize: context.setSp(20),
                   color: AppColor.black,
                   fontWeight: FontWeight.bold),
             ),
@@ -261,28 +244,33 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
   }
   if (!isdownloadRoll && items != null) {
     return Column(
+      spacing: context.setHeight(10),
       children: [
         SizedBox(
-            width: 150.w,
+            width:context.setWidth(150),
             child: Column(
+              spacing: context.setHeight(5),
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 infoText(
+                  context: context,
                     value:
                         '${'order_number'.tr} : (${printingController.saleOrderInvoice!.invoiceId})'),
-                SizedBox(height: 5.h),
                 if (user != null) ...[
-                  infoText(value: "${'served_by'.tr} : ${user.name!}"),
-                  SizedBox(height: 5.h),
+                  infoText(
+                    context: context,
+                    value: "${'served_by'.tr} : ${user.name!}"),
                 ],
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     infoText(
+                      context: context,
                       value:
                           " ${!printingController.saleOrderInvoice!.orderDate.toString().contains('T') ? printingController.saleOrderInvoice!.orderDate.toString() : printingController.saleOrderInvoice!.orderDate.toString().substring(0, printingController.saleOrderInvoice!.orderDate!.indexOf('T'))}",
                     ),
                     infoText(
+                      context: context,
                       value:
                           " ${!printingController.saleOrderInvoice!.orderDate.toString().contains('T') ? intl.DateFormat("HH:mm:ss").format(DateTime.now()) : printingController.saleOrderInvoice!.orderDate.toString().substring(printingController.saleOrderInvoice!.orderDate!.indexOf('T') + 1)}",
                     ),
@@ -290,92 +278,96 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items}) {
                 ),
               ],
             )),
-        SizedBox(height: 20.h),
-        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        SizedBox(height: context.setHeight(10)),
+        Row(
+          spacing: context.setWidth(5),
+          mainAxisAlignment: MainAxisAlignment.center, children: [
           Expanded(
             child: SizedBox(
-              width: 50.w,
+              width:context.setWidth(50),
               child: const Divider(
                 color: Colors.black, // لون الخط
-                thickness: 2, // سماكة الخط // المسافة من اليمين
+                thickness: 1, // سماكة الخط // المسافة من اليمين
               ),
             ),
           ),
-          SizedBox(width: 5.w),
           infoText(
-              value: '${items[0].productId!.soPosCategName}', fontsize: 4.sp),
-          SizedBox(width: 5.w),
+            context: context,
+              value: '${items[0].productId!.soPosCategName}', fontsize:context.setSp(20)),
           Expanded(
             child: SizedBox(
-              width: 50.w,
+              width:context.setWidth(50),
               child: const Divider(
                 color: Colors.black, // لون الخط
-                thickness: 2, // سماكة الخط // المسافة من اليمين
+                thickness: 1, // سماكة الخط // المسافة من اليمين
               ),
             ),
           ),
         ]),
-        SizedBox(height: 10.h),
-        Row(children: [
+        Row(
+          children: [
           SizedBox(
               // width: 15.w,
               child:
-                  productAndriodText(value: "#", isblack: true, isname: true)),
-          SizedBox(width: 10.h),
+                  productAndriodText(
+                    context: context,
+                    value: "#", isblack: true, isname: true)),
+          SizedBox(width:context.setWidth(10)),
           SizedBox(
-              // width: 145.w,
               child: productAndriodText(
+                context: context,
                   value: 'item'.tr, isblack: true, isname: true)),
           const Spacer(),
           SizedBox(
-              // width: 25.w,
               child: productAndriodText(
+                context: context,
                   value: 'qy'.tr,
                   isblack: true,
                   isname: true,
                   isAlignmentCenter: true)),
         ]),
-        SizedBox(height: 10.h),
         ...catogProductAndriodItem(
+            context: context,
             saleOrderLinesList: items,
             formatter: formatter,
             font: AppInvoiceStyle.fontMedium,
             isShowNote: true),
-        SizedBox(height: 5.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             SizedBox(
-              width: 50.w,
+              width:context.setWidth(50),
               child: const Divider(
                 color: Colors.black, // لون الخط
-                thickness: 2, // سماكة الخط // المسافة من اليمين
+                thickness: 1, // سماكة الخط // المسافة من اليمين
               ),
             ),
           ],
         ),
-        SizedBox(height: 5.h),
         Row(
+          spacing: context.setWidth(20),
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            infoText(value: "${'count_items'.tr} : ${items.length}"),
-            SizedBox(width: 20.w),
             infoText(
+              context: context,
+              value: "${'count_items'.tr} : ${items.length}"),
+            infoText(
+              context: context,
                 value:
                     "${'quantity'.tr} : ${items.fold(0, (previousValue, element) => previousValue + element.productUomQty!)}"),
           ],
         ),
-        SizedBox(height: 8.h),
         if (printingController.saleOrderInvoice!.note != null &&
             printingController.saleOrderInvoice!.note != '') ...[
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               productAndriodText(
+                context: context,
                   value:
                       "${'note'.tr} :  ${printingController.saleOrderInvoice!.note}",
                   isblack: true,
-                  fontsize: 4.sp),
+                  fontsize:context.setSp(20)),
             ],
           ),
         ]
@@ -390,6 +382,7 @@ Align infoText(
     {required String value,
     bool isbold = true,
     bool isblack = true,
+    required  BuildContext context,
     double? fontsize}) {
   return Align(
       alignment: Alignment.center,
@@ -397,26 +390,176 @@ Align infoText(
         textDirection: TextDirection.rtl,
         value, // Arabic text
         style: TextStyle(
-            fontStyle: FontStyle.normal,
-            fontSize: fontsize ?? 4.sp,
-            // color: (isblack ? AppColor.black : AppColor.gray),
+            fontSize: fontsize ?? context.setSp(20),
             color: AppColor.black,
-            fontWeight: FontWeight.bold),
+            fontWeight:isbold ? FontWeight.bold : FontWeight.normal),
       ));
 }
 
 Row rowFotter({
   required String title,
   required String value,
+  required  BuildContext context
 }) {
   return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
     infoText(
       value: title,
       isbold: true,
+      context: context
+
     ),
     infoText(
       value: "$value ${"S.R".tr}",
       isbold: true,
+      context: context
     )
   ]);
+}
+
+
+Column productAndriodItem(
+    {required SaleOrderLine item,
+    required formatter,
+    bool isShowNote = false,
+    required  BuildContext context,
+    required font}) {
+  return Column(
+    spacing: context.setHeight(5),
+    mainAxisSize: MainAxisSize.min, children: [
+    productAndriodText(context: context, value: "${item.name}", isblack: true, isname: true),
+    if (item.note != null || item.categoryNotes != null) ...[
+      if (isShowNote) ...[
+        Row(children: [
+          SizedBox(width:context.setWidth(3)),
+          productAndriodText(
+            context: context,
+              value: " ${item.note} ",
+              isblack: false,
+              isname: true,
+              fontsize: context.setSp(20),
+              color: AppColor.gray),
+          if (item.categoryNotes != null && item.categoryNotes!.isNotEmpty) ...[
+            ...List.generate(item.categoryNotes!.length, (index) {
+              return productAndriodText(
+                context: context,
+                  value: " ${item.categoryNotes![index].note} ",
+                  isblack: false,
+                  isname: true,
+                  fontsize:context.setSp(20),
+                  color: AppColor.gray);
+            })
+          ]
+        ])
+      ]
+    ],
+    Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+      Padding(
+        padding: EdgeInsetsDirectional.only(start: 8),
+        child: Row(children: [
+          productAndriodText(context: context, value: "${item.productUomQty}", isblack: true),
+          productAndriodText(
+            context: context,
+            value: " x ",
+          ),
+          if (!isShowNote) ...[
+            productAndriodText(
+              context: context,
+              value: "${formatter.format(item.priceUnit)} ${"S.R".tr}",
+            ),
+          ],
+        ]),
+      ),
+      if (!isShowNote) ...[
+        productAndriodText(
+          context: context,
+            value: "${formatter.format(item.totalPrice)} ${"S.R".tr}",
+            isblack: true),
+      ]
+    ]),
+    SizedBox(height:context.setHeight(10)),
+  ]);
+}
+
+
+
+Align productAndriodText({
+  required String value,
+  bool isbold = true,
+  bool isname = false,
+  bool isblack = true,
+  bool isAlignmentCenter = false,
+  double? fontsize,
+  Color? color,
+  required  BuildContext context
+}) {
+  return Align(
+      alignment: !isAlignmentCenter
+          ? AlignmentDirectional.centerStart
+          : AlignmentDirectional.center,
+      child: Text(
+        textDirection: isname ? TextDirection.rtl : null,
+        value,
+        style: TextStyle(
+            fontStyle: FontStyle.normal,
+            fontSize: fontsize ?? context.setSp(20),
+            color: AppColor.black,
+            fontWeight: FontWeight.bold),
+      ));
+}
+
+
+
+List<Column> catogProductAndriodItem(
+    {required List<SaleOrderLine> saleOrderLinesList,
+    required formatter,
+    bool isShowNote = false,
+    required  BuildContext context,
+    required font}) {
+  return List.generate(saleOrderLinesList.length, (index) {
+    SaleOrderLine item = saleOrderLinesList[index];
+    return Column(children: [
+      SizedBox(height:context.setHeight(10)),
+      Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        SizedBox(
+            child: productAndriodText(
+              context: context,
+                value: "${index + 1}.", isblack: true, isname: true)),
+        SizedBox(
+          child: productAndriodText(
+            context: context,
+            value: buildProductNameWithNotes(item),
+            isblack: true,
+            isname: true,
+          ),
+        ),
+        const Spacer(),
+        SizedBox(
+            child: productAndriodText(
+                context: context,
+                value: "${item.productUomQty}",
+                isblack: true,
+                isAlignmentCenter: true)),
+      ]),
+    ]);
+  });
+}
+
+String buildProductNameWithNotes(SaleOrderLine item) {
+  final notes = <String>[];
+
+  // if (item.note != null && item.note!.trim().isNotEmpty) {
+  //   notes.add(item.note!.trim());
+  // }
+
+  if (item.productId!.productNotes != null && item.productId!.productNotes!.isNotEmpty) {
+    notes.addAll(item.productId!.productNotes!
+        .map((e) => e.note?.trim())
+        .where((note) => note != null && note.isNotEmpty)
+        .cast<String>());
+  }
+  if (notes.isEmpty) {
+    return item.name?? '';
+  }
+
+  return "${item.name} (${notes.join(', ')})";
 }

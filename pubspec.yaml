@@ -63,6 +63,7 @@ dev_dependencies:
 
 dependency_overrides:
   network_info_plus: ^4.0.2
+  fl_chart: ^0.69.0
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

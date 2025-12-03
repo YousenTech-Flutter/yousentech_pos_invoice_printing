@@ -36,11 +36,9 @@ import 'package:yousentech_pos_local_db/yousentech_pos_local_db.dart';
 import 'package:yousentech_pos_messaging/messaging/domain/messaging_viewmodel.dart';
 import 'package:yousentech_pos_messaging/messaging/utils/file_convert_helper.dart';
 import 'package:yousentech_pos_payment/payment/domain/payment_viewmodel.dart';
-import 'package:yousentech_pos_payment_summary/payment_summary/presentation/payment_sammry_screen.dart';
+import 'package:yousentech_pos_payment_summary/payment_summary/presentation/payment_summry.dart';
 import 'package:yousentech_pos_printing/printing/domain/app_connected_printers/connected_printer_viewmodel.dart';
 import 'package:yousentech_pos_printing/printing/utils/subnet_determination.dart';
-import 'package:ysn_pos_android_printer/android_printer/printer.dart';
-import 'package:ysn_pos_android_printer/test.dart';
 
 import '../utils/a4_print_helper.dart';
 // import 'package:pdf/widgets.dart' as pw;
@@ -236,12 +234,7 @@ class PrintingInvoiceController extends GetxController {
         }
         if (posSettingInfo?.enableNetworkPrint != null &&
             posSettingInfo!.enableNetworkPrint!) {
-          print("enableNetworkPrint=======================");
-          print(
-              "enableDirectPrinter======================= ${posSettingInfo.enableDirectPrinter}");
-          print("printingTypeSkip======================= ${printingTypeSkip}");
           List<dynamic> printingNetworksIp = await getPrintingSetting();
-          print("printingNetworksIp======================= ${printingNetworksIp}");
           var ipPorts = (Platform.isAndroid || Platform.isIOS) ? [] : await LanPrintingHelper.listSharedPrintersWithIP();
           List<Printer> printers = (Platform.isAndroid || Platform.isIOS) ? []: await PrintHelper.getPrinters();
           final ip = printingNetworksIp.firstWhere(
@@ -637,7 +630,6 @@ class PrintingInvoiceController extends GetxController {
     if (!disablePrintOrderInvoice) {
       // تبع الشبكات الاي بي
       if (printingNetworksIp.isNotEmpty) {
-        print(" // تبع الشبكات الاي بي");
         for (var setting in printingNetworksIp) {
           if (setting.disablePrinting ||
               setting.isCustomerPrinter ||
@@ -667,8 +659,6 @@ class PrintingInvoiceController extends GetxController {
           }
         }
       } else {
-        print("طباعة فاتورة المطبخ لليواس بس والبلوثوث");
-        print("categoryids $categoryids");
         for (var categoryId in categoryids) {
           final filteredLines = saleOrderLinesList!
               .where((line) => line.productId?.soPosCategId == categoryId)
@@ -685,8 +675,6 @@ class PrintingInvoiceController extends GetxController {
 
     // طباعة الفاتورة الكاملة
     if (!disablePrintFullInvoice) {
-      print(
-          "// طباعة الفاتورة الكاملة===========isWindows $isWindows printerIPorDefault $printerIPorDefault");
       if (isWindows) {
         if (printerIPorDefault != null) {
           await Printing.directPrintPdf(
@@ -700,11 +688,10 @@ class PrintingInvoiceController extends GetxController {
           );
         }
       } else {
-        print("$printerIPorDefault طباعة الفاتورة كاملة اندرويد");
         await  Get.to(() => ScreenshotWidget(
         printerIp: printerIPorDefault,
         isChasherInvoice: true,
-        child: rollAndroidPrint(isdownloadRoll: true),
+        child: rollAndroidPrint(isdownloadRoll: true ,context:Get.context!),
             ));
       }
     }
@@ -715,18 +702,15 @@ class PrintingInvoiceController extends GetxController {
       {bool silent = true,
       bool isWindows = false,
       required PdfPageFormat format,
-      required String? printerIp}) async {
-    print(
-        "items $items  targetPrinter $targetPrinter isWindows $isWindows printerIp $printerIp");
+      required String? printerIp
+      }) async {
     if (isWindows) {
-      print("طباعة فاتورة المطبخ للوندوز ");
       final pdfLayout = await buildPDFLayout(
         format: format,
         isdownloadRoll: !silent,
         items: items,
       );
       if (silent) {
-        print(" اذا كانت سالينت طباعة فاتورة المطبخ للوندوز ");
         if (targetPrinter != null) {
           await Printing.directPrintPdf(
             format: format,
@@ -738,7 +722,6 @@ class PrintingInvoiceController extends GetxController {
           );
         }
       } else {
-        print(" اذا كانت ديلوق طباعة فاتورة المطبخ للوندوز ");
         await Printing.layoutPdf(
           format: format,
           onLayout: pdfLayout,
@@ -748,10 +731,9 @@ class PrintingInvoiceController extends GetxController {
         );
       }
     } else {
-      print(" طباعة فاتورة المطبخ اندرويد");
       await   Get.to(() => ScreenshotWidget(
       printerIp: printerIp,
-      child: rollAndroidPrint(isdownloadRoll: false, items: items),
+      child: rollAndroidPrint(isdownloadRoll: false, items: items , context:Get.context! ),
       ));
     }
   }
@@ -1051,8 +1033,8 @@ class PrintingInvoiceController extends GetxController {
             format: checkbox ? "A4" : "Roll80", isFromPayment: isFromPayment);
         invoiceController.preventQuantityDecrease = true;
         Get.to(() => PaymentSammryScreen(
-              totalPrice: saleOrderInvoice!.totalPrice,
-              newSaleOrder: saleOrderInvoiceValue,
+              // totalPrice: saleOrderInvoice!.totalPrice,
+              // newSaleOrder: saleOrderInvoiceValue,
             ));
       } else {
         paymentController.isPDFDialogOpen = true;
