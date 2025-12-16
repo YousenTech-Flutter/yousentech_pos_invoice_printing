@@ -256,6 +256,10 @@ Widget rollAndroidPrint({isdownloadRoll = false, List<SaleOrderLine>? items ,req
                   context: context,
                     value:
                         '${'order_number'.tr} : (${printingController.saleOrderInvoice!.invoiceId})'),
+                infoText(
+                  context: context,
+                    value:
+                        '${'نوع الطلب'.tr} : (${printingController.saleOrderInvoice!.isTakeAwayOrder! ? "take_away".tr : "dine_in".tr})'),
                 if (user != null) ...[
                   infoText(
                     context: context,
@@ -551,8 +555,8 @@ String buildProductNameWithNotes(SaleOrderLine item) {
   //   notes.add(item.note!.trim());
   // }
 
-  if (item.productId!.productNotes != null && item.productId!.productNotes!.isNotEmpty) {
-    notes.addAll(item.productId!.productNotes!
+  if (item.categoryNotes != null && item.categoryNotes!.isNotEmpty) {
+    notes.addAll(item.categoryNotes!
         .map((e) => e.note?.trim())
         .where((note) => note != null && note.isNotEmpty)
         .cast<String>());
