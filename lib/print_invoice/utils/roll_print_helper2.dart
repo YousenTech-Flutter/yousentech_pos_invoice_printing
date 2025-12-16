@@ -90,11 +90,6 @@ Future<pw.Document> rollPrint2({PdfPageFormat? format,isdownloadRoll = false,Lis
                             isblack: true,
                             value:
                                 '${'invoice_nmuber'.tr} : ${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}'),
-                        infoText(
-                            isbold: true,
-                            isblack: true,
-                            value:
-                                '${'نوع الطلب'.tr} : ${printingController.saleOrderInvoice!.isTakeAwayOrder! ? "take_away".tr : "dine_in".tr}'),
                       ],
                     )),
                         pw.SizedBox(height: 3),
