@@ -13,14 +13,18 @@ import 'package:shared_widgets/config/app_invoice_styles.dart';
 import '../domain/invoice_printing_viewmodel.dart';
 import '../presentation/widgets/roll_table_row_data.dart';
 
-Future<pw.Document> rollPrint2({PdfPageFormat? format,isdownloadRoll = false,List<SaleOrderLine>? items}) async {
-  PrintingInvoiceController printingController = Get.put(PrintingInvoiceController());
+Future<pw.Document> rollPrint2(
+    {PdfPageFormat? format,
+    isdownloadRoll = false,
+    List<SaleOrderLine>? items}) async {
+  PrintingInvoiceController printingController =
+      Get.put(PrintingInvoiceController());
   Customer? company = SharedPr.currentCompanyObject;
   User? user = SharedPr.chosenUserObj;
   final intl.NumberFormat formatter = intl.NumberFormat('#,##0.00', 'en_US');
-  late  var companyImage ;
-  if(company?.image != null && company?.image != ''){
-      companyImage = pw.MemoryImage(base64Decode(company!.image!));
+  late var companyImage;
+  if (company?.image != null && company?.image != '') {
+    companyImage = pw.MemoryImage(base64Decode(company!.image!));
   }
   bool isFind =
       printingController.saleOrderInvoice!.orderDate.toString().contains('T');
@@ -38,8 +42,12 @@ Future<pw.Document> rollPrint2({PdfPageFormat? format,isdownloadRoll = false,Lis
     compress: true,
   );
   List listHeder = ["item".tr, "quantity".tr, "price".tr, "total".tr];
-  List<String> headerLines = SharedPr.currentPosObject!.invoiceHeaderLines == '' ?[]: SharedPr.currentPosObject!.invoiceHeaderLines!.trim().split('\n');
-  List<String> footerLines =SharedPr.currentPosObject!.invoiceFooterLines == '' ?[]: SharedPr.currentPosObject!.invoiceFooterLines!.trim().split('\n');
+  List<String> headerLines = SharedPr.currentPosObject!.invoiceHeaderLines == ''
+      ? []
+      : SharedPr.currentPosObject!.invoiceHeaderLines!.trim().split('\n');
+  List<String> footerLines = SharedPr.currentPosObject!.invoiceFooterLines == ''
+      ? []
+      : SharedPr.currentPosObject!.invoiceFooterLines!.trim().split('\n');
   if (isdownloadRoll) {
     pdf.addPage(pw.Page(
         pageFormat: const PdfPageFormat(
@@ -58,24 +66,39 @@ Future<pw.Document> rollPrint2({PdfPageFormat? format,isdownloadRoll = false,Lis
                     width: 150,
                     child: pw.Column(
                       children: [
-                        if(company?.image != null && company?.image != '')...[
-                            pw.Container(height: 30,width: 30,child: pw.Image(companyImage),),
-                            pw.SizedBox(height: 5),
+                        if (company?.image != null && company?.image != '') ...[
+                          pw.Container(
+                            height: 30,
+                            width: 30,
+                            child: pw.Image(companyImage),
+                          ),
+                          pw.SizedBox(height: 5),
                         ],
-                        infoText(value:printingController.saleOrderInvoice!.refundNote != null && printingController.saleOrderInvoice!.refundNote != ''? "${"invoice".tr} ${'credit_note'.tr}" :  printingController.title.tr),
-                        
+                        infoText(
+                            value: printingController
+                                            .saleOrderInvoice!.refundNote !=
+                                        null &&
+                                    printingController
+                                            .saleOrderInvoice!.refundNote !=
+                                        ''
+                                ? "${"invoice".tr} ${'credit_note'.tr}"
+                                : printingController.title.tr),
                         if (company != null) ...[
                           pw.SizedBox(height: 5),
                           infoText(value: company.name ?? ""),
-                          if(company.phone != null && company.phone != '')...[
+                          if (company.phone != null && company.phone != '') ...[
                             pw.SizedBox(height: 5),
-                            infoText(value: "${'tell'.tr}: ${company.phone ?? ""}"),
+                            infoText(
+                                value: "${'tell'.tr}: ${company.phone ?? ""}"),
                           ],
-                          
                           pw.SizedBox(height: 5),
                           infoText(value: company.email ?? ""),
                         ],
-                        ... headerLines.map((line) => pw.Padding(padding:const   pw.EdgeInsets.only(bottom: 5), child:  infoText(value: line)),),
+                        ...headerLines.map(
+                          (line) => pw.Padding(
+                              padding: const pw.EdgeInsets.only(bottom: 5),
+                              child: infoText(value: line)),
+                        ),
                         pw.Align(
                             alignment: pw.Alignment.center,
                             child:
@@ -84,7 +107,6 @@ Future<pw.Document> rollPrint2({PdfPageFormat? format,isdownloadRoll = false,Lis
                           infoText(value: "${'served_by'.tr} ${user.name!}"),
                           pw.SizedBox(height: 5),
                         ],
-                        
                         infoText(
                             isbold: true,
                             isblack: true,
@@ -92,14 +114,18 @@ Future<pw.Document> rollPrint2({PdfPageFormat? format,isdownloadRoll = false,Lis
                                 '${'invoice_nmuber'.tr} : ${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}'),
                       ],
                     )),
-                        pw.SizedBox(height: 3),
-                        pw.BarcodeWidget(
-                              data: containsArabic(printingController.saleOrderInvoice!.invoiceName.toString())? '${printingController.saleOrderInvoice!.id}'  :  '${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}',
-                              barcode:pw. Barcode.code128(),
-                              width: 100,
-                              height: 20,
-                              drawText: false,
-                              ),
+                pw.SizedBox(height: 3),
+                pw.BarcodeWidget(
+                  data: containsArabic(printingController
+                          .saleOrderInvoice!.invoiceName
+                          .toString())
+                      ? '${printingController.saleOrderInvoice!.id}'
+                      : '${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}',
+                  barcode: pw.Barcode.code128(),
+                  width: 100,
+                  height: 20,
+                  drawText: false,
+                ),
                 pw.SizedBox(height: 10),
                 ...productItem(
                     saleOrderLinesList: printingController.saleOrderLinesList!,
@@ -198,9 +224,12 @@ Future<pw.Document> rollPrint2({PdfPageFormat? format,isdownloadRoll = false,Lis
                               width: 60,
                               height: 60),
                         ])),
-                pw.SizedBox(height:10),
-                ... footerLines.map((line) =>     pw.Padding(padding:const   pw.EdgeInsets.only(bottom: 5), child:  infoText(value: line)),),
-                
+                pw.SizedBox(height: 10),
+                ...footerLines.map(
+                  (line) => pw.Padding(
+                      padding: const pw.EdgeInsets.only(bottom: 5),
+                      child: infoText(value: line)),
+                ),
                 pw.Row(
                   mainAxisAlignment: pw.MainAxisAlignment.center,
                   children: [
@@ -218,11 +247,9 @@ Future<pw.Document> rollPrint2({PdfPageFormat? format,isdownloadRoll = false,Lis
                 ),
               ],
             )));
-
-
   }
   if (!isdownloadRoll && items != null) {
-  pdf.addPage(pw.Page(
+    pdf.addPage(pw.Page(
         pageFormat: const PdfPageFormat(
           72 * PdfPageFormat.mm, // 80mm width
           double.infinity, // Example: fixed 200mm height
@@ -240,7 +267,17 @@ Future<pw.Document> rollPrint2({PdfPageFormat? format,isdownloadRoll = false,Lis
                     child: pw.Column(
                       crossAxisAlignment: pw.CrossAxisAlignment.start,
                       children: [
-                        infoText(value:'${'order_number'.tr} : (${printingController.saleOrderInvoice!.invoiceId})'),
+                        infoText(
+                            value:
+                                '${'order_number'.tr} : (${printingController.saleOrderInvoice!.invoiceId})'),
+                        if (SharedPr.currentPosObject!.enableOrderType !=
+                                null &&
+                            SharedPr.currentPosObject!.enableOrderType ==
+                                true) ...[
+                          infoText(
+                              value:
+                                  '${'order_type'.tr} : (${printingController.saleOrderInvoice!.isTakeAwayOrder! ? "take_away".tr : "dine_in".tr})'),
+                        ],
                         pw.SizedBox(height: 5),
                         if (user != null) ...[
                           infoText(value: "${'served_by'.tr} : ${user.name!}"),
@@ -249,86 +286,102 @@ Future<pw.Document> rollPrint2({PdfPageFormat? format,isdownloadRoll = false,Lis
                         pw.Row(
                           mainAxisAlignment: pw.MainAxisAlignment.center,
                           children: [
-                            infoText(value:
-                              " ${!printingController.saleOrderInvoice!.orderDate.toString().contains('T') ? printingController.saleOrderInvoice!.orderDate.toString() : printingController.saleOrderInvoice!.orderDate.toString().substring(0, printingController.saleOrderInvoice!.orderDate!.indexOf('T'))}",
+                            infoText(
+                              value:
+                                  " ${!printingController.saleOrderInvoice!.orderDate.toString().contains('T') ? printingController.saleOrderInvoice!.orderDate.toString() : printingController.saleOrderInvoice!.orderDate.toString().substring(0, printingController.saleOrderInvoice!.orderDate!.indexOf('T'))}",
                             ),
-                            infoText(value:
-                              " ${!printingController.saleOrderInvoice!.orderDate.toString().contains('T') ? DateFormat("HH:mm:ss").format(DateTime.now()) : printingController.saleOrderInvoice!.orderDate.toString().substring(printingController.saleOrderInvoice!.orderDate!.indexOf('T') + 1)}",
+                            infoText(
+                              value:
+                                  " ${!printingController.saleOrderInvoice!.orderDate.toString().contains('T') ? DateFormat("HH:mm:ss").format(DateTime.now()) : printingController.saleOrderInvoice!.orderDate.toString().substring(printingController.saleOrderInvoice!.orderDate!.indexOf('T') + 1)}",
                             ),
                           ],
                         ),
                       ],
                     )),
                 pw.SizedBox(height: 20),
-                pw.Row(mainAxisAlignment: pw.MainAxisAlignment.center, children: [
-                  pw.Expanded(child: 
-                  pw.Container(
-                      alignment: pw.Alignment.center,
-                      child: pw.Divider(borderStyle: pw.BorderStyle.dashed))),
-                  pw.SizedBox(width: 5),
-                  infoText(value:'${items[0].productId!.soPosCategName}' , fontsize: 9),
-                  pw.SizedBox(width: 5),
-                  pw.Expanded(child: 
-                  pw.Container(
-                      alignment: pw.Alignment.center,
-                      child: pw.Divider(borderStyle: pw.BorderStyle.dashed))),
-                ]),
+                pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.center,
+                    children: [
+                      pw.Expanded(
+                          child: pw.Container(
+                              alignment: pw.Alignment.center,
+                              child: pw.Divider(
+                                  borderStyle: pw.BorderStyle.dashed))),
+                      pw.SizedBox(width: 5),
+                      infoText(
+                          value: '${items[0].productId!.soPosCategName}',
+                          fontsize: 9),
+                      pw.SizedBox(width: 5),
+                      pw.Expanded(
+                          child: pw.Container(
+                              alignment: pw.Alignment.center,
+                              child: pw.Divider(
+                                  borderStyle: pw.BorderStyle.dashed))),
+                    ]),
                 pw.SizedBox(height: 10),
                 pw.Row(children: [
-                          pw.Container(
-                            width: 15,
-                            child: 
-                          productText(value: "#", isblack: true , isname: true)),
-                          pw.Container(
-                            width: 145,
-                            child: 
-                          productText(value: 'item'.tr, isblack: true,isname: true)),
-                          pw.Container(
-                            width: 25,
-                            child: 
-                          productText(value: 'qy'.tr, isblack: true,isname: true , isAlignmentCenter: true)),
-                  ]),
+                  pw.Container(
+                      width: 15,
+                      child:
+                          productText(value: "#", isblack: true, isname: true)),
+                  pw.Container(
+                      width: 145,
+                      child: productText(
+                          value: 'item'.tr, isblack: true, isname: true)),
+                  pw.Container(
+                      width: 25,
+                      child: productText(
+                          value: 'qy'.tr,
+                          isblack: true,
+                          isname: true,
+                          isAlignmentCenter: true)),
+                ]),
                 ...catogProductItem(
                     saleOrderLinesList: items,
                     formatter: formatter,
                     font: AppInvoiceStyle.fontMedium,
                     isShowNote: true),
                 pw.SizedBox(height: 5),
-                pw.Row(mainAxisAlignment: pw.MainAxisAlignment.start, children: [
-                  pw.Container(
-                      width: 70,
-                      alignment: pw.Alignment.center,
-                      child: pw.Divider(borderStyle: pw.BorderStyle.dashed)),
-                ]),
+                pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.start,
+                    children: [
+                      pw.Container(
+                          width: 70,
+                          alignment: pw.Alignment.center,
+                          child:
+                              pw.Divider(borderStyle: pw.BorderStyle.dashed)),
+                    ]),
                 pw.SizedBox(height: 5),
                 pw.Row(
-                          mainAxisAlignment: pw.MainAxisAlignment.start,
-                          children: [
-                            infoText(value: "${'count_items'.tr} : ${items.length}"),
-                            pw.SizedBox(width: 20),
-                            infoText(value: "${'quantity'.tr} : ${items.fold(0, (previousValue, element) => previousValue + element.productUomQty!)}"),
-                          ],
-                        ),
+                  mainAxisAlignment: pw.MainAxisAlignment.start,
+                  children: [
+                    infoText(value: "${'count_items'.tr} : ${items.length}"),
+                    pw.SizedBox(width: 20),
+                    infoText(
+                        value:
+                            "${'quantity'.tr} : ${items.fold(0, (previousValue, element) => previousValue + element.productUomQty!)}"),
+                  ],
+                ),
                 pw.SizedBox(height: 8),
-                if(printingController.saleOrderInvoice!.note != null && printingController.saleOrderInvoice!.note != '')...[
+                if (printingController.saleOrderInvoice!.note != null &&
+                    printingController.saleOrderInvoice!.note != '') ...[
                   pw.Column(
-                          crossAxisAlignment: pw.CrossAxisAlignment.start,
-                          children: [
-                            productText(value: "${'note'.tr} :  ${printingController.saleOrderInvoice!.note}"  , isblack: true , fontsize: 7) ,
-
-                          ],
-                        ),
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      productText(
+                          value:
+                              "${'note'.tr} :  ${printingController.saleOrderInvoice!.note}",
+                          isblack: true,
+                          fontsize: 7),
+                    ],
+                  ),
                 ]
-                
               ],
             )));
-  
   }
   // return pdf;
   return pdf;
 }
-
-
 
 pw.Align infoText(
     {required String value,
@@ -362,7 +415,6 @@ pw.Row rowFotter({
         )
       ]);
 }
-
 
 bool containsArabic(String text) {
   final arabic = RegExp(r'[\u0600-\u06FF]');

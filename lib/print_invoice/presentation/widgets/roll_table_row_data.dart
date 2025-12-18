@@ -287,9 +287,9 @@ List<Column> catogProductAndriodItem(
 String buildProductNameWithNotes(item) {
   final notes = <String>[];
 
-  if (item.note != null && item.note!.trim().isNotEmpty) {
-    notes.add(item.note!.trim());
-  }
+  // if (item.note != null && item.note!.trim().isNotEmpty) {
+  //   notes.add(item.note!.trim());
+  // }
 
   if (item.categoryNotes != null && item.categoryNotes!.isNotEmpty) {
     notes.addAll(item.categoryNotes!
