@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart' as intl;
+import 'package:pos_shared_preferences/helper/app_enum.dart';
 import 'package:pos_shared_preferences/models/account_journal/data/account_journal.dart';
 import 'package:pos_shared_preferences/models/authentication_data/user.dart';
 import 'package:pos_shared_preferences/models/customer_model.dart';
@@ -112,6 +113,15 @@ Widget rollAndroidPrint(
                 isblack: true,
                 value:
                     '${'invoice_nmuber'.tr} : ${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}'),
+            if (SharedPr.currentPosObject!.enableOrderType != null &&
+                SharedPr.currentPosObject!.enableOrderType == true &&
+                printingController.saleOrderInvoice!.moveType ==
+                    MoveType.out_invoice.name) ...[
+              infoText(
+                  context: context,
+                  value:
+                      '${'order_type'.tr} : (${printingController.saleOrderInvoice!.isTakeAwayOrder! ? "take_away".tr : "dine_in".tr})'),
+            ],
           ],
         )),
         BarcodeWidget(
@@ -246,7 +256,10 @@ Widget rollAndroidPrint(
       ],
     );
   }
-  if (!isdownloadRoll && items != null) {
+  if (!isdownloadRoll &&
+      items != null &&
+      printingController.saleOrderInvoice!.moveType ==
+          MoveType.out_invoice.name) {
     return Column(
       spacing: context.setHeight(10),
       children: [

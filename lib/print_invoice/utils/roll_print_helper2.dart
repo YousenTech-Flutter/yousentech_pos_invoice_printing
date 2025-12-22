@@ -4,6 +4,7 @@ import 'package:intl/intl.dart' as intl;
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'package:pos_shared_preferences/helper/app_enum.dart';
 import 'package:pos_shared_preferences/models/account_journal/data/account_journal.dart';
 import 'package:pos_shared_preferences/models/authentication_data/user.dart';
 import 'package:pos_shared_preferences/models/customer_model.dart';
@@ -112,10 +113,8 @@ Future<pw.Document> rollPrint2(
                             isblack: true,
                             value:
                                 '${'invoice_nmuber'.tr} : ${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}'),
-                        if (SharedPr.currentPosObject!.enableOrderType !=
-                                null &&
-                            SharedPr.currentPosObject!.enableOrderType ==
-                                true) ...[
+                        if (SharedPr.currentPosObject!.enableOrderType != null && SharedPr.currentPosObject!.enableOrderType ==true
+                        && printingController.saleOrderInvoice!.moveType == MoveType.out_invoice.name) ...[
                           infoText(
                               value:
                                   '${'order_type'.tr} : (${printingController.saleOrderInvoice!.isTakeAwayOrder! ? "take_away".tr : "dine_in".tr})'),
@@ -256,7 +255,7 @@ Future<pw.Document> rollPrint2(
               ],
             )));
   }
-  if (!isdownloadRoll && items != null) {
+  if (!isdownloadRoll && items != null && printingController.saleOrderInvoice!.moveType == MoveType.out_invoice.name) {
     pdf.addPage(pw.Page(
         pageFormat: const PdfPageFormat(
           72 * PdfPageFormat.mm, // 80mm width
@@ -426,6 +425,5 @@ pw.Row rowFotter({
 
 bool containsArabic(String text) {
   final arabic = RegExp(r'[\u0600-\u06FF]');
-  print("containsArabic ===============${arabic.hasMatch(text)}");
   return arabic.hasMatch(text);
 }
