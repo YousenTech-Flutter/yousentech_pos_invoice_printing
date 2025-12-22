@@ -112,6 +112,14 @@ Future<pw.Document> rollPrint2(
                             isblack: true,
                             value:
                                 '${'invoice_nmuber'.tr} : ${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}'),
+                        if (SharedPr.currentPosObject!.enableOrderType !=
+                                null &&
+                            SharedPr.currentPosObject!.enableOrderType ==
+                                true) ...[
+                          infoText(
+                              value:
+                                  '${'order_type'.tr} : (${printingController.saleOrderInvoice!.isTakeAwayOrder! ? "take_away".tr : "dine_in".tr})'),
+                        ],
                       ],
                     )),
                 pw.SizedBox(height: 3),
