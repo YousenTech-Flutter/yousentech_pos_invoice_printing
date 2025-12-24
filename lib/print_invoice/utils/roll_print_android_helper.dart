@@ -113,8 +113,8 @@ Widget rollAndroidPrint(
                 isblack: true,
                 value:
                     '${'invoice_nmuber'.tr} : ${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}'),
-            if (SharedPr.currentPosObject!.enableOrderType != null &&
-                SharedPr.currentPosObject!.enableOrderType == true &&
+            if (SharedPr.invoiceSetting?.showOrderType!= null &&
+                SharedPr.invoiceSetting!.showOrderType == true &&
                 printingController.saleOrderInvoice!.moveType ==
                     MoveType.out_invoice.name) ...[
               infoText(
@@ -273,8 +273,8 @@ Widget rollAndroidPrint(
                     context: context,
                     value:
                         '${'order_number'.tr} : (${printingController.saleOrderInvoice!.invoiceId})'),
-                if (SharedPr.currentPosObject!.enableOrderType != null &&
-                    SharedPr.currentPosObject!.enableOrderType == true) ...[
+                if (SharedPr.invoiceSetting?.showOrderType != null &&
+                    SharedPr.invoiceSetting!.showOrderType== true) ...[
                   infoText(
                       context: context,
                       value:
@@ -382,6 +382,7 @@ Widget rollAndroidPrint(
                     "${'quantity'.tr} : ${items.fold(0, (previousValue, element) => previousValue + element.productUomQty!)}"),
           ],
         ),
+        if (SharedPr.invoiceSetting != null &&SharedPr.invoiceSetting!.showNote == true) ...[
         if (printingController.saleOrderInvoice!.note != null &&
             printingController.saleOrderInvoice!.note != '') ...[
           Column(
@@ -395,6 +396,7 @@ Widget rollAndroidPrint(
                   fontsize: context.setSp(20)),
             ],
           ),
+        ]
         ]
       ],
     );
@@ -544,6 +546,8 @@ List<Column> catogProductAndriodItem(
                 value: "${index + 1}.",
                 isblack: true,
                 isname: true)),
+        if (SharedPr.invoiceSetting != null &&
+                    SharedPr.invoiceSetting!.showNote == true) ...[
         SizedBox(
           child: productAndriodText(
             context: context,
@@ -551,7 +555,7 @@ List<Column> catogProductAndriodItem(
             isblack: true,
             isname: true,
           ),
-        ),
+        )],
         const Spacer(),
         SizedBox(
             child: productAndriodText(

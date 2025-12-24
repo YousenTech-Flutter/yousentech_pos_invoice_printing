@@ -113,8 +113,10 @@ Future<pw.Document> rollPrint2(
                             isblack: true,
                             value:
                                 '${'invoice_nmuber'.tr} : ${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}'),
-                        if (SharedPr.currentPosObject!.enableOrderType != null && SharedPr.currentPosObject!.enableOrderType ==true
-                        && printingController.saleOrderInvoice!.moveType == MoveType.out_invoice.name) ...[
+                        if (SharedPr.invoiceSetting?.showOrderType != null &&
+                            SharedPr.invoiceSetting!.showOrderType == true &&
+                            printingController.saleOrderInvoice!.moveType ==
+                                MoveType.out_invoice.name) ...[
                           infoText(
                               value:
                                   '${'order_type'.tr} : (${printingController.saleOrderInvoice!.isTakeAwayOrder! ? "take_away".tr : "dine_in".tr})'),
@@ -255,7 +257,10 @@ Future<pw.Document> rollPrint2(
               ],
             )));
   }
-  if (!isdownloadRoll && items != null && printingController.saleOrderInvoice!.moveType == MoveType.out_invoice.name) {
+  if (!isdownloadRoll &&
+      items != null &&
+      printingController.saleOrderInvoice!.moveType ==
+          MoveType.out_invoice.name) {
     pdf.addPage(pw.Page(
         pageFormat: const PdfPageFormat(
           72 * PdfPageFormat.mm, // 80mm width
@@ -277,10 +282,8 @@ Future<pw.Document> rollPrint2(
                         infoText(
                             value:
                                 '${'order_number'.tr} : (${printingController.saleOrderInvoice!.invoiceId})'),
-                        if (SharedPr.currentPosObject!.enableOrderType !=
-                                null &&
-                            SharedPr.currentPosObject!.enableOrderType ==
-                                true) ...[
+                        if (SharedPr.invoiceSetting?.showOrderType != null &&
+                            SharedPr.invoiceSetting!.showOrderType == true) ...[
                           infoText(
                               value:
                                   '${'order_type'.tr} : (${printingController.saleOrderInvoice!.isTakeAwayOrder! ? "take_away".tr : "dine_in".tr})'),
@@ -370,18 +373,21 @@ Future<pw.Document> rollPrint2(
                   ],
                 ),
                 pw.SizedBox(height: 8),
-                if (printingController.saleOrderInvoice!.note != null &&
-                    printingController.saleOrderInvoice!.note != '') ...[
-                  pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: [
-                      productText(
-                          value:
-                              "${'note'.tr} :  ${printingController.saleOrderInvoice!.note}",
-                          isblack: true,
-                          fontsize: 7),
-                    ],
-                  ),
+                if (SharedPr.invoiceSetting != null &&
+                    SharedPr.invoiceSetting!.showNote == true) ...[
+                  if (printingController.saleOrderInvoice!.note != null &&
+                      printingController.saleOrderInvoice!.note != '') ...[
+                    pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        productText(
+                            value:
+                                "${'note'.tr} :  ${printingController.saleOrderInvoice!.note}",
+                            isblack: true,
+                            fontsize: 7),
+                      ],
+                    ),
+                  ]
                 ]
               ],
             )));
