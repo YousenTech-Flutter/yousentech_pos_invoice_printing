@@ -116,7 +116,7 @@ Widget rollAndroidPrint(
             if (SharedPr.invoiceSetting?.showOrderType!= null &&
                 SharedPr.invoiceSetting!.showOrderType == true &&
                 printingController.saleOrderInvoice!.moveType ==
-                    MoveType.out_invoice.name) ...[
+                    MoveType.out_invoice.name && printingController.saleOrderInvoice!.isTakeAwayOrder!) ...[
               infoText(
                   context: context,
                   value:
