@@ -231,8 +231,7 @@ Future<pw.Document> rollPrint2(
                     title: 'invoice_footer_total_tax'.tr,
                     value: formatter.format(
                         printingController.saleOrderInvoice!.totalTaxes)),
-                if (SharedPr.invoiceSetting != null &&
-                    SharedPr.invoiceSetting!.showNote == true) ...[
+                if (SharedPr.invoiceSetting != null && SharedPr.invoiceSetting!.showNote == true) ...[
                   if (printingController.saleOrderInvoice!.note != null &&
                       printingController.saleOrderInvoice!.note != '') ...[
                     pw.SizedBox(height: 5),

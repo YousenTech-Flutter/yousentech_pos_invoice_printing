@@ -470,19 +470,9 @@ Column productAndriodItem(
             value: "${item.name}",
             isblack: true,
             isname: true),
-        if (item.note != null || item.categoryNotes != null) ...[
-          if (isShowNote) ...[
+        if (item.categoryNotes != null && item.categoryNotes!.isNotEmpty) ...[
+          if (SharedPr.invoiceSetting != null && SharedPr.invoiceSetting!.showNote == true) ...[
             Row(children: [
-              SizedBox(width: context.setWidth(3)),
-              productAndriodText(
-                  context: context,
-                  value: " ${item.note} ",
-                  isblack: false,
-                  isname: true,
-                  fontsize: context.setSp(20),
-                  color: AppColor.gray),
-              if (item.categoryNotes != null &&
-                  item.categoryNotes!.isNotEmpty) ...[
                 ...List.generate(item.categoryNotes!.length, (index) {
                   return productAndriodText(
                       context: context,
@@ -492,7 +482,7 @@ Column productAndriodItem(
                       fontsize: context.setSp(20),
                       color: AppColor.gray);
                 })
-              ]
+              
             ])
           ]
         ],
