@@ -58,20 +58,10 @@ List<pw.Column> productItem(
     SaleOrderLine item = saleOrderLinesList[index];
     return pw.Column(children: [
       productText(value: "${item.name}", isblack: true, isname: true),
-      if (item.note != null || item.categoryNotes != null) ...[
-        if (isShowNote) ...[
+      if (item.categoryNotes != null && item.categoryNotes!.isNotEmpty) ...[
+        if (SharedPr.invoiceSetting != null && SharedPr.invoiceSetting!.showNote == true) ...[
           pw.SizedBox(height: 2),
           pw.Row(children: [
-            // pw.Image(noteImage, width: 6, height: 6, dpi: 500),
-            pw.SizedBox(width: 3),
-            productText(
-                value: " ${item.note} ",
-                isblack: false,
-                isname: true,
-                fontsize: 6,
-                color: AppInvoceColor.gray),
-            if (item.categoryNotes != null &&
-                item.categoryNotes!.isNotEmpty) ...[
               ...List.generate(item.categoryNotes!.length, (index) {
                 return productText(
                     value: " ${item.categoryNotes![index].note} ",
@@ -80,7 +70,7 @@ List<pw.Column> productItem(
                     fontsize: 6,
                     color: AppInvoceColor.gray);
               })
-            ]
+            
           ])
         ]
       ],
@@ -117,19 +107,10 @@ Column productAndriodItem(
     required font}) {
   return Column(mainAxisSize: MainAxisSize.min, children: [
     productAndriodText(value: "${item.name}", isblack: true, isname: true),
-    if (item.note != null || item.categoryNotes != null) ...[
-      if (isShowNote) ...[
+    if (item.categoryNotes != null && item.categoryNotes!.isNotEmpty) ...[
+      if (SharedPr.invoiceSetting != null && SharedPr.invoiceSetting!.showNote == true) ...[
         SizedBox(height: 2.h),
         Row(children: [
-          // pw.Image(noteImage, width: 6, height: 6, dpi: 500),
-          SizedBox(width: 3.h),
-          productAndriodText(
-              value: " ${item.note} ",
-              isblack: false,
-              isname: true,
-              fontsize: 4.sp,
-              color: AppColor.gray),
-          if (item.categoryNotes != null && item.categoryNotes!.isNotEmpty) ...[
             ...List.generate(item.categoryNotes!.length, (index) {
               return productAndriodText(
                   value: " ${item.categoryNotes![index].note} ",
@@ -138,7 +119,7 @@ Column productAndriodItem(
                   fontsize: 4.sp,
                   color: AppColor.gray);
             })
-          ]
+          
         ])
       ]
     ],
