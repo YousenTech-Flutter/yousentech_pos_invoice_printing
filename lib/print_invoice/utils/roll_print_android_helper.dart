@@ -103,20 +103,26 @@ Widget rollAndroidPrint(
                 thickness: 1, // سماكة الخط // المسافة من اليمين
               ),
             ),
-            if (user != null) ...[
+            if ((user != null &&
+                (SharedPr.invoiceSetting?.showCreatorUsername != null &&
+                    SharedPr.invoiceSetting!.showCreatorUsername == true))) ...[
               infoText(
                   context: context, value: "${'served_by'.tr} ${user.name!}"),
             ],
-            infoText(
-                context: context,
-                isbold: true,
-                isblack: true,
-                value:
-                    '${'invoice_nmuber'.tr} : ${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}'),
-            if (SharedPr.invoiceSetting?.showOrderType!= null &&
+            if (SharedPr.invoiceSetting?.showOrderNumber != null &&
+                SharedPr.invoiceSetting!.showOrderNumber == true) ...[
+              infoText(
+                  context: context,
+                  isbold: true,
+                  isblack: true,
+                  value:
+                      '${'invoice_nmuber'.tr} : ${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}')
+            ],
+            if (SharedPr.invoiceSetting?.showOrderType != null &&
                 SharedPr.invoiceSetting!.showOrderType == true &&
                 printingController.saleOrderInvoice!.moveType ==
-                    MoveType.out_invoice.name && printingController.saleOrderInvoice!.isTakeAwayOrder!) ...[
+                    MoveType.out_invoice.name &&
+                printingController.saleOrderInvoice!.isTakeAwayOrder!) ...[
               infoText(
                   context: context,
                   value:
@@ -217,20 +223,22 @@ Widget rollAndroidPrint(
             title: "${'total'.tr} ${'with_tax'.tr}",
             value: formatter
                 .format(printingController.saleOrderInvoice!.totalPrice)),
-        if (SharedPr.invoiceSetting != null && SharedPr.invoiceSetting!.showNote == true) ...[
-        if (printingController.saleOrderInvoice!.note != null && printingController.saleOrderInvoice!.note != '') ...[
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              productAndriodText(
-                  context: context,
-                  value:
-                      "${'note'.tr} :  ${printingController.saleOrderInvoice!.note}",
-                  isblack: true,
-                  fontsize: context.setSp(20)),
-            ],
-          ),
-        ],
+        if (SharedPr.invoiceSetting != null &&
+            SharedPr.invoiceSetting!.showNote == true) ...[
+          if (printingController.saleOrderInvoice!.note != null &&
+              printingController.saleOrderInvoice!.note != '') ...[
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                productAndriodText(
+                    context: context,
+                    value:
+                        "${'note'.tr} :  ${printingController.saleOrderInvoice!.note}",
+                    isblack: true,
+                    fontsize: context.setSp(20)),
+              ],
+            ),
+          ],
         ],
         Container(
             padding: EdgeInsets.all(context.setMinSize(10)),
@@ -289,7 +297,7 @@ Widget rollAndroidPrint(
                     value:
                         '${'order_number'.tr} : (${printingController.saleOrderInvoice!.invoiceId})'),
                 if (SharedPr.invoiceSetting?.showOrderType != null &&
-                    SharedPr.invoiceSetting!.showOrderType== true) ...[
+                    SharedPr.invoiceSetting!.showOrderType == true) ...[
                   infoText(
                       context: context,
                       value:

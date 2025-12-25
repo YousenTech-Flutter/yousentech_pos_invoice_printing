@@ -104,15 +104,23 @@ Future<pw.Document> rollPrint2(
                             alignment: pw.Alignment.center,
                             child:
                                 pw.Divider(borderStyle: pw.BorderStyle.dashed)),
-                        if (user != null) ...[
+                        if (user != null &&
+                            (SharedPr.invoiceSetting?.showCreatorUsername !=
+                                    null &&
+                                SharedPr.invoiceSetting!.showCreatorUsername ==
+                                    true)) ...[
                           infoText(value: "${'served_by'.tr} ${user.name!}"),
                           pw.SizedBox(height: 5),
                         ],
-                        infoText(
-                            isbold: true,
-                            isblack: true,
-                            value:
-                                '${'invoice_nmuber'.tr} : ${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}'),
+                        if (SharedPr.invoiceSetting?.showOrderNumber != null &&
+                            SharedPr.invoiceSetting!.showOrderNumber ==
+                                true) ...[
+                          infoText(
+                              isbold: true,
+                              isblack: true,
+                              value:
+                                  '${'invoice_nmuber'.tr} : ${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}')
+                        ],
                         if (SharedPr.invoiceSetting?.showOrderType != null &&
                             SharedPr.invoiceSetting!.showOrderType == true &&
                             printingController.saleOrderInvoice!.moveType ==
