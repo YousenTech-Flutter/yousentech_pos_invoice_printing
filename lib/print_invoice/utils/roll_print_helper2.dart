@@ -116,7 +116,7 @@ Future<pw.Document> rollPrint2(
                         if (SharedPr.invoiceSetting?.showOrderType != null &&
                             SharedPr.invoiceSetting!.showOrderType == true &&
                             printingController.saleOrderInvoice!.moveType ==
-                                MoveType.out_invoice.name) ...[
+                                MoveType.out_invoice.name && printingController.saleOrderInvoice!.isTakeAwayOrder!) ...[
                           infoText(
                               value:
                                   '${'order_type'.tr} : (${printingController.saleOrderInvoice!.isTakeAwayOrder! ? "take_away".tr : "dine_in".tr})'),
