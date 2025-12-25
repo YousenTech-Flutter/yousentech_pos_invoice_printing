@@ -123,6 +123,7 @@ Widget rollAndroidPrint(
                 printingController.saleOrderInvoice!.moveType ==
                     MoveType.out_invoice.name &&
                 printingController.saleOrderInvoice!.isTakeAwayOrder!) ...[
+              SizedBox(height: context.setHeight(10)),
               infoText(
                   context: context,
                   value:

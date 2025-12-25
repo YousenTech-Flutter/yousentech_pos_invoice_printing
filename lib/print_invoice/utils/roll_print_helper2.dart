@@ -119,7 +119,8 @@ Future<pw.Document> rollPrint2(
                               isbold: true,
                               isblack: true,
                               value:
-                                  '${'invoice_nmuber'.tr} : ${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}')
+                                  '${'invoice_nmuber'.tr} : ${printingController.saleOrderInvoice!.invoiceName ?? printingController.saleOrderInvoice!.id}'),
+                          pw.SizedBox(height: 5),
                         ],
                         if (SharedPr.invoiceSetting?.showOrderType != null &&
                             SharedPr.invoiceSetting!.showOrderType == true &&
@@ -130,6 +131,7 @@ Future<pw.Document> rollPrint2(
                           infoText(
                               value:
                                   '${'order_type'.tr} : (${printingController.saleOrderInvoice!.isTakeAwayOrder! ? "take_away".tr : "dine_in".tr})'),
+                          pw.SizedBox(height: 5),
                         ],
                       ],
                     )),
@@ -233,6 +235,7 @@ Future<pw.Document> rollPrint2(
                     SharedPr.invoiceSetting!.showNote == true) ...[
                   if (printingController.saleOrderInvoice!.note != null &&
                       printingController.saleOrderInvoice!.note != '') ...[
+                    pw.SizedBox(height: 5),
                     pw.Column(
                       crossAxisAlignment: pw.CrossAxisAlignment.start,
                       children: [
