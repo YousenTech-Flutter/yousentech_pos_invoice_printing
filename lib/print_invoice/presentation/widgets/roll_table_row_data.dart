@@ -231,8 +231,7 @@ List<pw.Column> catogProductItem(
             width: 15,
             child: productText(
                 value: "${index + 1}.", isblack: true, isname: true)),
-        if (SharedPr.invoiceSetting != null &&
-            SharedPr.invoiceSetting!.showNote == true) ...[
+        
           pw.Container(
             width: 145,
             child: productText(
@@ -240,8 +239,7 @@ List<pw.Column> catogProductItem(
               isblack: true,
               isname: true,
             ),
-          )
-        ],
+          ),
         pw.Container(
             width: 25,
             child: productText(
@@ -267,8 +265,7 @@ List<Column> catogProductAndriodItem(
             // width: 15.w,
             child: productAndriodText(
                 value: "${index + 1}.", isblack: true, isname: true)),
-        if (SharedPr.invoiceSetting != null &&
-            SharedPr.invoiceSetting!.showNote == true) ...[
+        
           SizedBox(
             // width: 145.w,
             child: productAndriodText(
@@ -277,7 +274,7 @@ List<Column> catogProductAndriodItem(
               isname: true,
             ),
           )
-        ],
+        ,
         const Spacer(),
         SizedBox(
             // width: 25.w,

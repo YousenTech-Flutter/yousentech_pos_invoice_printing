@@ -116,7 +116,9 @@ Future<pw.Document> rollPrint2(
                         if (SharedPr.invoiceSetting?.showOrderType != null &&
                             SharedPr.invoiceSetting!.showOrderType == true &&
                             printingController.saleOrderInvoice!.moveType ==
-                                MoveType.out_invoice.name && printingController.saleOrderInvoice!.isTakeAwayOrder!) ...[
+                                MoveType.out_invoice.name &&
+                            printingController
+                                .saleOrderInvoice!.isTakeAwayOrder!) ...[
                           infoText(
                               value:
                                   '${'order_type'.tr} : (${printingController.saleOrderInvoice!.isTakeAwayOrder! ? "take_away".tr : "dine_in".tr})'),
@@ -219,6 +221,22 @@ Future<pw.Document> rollPrint2(
                     title: 'invoice_footer_total_tax'.tr,
                     value: formatter.format(
                         printingController.saleOrderInvoice!.totalTaxes)),
+                if (SharedPr.invoiceSetting != null &&
+                    SharedPr.invoiceSetting!.showNote == true) ...[
+                  if (printingController.saleOrderInvoice!.note != null &&
+                      printingController.saleOrderInvoice!.note != '') ...[
+                    pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        productText(
+                            value:
+                                "${'note'.tr} :  ${printingController.saleOrderInvoice!.note}",
+                            isblack: true,
+                            fontsize: 7),
+                      ],
+                    ),
+                  ]
+                ],
                 pw.SizedBox(height: 10),
                 pw.Container(
                     padding: const pw.EdgeInsets.all(10),
@@ -373,21 +391,18 @@ Future<pw.Document> rollPrint2(
                   ],
                 ),
                 pw.SizedBox(height: 8),
-                if (SharedPr.invoiceSetting != null &&
-                    SharedPr.invoiceSetting!.showNote == true) ...[
-                  if (printingController.saleOrderInvoice!.note != null &&
-                      printingController.saleOrderInvoice!.note != '') ...[
-                    pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
-                        productText(
-                            value:
-                                "${'note'.tr} :  ${printingController.saleOrderInvoice!.note}",
-                            isblack: true,
-                            fontsize: 7),
-                      ],
-                    ),
-                  ]
+                if (printingController.saleOrderInvoice!.note != null &&
+                    printingController.saleOrderInvoice!.note != '') ...[
+                  pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      productText(
+                          value:
+                              "${'note'.tr} :  ${printingController.saleOrderInvoice!.note}",
+                          isblack: true,
+                          fontsize: 7),
+                    ],
+                  ),
                 ]
               ],
             )));

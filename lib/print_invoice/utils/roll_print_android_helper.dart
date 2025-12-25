@@ -217,6 +217,21 @@ Widget rollAndroidPrint(
             title: "${'total'.tr} ${'with_tax'.tr}",
             value: formatter
                 .format(printingController.saleOrderInvoice!.totalPrice)),
+        if (SharedPr.invoiceSetting != null && SharedPr.invoiceSetting!.showNote == true) ...[
+        if (printingController.saleOrderInvoice!.note != null && printingController.saleOrderInvoice!.note != '') ...[
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              productAndriodText(
+                  context: context,
+                  value:
+                      "${'note'.tr} :  ${printingController.saleOrderInvoice!.note}",
+                  isblack: true,
+                  fontsize: context.setSp(20)),
+            ],
+          ),
+        ],
+        ],
         Container(
             padding: EdgeInsets.all(context.setMinSize(10)),
             child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -382,7 +397,6 @@ Widget rollAndroidPrint(
                     "${'quantity'.tr} : ${items.fold(0, (previousValue, element) => previousValue + element.productUomQty!)}"),
           ],
         ),
-        if (SharedPr.invoiceSetting != null &&SharedPr.invoiceSetting!.showNote == true) ...[
         if (printingController.saleOrderInvoice!.note != null &&
             printingController.saleOrderInvoice!.note != '') ...[
           Column(
@@ -396,7 +410,6 @@ Widget rollAndroidPrint(
                   fontsize: context.setSp(20)),
             ],
           ),
-        ]
         ]
       ],
     );
@@ -546,8 +559,6 @@ List<Column> catogProductAndriodItem(
                 value: "${index + 1}.",
                 isblack: true,
                 isname: true)),
-        if (SharedPr.invoiceSetting != null &&
-                    SharedPr.invoiceSetting!.showNote == true) ...[
         SizedBox(
           child: productAndriodText(
             context: context,
@@ -555,7 +566,7 @@ List<Column> catogProductAndriodItem(
             isblack: true,
             isname: true,
           ),
-        )],
+        ),
         const Spacer(),
         SizedBox(
             child: productAndriodText(
