@@ -57,7 +57,7 @@ List<pw.Column> productItem(
   
   return List.generate(saleOrderLinesList.length, (index) {
     SaleOrderLine item = saleOrderLinesList[index];
-    print("categoryNotes========${item.categoryNotes?.map((e)=>print(e.note)).toList()}");
+    print("categoryNotes========${item.categoryNotes?.map((e)=>print("id==${e.id} ${e.note}")).toList()}");
     return pw.Column(children: [
       productText(value: "${item.name}", isblack: true, isname: true),
       if (item.categoryNotes != null && item.categoryNotes!.isNotEmpty) ...[
