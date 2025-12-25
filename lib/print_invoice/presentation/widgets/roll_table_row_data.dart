@@ -54,8 +54,10 @@ List<pw.Column> productItem(
     required formatter,
     bool isShowNote = false,
     required font}) {
+  
   return List.generate(saleOrderLinesList.length, (index) {
     SaleOrderLine item = saleOrderLinesList[index];
+    print("categoryNotes========${item.categoryNotes?.map((e)=>print(e.note)).toList()}");
     return pw.Column(children: [
       productText(value: "${item.name}", isblack: true, isname: true),
       if (item.categoryNotes != null && item.categoryNotes!.isNotEmpty) ...[
@@ -68,7 +70,7 @@ List<pw.Column> productItem(
                     isblack: false,
                     isname: true,
                     fontsize: 6,
-                    color: AppInvoceColor.gray);
+                    color: AppInvoceColor.black);
               })
             
           ])
