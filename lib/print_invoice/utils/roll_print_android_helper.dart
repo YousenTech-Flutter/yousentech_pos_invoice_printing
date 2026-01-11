@@ -403,7 +403,7 @@ Widget rollAndroidPrint(
             infoText(
                 context: context,
                 value:
-                    "${'quantity'.tr} : ${items.fold(0, (previousValue, element) => previousValue + element.productUomQty!)}"),
+                    "${'quantity'.tr} : ${items.fold(0.0, (previousValue, element) => previousValue + element.productUomQty!)}"),
           ],
         ),
         if (printingController.saleOrderInvoice!.note != null &&

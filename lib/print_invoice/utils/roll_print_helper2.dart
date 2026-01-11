@@ -397,7 +397,7 @@ Future<pw.Document> rollPrint2(
                     pw.SizedBox(width: 20),
                     infoText(
                         value:
-                            "${'quantity'.tr} : ${items.fold(0, (previousValue, element) => previousValue + element.productUomQty!)}"),
+                            "${'quantity'.tr} : ${items.fold(0.0, (previousValue, element) => previousValue + element.productUomQty!)}"),
                   ],
                 ),
                 pw.SizedBox(height: 8),
