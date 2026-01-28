@@ -24,6 +24,7 @@ import 'package:pos_shared_preferences/pos_shared_preferences.dart';
 import 'package:printing/printing.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:shared_widgets/config/app_invoice_styles.dart';
+import 'package:shared_widgets/utils/responsive_helpers/device_utils.dart';
 import 'package:yousentech_pos_invoice/invoices/domain/invoice_operations/invoice_operations_viewmodel.dart';
 import 'package:yousentech_pos_invoice/invoices/domain/invoice_viewmodel.dart';
 import 'package:yousentech_pos_invoice_printing/print_invoice/config/app_enums.dart';
@@ -37,6 +38,7 @@ import 'package:yousentech_pos_messaging/messaging/domain/messaging_viewmodel.da
 import 'package:yousentech_pos_messaging/messaging/utils/file_convert_helper.dart';
 import 'package:yousentech_pos_payment/payment/domain/payment_viewmodel.dart';
 import 'package:yousentech_pos_payment_summary/payment_summary/presentation/payment_summry.dart';
+import 'package:yousentech_pos_payment_summary/payment_summary/presentation/payment_summry_mobile.dart';
 import 'package:yousentech_pos_printing/printing/domain/app_connected_printers/connected_printer_viewmodel.dart';
 import 'package:yousentech_pos_printing/printing/utils/subnet_determination.dart';
 
@@ -1032,10 +1034,7 @@ class PrintingInvoiceController extends GetxController {
         await nextPressed(
             format: checkbox ? "A4" : "Roll80", isFromPayment: isFromPayment);
         invoiceController.preventQuantityDecrease = true;
-        Get.to(() => PaymentSammryScreen(
-              // totalPrice: saleOrderInvoice!.totalPrice,
-              // newSaleOrder: saleOrderInvoiceValue,
-            ));
+        Get.to(() => DeviceUtils.isMobile(Get.context!) ? PaymentSammryMobileScreen() :  PaymentSammryScreen());
       } else {
         paymentController.isPDFDialogOpen = true;
         await nextPressed(
