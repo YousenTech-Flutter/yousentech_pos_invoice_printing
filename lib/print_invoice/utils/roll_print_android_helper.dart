@@ -61,11 +61,13 @@ Widget rollAndroidPrint(
     }
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       spacing: context.setHeight(10),
       children: [
         SizedBox(
             // width: context.setWidth(150),
             child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
           spacing: context.setHeight(5),
           children: [
             if (company?.image != null && company?.image != '') ...[
@@ -286,6 +288,7 @@ Widget rollAndroidPrint(
           MoveType.out_invoice.name) {
     return Column(
       spacing: context.setHeight(10),
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
             width: context.setWidth(150),
