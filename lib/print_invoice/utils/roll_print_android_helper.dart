@@ -430,22 +430,26 @@ Widget rollAndroidPrint(
   return Container();
 }
 
-Align infoText(
+Text infoText(
     {required String value,
     bool isbold = true,
     bool isblack = true,
     required BuildContext context,
     double? fontsize}) {
-  return Align(
-      alignment: Alignment.center,
-      child: Text(
+  return 
+  // Align(
+  //     alignment: Alignment.center,
+  //     child:
+       Text(
         textDirection: TextDirection.rtl,
         value, // Arabic text
         style: TextStyle(
             fontSize: fontsize ?? context.setSp(20),
             color: AppColor.black,
             fontWeight: isbold ? FontWeight.bold : FontWeight.normal),
-      ));
+      )
+      // )
+      ;
 }
 
 Row rowFotter(
